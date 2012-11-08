@@ -1,0 +1,14 @@
+- plugin
+  - interface
+  - track
+  - graph
+
+- track plugin
+  - display track
+
+- route plugin
+  - display route (as cfd route)
+
+- graph plugin
+
+

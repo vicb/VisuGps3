@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map { height: 100% }
+    </style>
+    <title>VisuGps3 - dev</title>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing"></script>
+    <script type="text/javascript" src="http://localhost:9810/compile?id=vgps3-dev"></script>
+</head>
+<body>
+    <div id="map">
+    </div>
+    <script type="text/javascript">
+        var plugins = [
+            new vgps3.plugins.Track()
+        ];
+        var map = new vgps3.Map(document.getElementById("map"), {}, plugins);
+
+        map.Track.load('use test track');
+
+    </script>
+</body>
+</html>
