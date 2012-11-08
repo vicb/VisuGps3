@@ -1,0 +1,60 @@
+.vgps3-chart-cursor {
+    width: 0;
+    height: 100%;
+    border-left: 1px dashed black;
+    top: 0;
+    left: 0;
+    position: absolute;
+    z-index: 1000;
+}
+
+.vgps3-sliders-title {
+    position: relative;
+    width: 100%;
+    height: 25%;
+    cursor: pointer;
+    text-align: center;
+    overflow: hidden;
+    background-color: #000000;
+}
+
+.vgps3-sliders-title h1 {
+    font-size: 14px;
+    font-variant: small-caps;
+    position: absolute;
+    top: 50%;
+    margin: -.5em 0 0 .5em;
+    color: white;
+}
+
+
+.vgps3-chart-overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.goog-slider-horizontal {
+    position: relative;
+    overflow: hidden;
+    height: 25%;
+    width: 100%;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.goog-slider-horizontal:focus {
+    outline: none;
+}
+
+.goog-slider-horizontal .goog-slider-thumb {
+    position: absolute;
+    overflow: hidden;
+    width: 15%;
+    border-radius: 2px;
+    height: 100%;
+    background-color: #898989;
+    cursor: col-resize;
+}

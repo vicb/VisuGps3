@@ -1,0 +1,37 @@
+/**
+ * Copyright 2012 Victor Berchet
+ *
+ * This file is part of VisuGps3
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ */
+
+{namespace vgps3.track.templates}
+
+/**
+ * @param data
+*/
+{template .infoControl}
+    <h3>...iNfO</h3>
+    <ul>
+        <li>{$data.elev}m [hV]</li>
+        <li>{$data.elevGnd}m [hS]</li>
+        <li>{$data.vario}m/s [Vz]</li>
+        <li>{$data.speed}km/h [Vx]</li>
+        <li>{$data.hour}:{$data.min}:{$data.sec} [Th]</li>
+    </ul>
+{/template}
+
+/**
+ * @param data
+ */
+{template .dateControl}
+    <ul>
+        <li>{$data.date}</li>
+        {if $data.pilot}
+            <li>{$data.pilot}</li>
+        {/if}
+    </ul>
+{/template}

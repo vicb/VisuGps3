@@ -1,14 +1,18 @@
-- plugin
-  - interface
-  - track
-  - graph
-
 - track plugin
-  - display track
+  - load kml (!earth plugin)
+  - add an overlay while loading (indicator)
 
-- route plugin
-  - display route (as cfd route)
+- google earth plugin
 
-- graph plugin
+- measure plugin
+
+- allow resizing (map & chart)
+
+- multiple tracks
+
+- capture slider events
+
+
+
 
 

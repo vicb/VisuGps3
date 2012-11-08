@@ -13,67 +13,144 @@
  * @author Victor Berchet <victor@suumit.com>
  */
 
-goog.provide('vgps3.Map');
+goog.provide('vgps3.Viewer');
+
+goog.require('vgps3.track.Track');
+goog.require('vgps3.chart.Chart');
+goog.require('vgps3.ign.Map');
+goog.require('vgps3.route.Route');
+goog.require('vgps3.earth.Earth');
 
 goog.require('goog.object');
+goog.require('goog.structs.Map');
+goog.require('goog.Uri');
 goog.require('goog.array');
-goog.require('goog.events.EventTarget');
+goog.require('goog.debug.Console');
+goog.require('goog.debug.Logger');
+goog.require('goog.json');
 
 /**
- * @param {Node} container The container
- * @param {Object.<string>=} options Google Maps options
- * @param {Array<vgps3.IPlugin>|vgps3.IPlugin} plugins A list of plugins
- *
+ * @param {!Element} mapContainer
+ * @param {!Element} chartContainer
  * @constructor
- * @extends {goog.events.EventTarget}
  */
-vgps3.Map = function(container, options, plugins)
-{
+vgps3.Viewer = function(mapContainer, chartContainer) {
     /**
-     * @type {google.maps.Map}
-     * @private
+     * @type {vgps3.Map}
      */
-    this.map_ = null;
+    this.map;
 
-    goog.base(this);
-
-    var opt = {
-        center: new google.maps.LatLng(46.73986, 2.17529),
-        zoom: 5,
-        mapTypeId: google.maps.MapTypeId.TERRAIN
+    /**
+     * @type {Object.<string, vgps3.IPlugin>}
+     */
+    this.plugins = {
+        track: new vgps3.track.Track(),
+        chart: new vgps3.chart.Chart(chartContainer),
+        ign: new vgps3.ign.Map(),
+        route: new vgps3.route.Route(),
+        earth: new vgps3.earth.Earth()
     };
 
-    goog.object.extend(opt, options || {});
+    /**
+     * @type {!goog.debug.Logger}
+     * @private
+     */
+    this.logger_ = goog.debug.Logger.getLogger('vgps3.Viewer');
 
-    this.map_ = new google.maps.Map(container, opt);
+    this.map = new vgps3.Map(
+        mapContainer,
+        {
+            mapTypeControlOptions: {
+                mapTypeIds: [
+                    google.maps.MapTypeId.HYBRID,
+                    google.maps.MapTypeId.ROADMAP,
+                    google.maps.MapTypeId.SATELLITE,
+                    google.maps.MapTypeId.TERRAIN,
+                    'ign_terrain'
+                ]
+            }
+        },
+        goog.object.getValues(this.plugins)
+    );
 
-    this.initPlugins_(plugins);
+    var console = new goog.debug.Console();
+    console.setCapturing(true);
+
+    this.wireEvents_();
+
+    this.parseUrl_(document.location.href);
 };
 
-goog.inherits(vgps3.Map, goog.events.EventTarget);
-
 /**
- * @return {google.maps.Map} The google map object
- */
-vgps3.Map.prototype.getGoogleMap = function()
-{
-    return this.map_;
-};
-
-/**
- * @param {Array<vgps3.IPlugin>|vgps3.IPlugin} plugins A list of plugins
  * @private
  */
-vgps3.Map.prototype.initPlugins_ = function(plugins)
-{
-    plugins = goog.isArray(plugins) ? plugins : [plugins];
+vgps3.Viewer.prototype.wireEvents_ = function() {
+
+    var map = this.map,
+        track = this.plugins.track,
+        chart = this.plugins.chart,
+        eventMap = new goog.structs.Map(
+        vgps3.chart.EventType.MOVE, function(e) { track.moveTo(e.position); },
+        vgps3.chart.EventType.CLICK, function(e) { track.moveTo(e.position, true); },
+        vgps3.chart.EventType.WHEEL, function(e) {
+            var gMap = map.getGoogleMap();
+            track.moveTo(e.position, true);
+            gMap.setZoom((gMap.getZoom() - e.direction));
+        },
+        vgps3.chart.EventType.ABOUT, function(e) { map.showAbout(); },
+        vgps3.track.EventType.CLICK, function(e) { chart.moveTo(e.position); }
+    );
+
+    goog.object.forEach(eventMap.toObject(), function(handler, event) {
+        map.addEventListener(event, handler);
+    });
+};
+
+/**
+ * @param {string} url
+ *
+ * @private
+ */
+vgps3.Viewer.prototype.parseUrl_ = function(url) {
+    var uri = new goog.Uri(url),
+        routeType = uri.getParameterValue('flightType'),
+        turnpoints = uri.getParameterValues('turnpoints'),
+        start = uri.getParameterValue('start'),
+        end = uri.getParameterValue('end')
+    ;
 
     goog.array.forEach(
-        plugins,
-        function(plugin) {
-            plugin.init(this);
+        uri.getParameterValues('track') || [],
+        function (track) {
+            this.logger_.info('Loading track: ' + track);
+            this.plugins.track.load(track);
         },
         this
     );
-};
 
+    if (routeType && turnpoints) {
+        turnpoints = goog.array.map(/** @type {!Array.<number>} */(goog.json.parse(turnpoints)), this.array2LatLng_);
+        this.plugins.route.draw(
+            routeType,
+            turnpoints,
+            start ? this.array2LatLng_(/** @type {!Array.<number>} */(goog.json.parse(start))) : undefined,
+            end ? this.array2LatLng_(/** @type {!Array.<number>} */(goog.json.parse(end))) : undefined
+        );
+    }
+}
+
+/**
+ *
+ * @param {Array.<number>|number} latlng
+ *
+ * @return {google.maps.LatLng}
+ * @private
+ */
+vgps3.Viewer.prototype.array2LatLng_ = function(latlng) {
+    return latlng && goog.isArray(latlng) ? new google.maps.LatLng(latlng[0], latlng[1]) : null;
+}
+
+/**
+ * @define {string}
+ */
+vgps3.VERSION = "3.0";
