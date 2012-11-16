@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel='stylesheet' type='text/css' href='css/normalize.css' />
-    <link rel='stylesheet' type='text/css' href='css/vgps3.css' />
-    <link rel='stylesheet' type='text/css' href='css/vgps3-chart.css' />
+    <link rel="stylesheet" type="text/css" href="css/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="css/vgps3.css" />
+    <link rel="stylesheet" type="text/css" href="css/vgps3-chart.css" />
     <title>VGps3 - dev</title>
-    <meta charset='utf-8'>
-    <script type='text/javascript' src='https://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing'></script>
-    <script type='text/javascript' src='dist/vgps3.js'></script>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing"></script>
+    <script type="text/javascript" src="dist/vgps3.js"></script>
 </head>
 <body>
-    <div id='map-container'></div>
-    <div id='charts-container'>
-        <div id='charts'></div>
-        <div id='sliders'></div>
+    <div id="map-container"></div>
+    <div id="charts-container">
+        <div id="charts"></div>
+        <div id="sliders"></div>
     </div>
-    <script type='text/javascript'>
+    <script type="text/javascript">
         viewer = new vgps3.Viewer(
             document.getElementById('map-container'),
             document.getElementById('chart-container')
