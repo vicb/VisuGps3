@@ -15,25 +15,23 @@
 
 goog.provide('vgps3.chart.Chart');
 
-goog.require('vgps3.Map');
-goog.require('vgps3.IPlugin');
-goog.require('vgps3.track.InfoControl');
-
-goog.require('vgps3.chart.Overlays');
-goog.require('vgps3.chart.Sliders');
-goog.require('vgps3.chart.ClickEvent');
-goog.require('vgps3.chart.MoveEvent');
-goog.require('vgps3.chart.WheelEvent');
-goog.require('vgps3.chart.AboutEvent');
-
-goog.require('goog.net.jsloader');
 goog.require('goog.async.Deferred');
 goog.require('goog.events');
 goog.require('goog.events.BrowserEvent');
 goog.require('goog.events.MouseWheelHandler');
 goog.require('goog.events.MouseWheelHandler.EventType');
+goog.require('goog.net.jsloader');
 goog.require('goog.style');
 goog.require('goog.ui.Slider');
+goog.require('vgps3.IPlugin');
+goog.require('vgps3.Map');
+goog.require('vgps3.chart.AboutEvent');
+goog.require('vgps3.chart.ClickEvent');
+goog.require('vgps3.chart.MoveEvent');
+goog.require('vgps3.chart.Overlays');
+goog.require('vgps3.chart.Sliders');
+goog.require('vgps3.chart.WheelEvent');
+goog.require('vgps3.track.InfoControl');
 
 /**
  * @param {!Element} container
@@ -81,7 +79,7 @@ vgps3.chart.Chart = function(container) {
 /**
  * @override
  */
-vgps3.chart.Chart.prototype.init = function (vgps) {
+vgps3.chart.Chart.prototype.init = function(vgps) {
     this.vgps_ = vgps;
 
     this.vgps_.addEventListener(
@@ -91,7 +89,7 @@ vgps3.chart.Chart.prototype.init = function (vgps) {
 };
 
 /**
- * @param {number} position [0...1]
+ * @param {number} position [0...1].
  * @private
  */
 vgps3.chart.Chart.prototype.moveTo = function(position) {
@@ -129,8 +127,8 @@ vgps3.chart.Chart.prototype.handleMouseWheel_ = function(event) {
  */
 vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
     var track = event.track,
-        charts = this
-    ;
+        charts = this;
+
 
     this.overlays_.render(goog.dom.getElement('charts'));
     this.sliders_.render(goog.dom.getElement('sliders'));
@@ -161,8 +159,8 @@ vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
             chart,
             options,
             data = new google.visualization.DataTable(),
-            view
-        ;
+            view;
+
 
         data.addColumn('string', 'time');
         data.addColumn('number', 'elev');
@@ -172,7 +170,7 @@ vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
 
         for (var chartIndex = 0; chartIndex < track.nbChartPt; chartIndex++) {
             data.addRow([
-                track.time.hour[chartIndex] + "h" + track.time.min[chartIndex],
+                track.time.hour[chartIndex] + 'h' + track.time.min[chartIndex],
                 track.elev[chartIndex],
                 track.elevGnd[chartIndex],
                 track.speed[chartIndex],
@@ -214,23 +212,23 @@ vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
         chart = new google.visualization.LineChart(overlay);
         chart.draw(view, options);
     });
-}
+};
 
 /**
  * @private
  */
-vgps3.chart.Chart.prototype.loadApi_ = function () {
+vgps3.chart.Chart.prototype.loadApi_ = function() {
     var chart = this;
     google.load('visualization', '1.0', {
         packages: ['corechart'],
         callback: function() { chart.chartLoaded_.callback(); }
     });
-}
+};
 
 /**
  * @define {string}
  */
-vgps3.chart.LOADER_URL = "https://www.google.com/jsapi";
+vgps3.chart.LOADER_URL = 'https://www.google.com/jsapi';
 
 /**
  * @enum {string}

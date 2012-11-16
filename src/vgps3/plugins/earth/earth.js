@@ -15,12 +15,11 @@
 
 goog.provide('vgps3.earth.Earth');
 
-goog.require('vgps3.Map');
-goog.require('vgps3.IPlugin');
 goog.require('GoogleEarth');
-
-goog.require('goog.net.jsloader');
 goog.require('goog.async.Deferred');
+goog.require('goog.net.jsloader');
+goog.require('vgps3.IPlugin');
+goog.require('vgps3.Map');
 
 /**
  *
@@ -92,15 +91,15 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
 
 /**
  *
- * @param {number} position [0...1]
+ * @param {number} position [0...1].
  */
 vgps3.earth.Earth.prototype.moveTo = function(position) {
     var trackIdx = Math.round((this.track_.nbTrackPt - 1) * position),
         nextIdx = Math.min(this.track_.nbTrackPt - 1, trackIdx + 1),
         deltaLat = this.track_.lat[nextIdx] - this.track_.lat[trackIdx],
         deltaLon = this.track_.lon[nextIdx] - this.track_.lon[trackIdx],
-        angle
-    ;
+        angle;
+
 
     this.location_.setLatLngAlt(
         this.track_.lat[trackIdx],
@@ -133,7 +132,7 @@ vgps3.earth.Earth.prototype.moveTo = function(position) {
  */
 vgps3.earth.Earth.prototype.clickHandler_ = function(event) {
     this.vgps_.click(new google.maps.LatLng(event.getLatitude(), event.getLongitude));
-}
+};
 
 /**
  * @param {vgps3.track.LoadEvent} event
@@ -142,8 +141,8 @@ vgps3.earth.Earth.prototype.clickHandler_ = function(event) {
  */
 vgps3.earth.Earth.prototype.mapLoadHandler_ = function(event) {
     var track = event.track,
-        earth = this
-    ;
+        earth = this;
+
 
     this.track_ = track;
 
@@ -151,8 +150,8 @@ vgps3.earth.Earth.prototype.mapLoadHandler_ = function(event) {
         // todo init in listen once for "earth" map
         var ge = earth.ge_ = (new GoogleEarth(earth.gMap_)).getInstance(),
             lineString = ge.createLineString(''),
-            lineStringPlacemark = ge.createPlacemark('')
-        ;
+            lineStringPlacemark = ge.createPlacemark('');
+
 
         lineStringPlacemark.setGeometry(lineString);
         lineString.setTessellate(false);
@@ -187,30 +186,30 @@ vgps3.earth.Earth.prototype.mapLoadHandler_ = function(event) {
         model3d.setAltitudeMode(ge.ALTITUDE_ABSOLUTE);
         earth.moveTo(0);
     });
-}
+};
 
 /**
  * @private
  */
-vgps3.earth.Earth.prototype.loadApi_ = function () {
+vgps3.earth.Earth.prototype.loadApi_ = function() {
     var earth = this;
     google.load('earth', '1', { callback: function() { earth.geLoaded_.callback(); }});
-}
+};
 
 /**
  * @define {string}
  */
-vgps3.earth.LOADER_URL = "https://www.google.com/jsapi";
+vgps3.earth.LOADER_URL = 'https://www.google.com/jsapi';
 
 /**
  * @define {string}
  */
 // todo
-vgps3.earth.MODEL_URL = "http://victorb.fr/visugps/img/paraglider.dae";
+vgps3.earth.MODEL_URL = 'http://victorb.fr/visugps/img/paraglider.dae';
 
 /**
  * @enum {string}
  */
 vgps3.earth.EventType = {
     CLICK: 'vgps3.earth.click'
-}
+};

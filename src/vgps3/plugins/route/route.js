@@ -15,8 +15,8 @@
 
 goog.provide('vgps3.route.Route');
 
-goog.require('vgps3.Map');
 goog.require('vgps3.IPlugin');
+goog.require('vgps3.Map');
 
 /**
  *
@@ -36,7 +36,7 @@ vgps3.route.Route = function() {
  */
 vgps3.route.Route.prototype.init = function(vgps) {
     this.gMap_ = vgps.getGoogleMap();
-}
+};
 
 /**
  *
@@ -54,11 +54,11 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, start, end) {
             clickable: false,
             map: this.gMap_,
             path: turnpoints,
-            strokeColor: "#00f",
+            strokeColor: '#00f',
             strokeOpacity: 0.8,
             strokeWeight: 1
         });
-    ;
+
 
     new google.maps.Marker({
         clickable: false,
@@ -83,7 +83,7 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, start, end) {
                 position: tp,
                 map: this.gMap_,
                 icon: icon
-            })
+            });
         },
         this
     );
@@ -92,14 +92,14 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, start, end) {
 /**
  * @define {string}
  */
-vgps3.route.START_ICON_URL = "http://labs.google.com/ridefinder/images/mm_20_green.png";
+vgps3.route.START_ICON_URL = 'http://labs.google.com/ridefinder/images/mm_20_green.png';
 
 /**
  * @define {string}
  */
-vgps3.route.END_ICON_URL = "http://labs.google.com/ridefinder/images/mm_20_red.png";
+vgps3.route.END_ICON_URL = 'http://labs.google.com/ridefinder/images/mm_20_red.png';
 
 /**
  * @define {string}
  */
-vgps3.route.ICON_URL = "http://labs.google.com/ridefinder/images/mm_20_orange.png";
+vgps3.route.ICON_URL = 'http://labs.google.com/ridefinder/images/mm_20_orange.png';

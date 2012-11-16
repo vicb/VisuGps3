@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview VisuGps3 plugin interface
+ * @fileoverview VisuGps3 plugin interface.
  * @author Victor Berchet <victor@suumit.com>
  */
 
@@ -28,9 +28,9 @@ vgps3.IPlugin = function() {};
 /**
  * Plugin initialization.
  *
- * @param {vgps3.Map} The map
+ * @param {vgps3.Map} The map.
  *
- * @return {void} Nothing
+ * @return {void} Nothing.
  *
  */
 vgps3.IPlugin.prototype.init;

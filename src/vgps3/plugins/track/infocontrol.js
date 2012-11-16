@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview Google maps control
+ * @fileoverview Google maps control.
  * @author Victor Berchet <victor@suumit.com>
  */
 

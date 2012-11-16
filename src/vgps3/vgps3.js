@@ -1,5 +1,5 @@
 /**
- * @license Copyright 2012 Victor Berchet
+ * @license Copyright 2012 Victor Berchet.
  *
  * VisuGps3
  *
@@ -9,25 +9,24 @@
  */
 
 /**
- * @fileoverview VisuGps3
+ * @fileoverview VisuGps3.
  * @author Victor Berchet <victor@suumit.com>
  */
 
 goog.provide('vgps3.Viewer');
 
-goog.require('vgps3.track.Track');
-goog.require('vgps3.chart.Chart');
-goog.require('vgps3.ign.Map');
-goog.require('vgps3.route.Route');
-goog.require('vgps3.earth.Earth');
-
-goog.require('goog.object');
-goog.require('goog.structs.Map');
 goog.require('goog.Uri');
 goog.require('goog.array');
 goog.require('goog.debug.Console');
 goog.require('goog.debug.Logger');
 goog.require('goog.json');
+goog.require('goog.object');
+goog.require('goog.structs.Map');
+goog.require('vgps3.chart.Chart');
+goog.require('vgps3.earth.Earth');
+goog.require('vgps3.ign.Map');
+goog.require('vgps3.route.Route');
+goog.require('vgps3.track.Track');
 
 /**
  * @param {!Element} mapContainer
@@ -116,12 +115,12 @@ vgps3.Viewer.prototype.parseUrl_ = function(url) {
         routeType = uri.getParameterValue('flightType'),
         turnpoints = uri.getParameterValues('turnpoints'),
         start = uri.getParameterValue('start'),
-        end = uri.getParameterValue('end')
-    ;
+        end = uri.getParameterValue('end');
+
 
     goog.array.forEach(
         uri.getParameterValues('track') || [],
-        function (track) {
+        function(track) {
             this.logger_.info('Loading track: ' + track);
             this.plugins.track.load(track);
         },
@@ -137,7 +136,7 @@ vgps3.Viewer.prototype.parseUrl_ = function(url) {
             end ? this.array2LatLng_(/** @type {!Array.<number>} */(goog.json.parse(end))) : undefined
         );
     }
-}
+};
 
 /**
  *
@@ -148,9 +147,9 @@ vgps3.Viewer.prototype.parseUrl_ = function(url) {
  */
 vgps3.Viewer.prototype.array2LatLng_ = function(latlng) {
     return latlng && goog.isArray(latlng) ? new google.maps.LatLng(latlng[0], latlng[1]) : null;
-}
+};
 
 /**
  * @define {string}
  */
-vgps3.VERSION = "3.0";
+vgps3.VERSION = '3.0';

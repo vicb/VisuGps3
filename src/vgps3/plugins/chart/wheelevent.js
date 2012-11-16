@@ -37,7 +37,6 @@ vgps3.chart.WheelEvent = function(position, direction) {
      */
     this.direction = direction;
 };
-
 goog.inherits(vgps3.chart.WheelEvent, goog.events.Event);
 
 

@@ -31,7 +31,6 @@ vgps3.track.LoadEvent = function(track) {
      */
     this.track = track;
 };
-
 goog.inherits(vgps3.track.LoadEvent, goog.events.Event);
 
 

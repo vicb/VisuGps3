@@ -15,8 +15,8 @@
 
 goog.provide('vgps3.ign.Map');
 
-goog.require('vgps3.Map');
 goog.require('vgps3.IPlugin');
+goog.require('vgps3.Map');
 
 /**
  * @constructor
@@ -28,7 +28,7 @@ vgps3.ign.Map = function() {
 /**
  * @override
  */
-vgps3.ign.Map.prototype.init = function (vgps) {
+vgps3.ign.Map.prototype.init = function(vgps) {
     var gMap = vgps.getGoogleMap();
     gMap.mapTypes.set('ign_terrain', this.getIgnMapType_());
 };
@@ -48,8 +48,8 @@ vgps3.ign.Map.prototype.getIgnMapType_ = function() {
                 .replace('{zoom}', zoom)
                 .replace('{x}', (((coord.x % numTiles) + numTiles) % numTiles).toString(10))
                 .replace('{y}', coord.y)
-                .replace('{layer}', 'GEOGRAPHICALGRIDSYSTEMS.MAPS')
-            ;
+                .replace('{layer}', 'GEOGRAPHICALGRIDSYSTEMS.MAPS');
+
         },
         tileSize: new google.maps.Size(256, 256),
         minZoom: 6,
@@ -57,7 +57,7 @@ vgps3.ign.Map.prototype.getIgnMapType_ = function() {
         name: 'IGN',
         alt: 'Cartes IGN France'
     });
-}
+};
 
 /**
  * @define {string}
@@ -67,7 +67,7 @@ vgps3.ign.API_KEY = 'tyujsdxmzox31ituc2uw0qwl';
 /**
  * @define {string}
  */
-vgps3.ign.TILES_URL = 'http://gpp3-wxs.ign.fr/' + vgps3.ign.API_KEY + '/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER={layer}&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={zoom}&TILEROW={y}&TILECOL={x};'
+vgps3.ign.TILES_URL = 'http://gpp3-wxs.ign.fr/' + vgps3.ign.API_KEY + '/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER={layer}&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={zoom}&TILEROW={y}&TILECOL={x};';
 
 
 

@@ -9,22 +9,21 @@
  */
 
 /**
- * @fileoverview Load tracks on top of a map
+ * @fileoverview Load tracks on top of a map.
  * @author Victor Berchet <victor@suumit.com>
  */
 
 goog.provide('vgps3.track.Track');
 
-goog.require('vgps3.Map');
-goog.require('vgps3.IPlugin');
-goog.require('vgps3.track.InfoControl');
-goog.require('vgps3.track.templates');
-goog.require('vgps3.track.LoadEvent');
-goog.require('vgps3.track.ClickEvent');
-
-goog.require('goog.object');
-goog.require('goog.net.XhrIo');
 goog.require('goog.events.Event');
+goog.require('goog.net.XhrIo');
+goog.require('goog.object');
+goog.require('vgps3.IPlugin');
+goog.require('vgps3.Map');
+goog.require('vgps3.track.ClickEvent');
+goog.require('vgps3.track.InfoControl');
+goog.require('vgps3.track.LoadEvent');
+goog.require('vgps3.track.templates');
 goog.require('goog.events.Event');
 
 /**
@@ -83,7 +82,7 @@ vgps3.track.Track.prototype.init = function(vgps) {
 };
 
 /**
- * @param {string|goog.Uri} url The track url
+ * @param {string|goog.Uri} url The track url.
  */
 vgps3.track.Track.prototype.load = function(url) {
     goog.net.XhrIo.send(
@@ -93,16 +92,16 @@ vgps3.track.Track.prototype.load = function(url) {
 };
 
 /**
- * @param {number} position [0...1]
- * @param {boolean=} setCenter Whether to center the map
+ * @param {number} position [0...1].
+ * @param {boolean=} setCenter Whether to center the map.
  */
 vgps3.track.Track.prototype.moveTo = function(position, setCenter) {
     position = Math.max(Math.min(position, 1), 0);
 
     var track = this.tracks_[this.currentTrackIndex_],
         pointIndex = Math.round(position * (track.trackData.nbTrackPt - 1)),
-        chartIndex = Math.round(position * (track.trackData.nbChartPt - 1))
-    ;
+        chartIndex = Math.round(position * (track.trackData.nbChartPt - 1));
+
 
     this.updateInfoControl_(this.currentTrackIndex_, chartIndex);
     track.marker.setPosition(track.points[pointIndex]);
@@ -118,7 +117,7 @@ vgps3.track.Track.prototype.moveTo = function(position, setCenter) {
  * @see load
  *
  * @param {goog.events.Event} event
- * @param {string} url The url of the track
+ * @param {string} url The url of the track.
  *
  * @private
  */
@@ -138,15 +137,15 @@ vgps3.track.Track.prototype.afterTrackLoad_ = function(url, event) {
 /**
  * Adds a track on the map.
  *
- * @param {!(goog.Uri|string)} url The url of the track
- * @param {Object.<string, *>} track The track object
+ * @param {!(goog.Uri|string)} url The url of the track.
+ * @param {Object.<string, *>} track The track object.
  *
  * @private
  */
 vgps3.track.Track.prototype.addTrack_ = function(url, track) {
     var point,
-        bounds = new google.maps.LatLngBounds()
-    ;
+        bounds = new google.maps.LatLngBounds();
+
 
     // todo
     if (!this.currentTrackIndex_) {
@@ -164,7 +163,7 @@ vgps3.track.Track.prototype.addTrack_ = function(url, track) {
         bounds.extend(point);
     }
 
-    for (var i= 0; i <track.nbChartPoint; i++) {
+    for (var i = 0; i < track.nbChartPoint; i++) {
         track.elev[i] = Math.min(vgps3.track.MAX_ELEV, track.elev[i]);
         track.speed[i] = Math.min(vgps3.track.MAX_SPEED, track.speed[i]);
         track.vario[i] = Math.min(vgps3.track.MAX_VARIO, track.vario[i]);
@@ -176,7 +175,7 @@ vgps3.track.Track.prototype.addTrack_ = function(url, track) {
         clickable: false,
         map: this.map_,
         path: this.tracks_[url].points,
-        strokeColor: "#ff0000",
+        strokeColor: '#ff0000',
         strokeWeight: 2
     });
 
@@ -208,7 +207,7 @@ vgps3.track.Track.prototype.addTrack_ = function(url, track) {
     }
 
     this.vgps_.dispatchEvent(new vgps3.track.LoadEvent(track));
-}
+};
 
 /**
  * Computes the bounding box include all loaded tracks
@@ -220,7 +219,7 @@ vgps3.track.Track.prototype.getTracksBounds_ = function() {
 
     goog.object.forEach(this.tracks_, function(track) {
         bounds.union(track.bounds);
-    })
+    });
 
     return bounds;
 };
@@ -241,13 +240,13 @@ vgps3.track.Track.prototype.click = function(latlng) {
                 trackIndex = trackIdx;
                 pointIndex = pointIdx;
             }
-        })
+        });
     });
 
     if (position) {
         var track = this.tracks_[trackIndex],
-            chartIndex = Math.round(pointIndex / (track.trackData.nbTrackPt - 1) * (track.trackData.nbChartPt - 1))
-        ;
+            chartIndex = Math.round(pointIndex / (track.trackData.nbTrackPt - 1) * (track.trackData.nbChartPt - 1));
+
         track.marker.setPosition(position);
         this.updateInfoControl_(trackIndex, chartIndex);
         this.vgps_.dispatchEvent(new vgps3.track.ClickEvent(
@@ -255,7 +254,7 @@ vgps3.track.Track.prototype.click = function(latlng) {
             pointIndex / (track.trackData.nbTrackPt - 1)
         ));
     }
-}
+};
 
 /**
  * @param {google.maps.MouseEvent} event
@@ -299,7 +298,7 @@ vgps3.track.EventType = {
 /**
  * @define {string}
  */
-vgps3.track.PROXY_URL = "php/vg_proxy.php?track=";
+vgps3.track.PROXY_URL = 'php/vg_proxy.php?track=';
 
 /**
  * @define {number}

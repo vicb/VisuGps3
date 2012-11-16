@@ -15,10 +15,10 @@
 
 goog.provide('vgps3.chart.Sliders');
 
+goog.require('goog.dom');
+goog.require('goog.style');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Slider');
-goog.require('goog.style');
-goog.require('goog.dom');
 goog.require('soy');
 
 /**
@@ -35,8 +35,7 @@ vgps3.chart.Sliders = function(opt_domHelper) {
     this.title_;
 
     goog.base(this, opt_domHelper);
-}
-
+};
 goog.inherits(vgps3.chart.Sliders, goog.ui.Component);
 
 /**
@@ -60,7 +59,7 @@ vgps3.chart.Sliders.prototype.addSlider = function(label, element, color) {
     this.getHandler().listen(
         slider,
         goog.ui.Component.EventType.CHANGE,
-        function (event) {
+        function(event) {
             var opacity = slider.getValue() / 100;
             goog.style.setOpacity(element, opacity);
             goog.style.setOpacity(thumb, Math.max(0.2, opacity));
@@ -71,13 +70,13 @@ vgps3.chart.Sliders.prototype.addSlider = function(label, element, color) {
 /**
  * @return {Element}
  */
-vgps3.chart.Sliders.prototype.getTitleElement = function () {
+vgps3.chart.Sliders.prototype.getTitleElement = function() {
     if (!this.isInDocument()) {
         throw Error(goog.ui.Component.Error.NOT_IN_DOCUMENT);
     }
 
     return this.title_;
-}
+};
 
 /** @override */
 vgps3.chart.Sliders.prototype.createDom = function() {
@@ -106,4 +105,4 @@ vgps3.chart.Sliders.prototype.canDecorate = function(element) {
 /** @override */
 vgps3.chart.Sliders.disposeInternal = function() {
     delete this.title_;
-}
+};

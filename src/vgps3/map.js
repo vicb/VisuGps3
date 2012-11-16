@@ -9,25 +9,24 @@
  */
 
 /**
- * @fileoverview VisuGps3
+ * @fileoverview VisuGps3.
  * @author Victor Berchet <victor@suumit.com>
  */
 
 goog.provide('vgps3.Map');
 
-goog.require('vgps3.templates');
-
-goog.require('goog.object');
 goog.require('goog.array');
-goog.require('goog.events.EventTarget');
 goog.require('goog.events.EventHandler');
+goog.require('goog.events.EventTarget');
+goog.require('goog.object');
 goog.require('goog.ui.Dialog');
 goog.require('goog.ui.Dialog.ButtonSet');
+goog.require('vgps3.templates');
 
 /**
- * @param {!Element} container The container
- * @param {Object.<string>=} options Google Maps options
- * @param {(Array.<vgps3.IPlugin>|vgps3.IPlugin)=} plugins A list of plugins
+ * @param {!Element} container The container.
+ * @param {Object.<string>=} options Google Maps options.
+ * @param {(Array.<vgps3.IPlugin>|vgps3.IPlugin)=} plugins A list of plugins.
  *
  * @constructor
  * @extends {goog.events.EventTarget}
@@ -66,11 +65,10 @@ vgps3.Map = function(container, options, plugins) {
 
     this.initPlugins_(plugins);
 };
-
 goog.inherits(vgps3.Map, goog.events.EventTarget);
 
 /**
- * @return {google.maps.Map} The google map object
+ * @return {google.maps.Map} The google map object.
  */
 vgps3.Map.prototype.getGoogleMap = function() {
     return this.map_;
@@ -82,10 +80,10 @@ vgps3.Map.prototype.showAbout = function() {
     dialog.setContent(vgps3.templates.about());
     dialog.setButtonSet(goog.ui.Dialog.ButtonSet.createOk());
     dialog.setVisible(true);
-}
+};
 
 /**
- * @param {(Array.<vgps3.IPlugin>|vgps3.IPlugin)=} plugins A list of plugins
+ * @param {(Array.<vgps3.IPlugin>|vgps3.IPlugin)=} plugins A list of plugins.
  * @private
  */
 vgps3.Map.prototype.initPlugins_ = function(plugins) {

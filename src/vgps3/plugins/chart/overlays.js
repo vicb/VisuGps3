@@ -15,10 +15,10 @@
 
 goog.provide('vgps3.chart.Overlays');
 
-goog.require('goog.ui.Component');
-goog.require('goog.style');
-goog.require('goog.events.EventType');
 goog.require('goog.array');
+goog.require('goog.events.EventType');
+goog.require('goog.style');
+goog.require('goog.ui.Component');
 
 /**
  *
@@ -41,7 +41,6 @@ vgps3.chart.Overlays = function(opt_domHelper) {
      */
     this.cursor_;
 };
-
 goog.inherits(vgps3.chart.Overlays, goog.ui.Component);
 
 /**
@@ -59,29 +58,29 @@ vgps3.chart.Overlays.prototype.addLayer = function() {
     goog.dom.appendChild(this.getElement(), el);
     this.layers_.push(el);
     return el;
-}
+};
 
 /**
  * Set the cursor position
- * @param {number} position 0...1
+ * @param {number} position 0...1.
  */
 vgps3.chart.Overlays.prototype.moveTo = function(position) {
     var width = goog.style.getSize(this.getElement()).width;
 
     goog.style.setPosition(this.cursor_, Math.round(width * position));
-}
+};
 
 /**
  * Returns the cursor position
- * @return {number} position 0...1
+ * @return {number} position 0...1.
  */
 vgps3.chart.Overlays.prototype.getPosition = function() {
     var width = goog.style.getSize(this.getElement()).width,
-        offset = goog.style.getPosition(this.cursor_).x
-    ;
+        offset = goog.style.getPosition(this.cursor_).x;
+
 
     return offset / width;
-}
+};
 
 /** @override */
 vgps3.chart.Overlays.prototype.createDom = function() {
@@ -110,7 +109,7 @@ vgps3.chart.Overlays.prototype.enterDocument = function() {
             [goog.events.EventType.MOUSEDOWN, goog.events.EventType.MOUSEMOVE],
             this.handleMouseEvents_
         );
-}
+};
 
 /**
  * @param {goog.events.BrowserEvent} event
@@ -119,8 +118,8 @@ vgps3.chart.Overlays.prototype.enterDocument = function() {
 vgps3.chart.Overlays.prototype.handleMouseEvents_ = function(event) {
     var width = goog.style.getSize(this.getElement()).width,
         offsetX = event.clientX - goog.style.getPosition(this.getElement()).x,
-        position = offsetX / width
-    ;
+        position = offsetX / width;
+
 
     event.preventDefault();
 
@@ -138,7 +137,7 @@ vgps3.chart.Overlays.prototype.disposeInternal = function() {
     delete this.cursor_;
     goog.array.forEach(this.layers_, function(el, index) {
         delete overlays.layers_[index];
-    })
+    });
 };
 
 

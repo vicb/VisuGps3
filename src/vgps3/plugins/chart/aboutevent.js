@@ -24,7 +24,6 @@ goog.require('goog.events.Event');
 vgps3.chart.AboutEvent = function() {
     goog.base(this, vgps3.chart.EventType.ABOUT);
 };
-
 goog.inherits(vgps3.chart.AboutEvent, goog.events.Event);
 
 

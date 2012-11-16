@@ -19,7 +19,7 @@ goog.require('goog.events.Event');
 
 /**
  * @param {Object} track
- * @param {number} position [0...1]
+ * @param {number} position [0...1].
  *
  * @constructor
  * @extends {goog.events.Event}
@@ -37,7 +37,6 @@ vgps3.track.ClickEvent = function(track, position) {
      */
     this.position = position;
 };
-
 goog.inherits(vgps3.track.ClickEvent, goog.events.Event);
 
 

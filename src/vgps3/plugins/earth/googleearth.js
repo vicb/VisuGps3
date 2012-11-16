@@ -74,7 +74,7 @@ GoogleEarth = function(map) {
 
   this.addEarthMapType_();
   this.addEarthControl_();
-}
+};
 window['GoogleEarth'] = GoogleEarth;
 
 /**

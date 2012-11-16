@@ -31,7 +31,6 @@ vgps3.chart.MoveEvent = function(position) {
      */
     this.position = position;
 };
-
 goog.inherits(vgps3.chart.MoveEvent, goog.events.Event);
 
 
