@@ -25,6 +25,7 @@ goog.require('vgps3.track.InfoControl');
 goog.require('vgps3.track.LoadEvent');
 goog.require('vgps3.track.templates');
 goog.require('goog.events.Event');
+goog.require('goog.string.format');
 
 /**
  * @constructor
@@ -67,6 +68,12 @@ vgps3.track.Track = function() {
      * @private
      */
     this.dateControlDom_ = null;
+
+    /**
+     * @type {!goog.debug.Logger}
+     * @private
+     */
+    this.logger_ = goog.debug.Logger.getLogger('vgps3.track.Track');
 };
 
 /**
@@ -185,6 +192,21 @@ vgps3.track.Track.prototype.addTrack_ = function(url, track) {
         clickable: false
     });
 
+    // todo compute maxDelta server side
+    var maxDelta = 0;
+    var points = this.tracks_[url].points;
+    var nbPoints = points.length;
+    for (i = 1; i < nbPoints; ++i) {
+      maxDelta = Math.max(
+          google.maps.geometry.spherical.computeDistanceBetween(points[i - 1], points[i]),
+          maxDelta
+      );
+    }
+    this.tracks_[url].maxDelta = maxDelta;
+    if (goog.DEBUG) {
+        this.logger_.info(goog.string.format('track[%s].maxDelta = %fm', url, maxDelta));
+    }
+
     this.map_.fitBounds(this.getTracksBounds_());
 
     if (!this.infoControl_) {
@@ -229,18 +251,40 @@ vgps3.track.Track.prototype.getTracksBounds_ = function() {
  * @param {google.maps.LatLng} latlng
  */
 vgps3.track.Track.prototype.click = function(latlng) {
-    var trackIndex, pointIndex, position, currentDistance, distance = Number.MAX_VALUE;
+    var trackIndex,
+        pointIndex,
+        position,
+        currentDistance, distance = Number.MAX_VALUE,
+        that = this;
 
     goog.object.forEach(this.tracks_, function(track, trackIdx) {
-        goog.array.forEach(track.points, function(point, pointIdx) {
-            currentDistance = google.maps.geometry.spherical.computeDistanceBetween(latlng, point);
+        var points = track.points,
+            nbPoints = points.length;
+        if (goog.DEBUG) {
+            var trials = 0;
+        }
+        for (var pointIdx = 0; pointIdx < nbPoints; ) {
+            if (goog.DEBUG) {
+                trials++;
+            }
+            currentDistance = google.maps.geometry.spherical.computeDistanceBetween(latlng, points[pointIdx]);
             if (currentDistance < distance) {
                 distance = currentDistance;
-                position = point;
+                position = points[pointIdx];
                 trackIndex = trackIdx;
                 pointIndex = pointIdx;
+                ++pointIdx;
+            } else {
+                pointIdx += Math.max(1, Math.floor((currentDistance - distance) / track.maxDelta));
             }
-        });
+        }
+        if (goog.DEBUG) {
+            that.logger_.info(goog.string.format(
+                'Click location search: %d trials for %d points',
+                trials,
+                nbPoints
+            ));
+        }
     });
 
     if (position) {
