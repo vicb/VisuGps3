@@ -132,16 +132,6 @@ GoogleEarth.prototype.addEarthMapType_ = function() {
 
   map.mapTypes.set(GoogleEarth.MAP_TYPE_ID, earthMapType);
 
-  var options = /** @type {google.maps.MapTypeControlOptions} */({
-    mapTypeControlOptions: {
-      mapTypeIds: [google.maps.MapTypeId.ROADMAP,
-                   google.maps.MapTypeId.SATELLITE,
-                   GoogleEarth.MAP_TYPE_ID]
-    }
-  });
-
-  map.setOptions(options);
-
   var that = this;
   google.maps.event.addListener(map, 'maptypeid_changed', function() {
     that.mapTypeChanged_();

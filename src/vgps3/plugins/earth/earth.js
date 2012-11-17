@@ -92,6 +92,7 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
 /**
  *
  * @param {number} position [0...1].
+ * @notypecheck
  */
 vgps3.earth.Earth.prototype.moveTo = function(position) {
     var trackIdx = Math.round((this.track_.nbTrackPt - 1) * position),
@@ -129,6 +130,7 @@ vgps3.earth.Earth.prototype.moveTo = function(position) {
  * @param {Object} event
  *
  * @private
+ * @notypecheck
  */
 vgps3.earth.Earth.prototype.clickHandler_ = function(event) {
     this.vgps_.click(new google.maps.LatLng(event.getLatitude(), event.getLongitude));
@@ -138,11 +140,11 @@ vgps3.earth.Earth.prototype.clickHandler_ = function(event) {
  * @param {vgps3.track.LoadEvent} event
  *
  * @private
+ * @notypecheck
  */
 vgps3.earth.Earth.prototype.mapLoadHandler_ = function(event) {
     var track = event.track,
         that = this;
-
 
     this.track_ = track;
 
@@ -193,7 +195,7 @@ vgps3.earth.Earth.prototype.mapLoadHandler_ = function(event) {
  */
 vgps3.earth.Earth.prototype.loadApi_ = function() {
     var that = this;
-    google.load('that', '1', { callback: function() { that.geLoaded_.callback(); }});
+    google.load('earth', '1', { callback: function() { that.geLoaded_.callback(); }});
 };
 
 /**

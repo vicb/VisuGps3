@@ -27,6 +27,7 @@ goog.require('vgps3.earth.Earth');
 goog.require('vgps3.ign.Map');
 goog.require('vgps3.route.Route');
 goog.require('vgps3.track.Track');
+goog.require('GoogleEarth');
 
 /**
  * @param {!Element} mapContainer
@@ -65,7 +66,8 @@ vgps3.Viewer = function(mapContainer, chartContainer) {
                     google.maps.MapTypeId.ROADMAP,
                     google.maps.MapTypeId.SATELLITE,
                     google.maps.MapTypeId.TERRAIN,
-                    'ign_terrain'
+                    'ign_terrain',
+                    GoogleEarth.MAP_TYPE_ID
                 ]
             }
         },

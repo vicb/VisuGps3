@@ -3,6 +3,8 @@
   - add an overlay while loading (indicator)
 
 - google earth plugin
+  - wire earth events
+  - show dialog when ge plugin is not installed / not supported
 
 - measure plugin
 
@@ -12,7 +14,10 @@
 
 - capture slider events
 
+- FontAwesome w/ firefox (mime type ?)
 
+- fix compilation warnings (externs & typedef)
 
+- export symbols
 
-
+- minify CSS

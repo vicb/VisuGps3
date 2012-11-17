@@ -70,7 +70,7 @@ vgps3.chart.Chart = function(container) {
     var that = this;
 
     if (google && google.load) {
-        this.loadApi_(this.chartLoaded_);
+        this.loadApi_();
     } else {
         goog.net.jsloader.load(vgps3.chart.LOADER_URL).addCallback(function() { that.loadApi_(); });
     }
@@ -128,7 +128,6 @@ vgps3.chart.Chart.prototype.handleMouseWheel_ = function(event) {
 vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
     var track = event.track,
         that = this;
-
 
     this.overlays_.render(goog.dom.getElement('charts'));
     this.sliders_.render(goog.dom.getElement('sliders'));
