@@ -80,8 +80,6 @@ vgps3.chart.Sliders.prototype.getTitleElement = function() {
 
 /** @override */
 vgps3.chart.Sliders.prototype.createDom = function() {
-    var sliders = this;
-
     this.element_ = this.dom_.createElement('div');
 
     goog.dom.append(

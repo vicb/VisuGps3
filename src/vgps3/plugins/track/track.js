@@ -80,8 +80,6 @@ vgps3.track.Track = function() {
  * @override
  */
 vgps3.track.Track.prototype.init = function(vgps) {
-    var track = this;
-
     this.vgps_ = vgps;
     this.map_ = vgps.getGoogleMap();
 

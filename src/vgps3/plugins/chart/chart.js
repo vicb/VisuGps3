@@ -67,12 +67,12 @@ vgps3.chart.Chart = function(container) {
      * @private
      */
     this.chartLoaded_ = new goog.async.Deferred();
-    var chart = this;
+    var that = this;
 
     if (google && google.load) {
         this.loadApi_(this.chartLoaded_);
     } else {
-        goog.net.jsloader.load(vgps3.chart.LOADER_URL).addCallback(function() { chart.loadApi_(); });
+        goog.net.jsloader.load(vgps3.chart.LOADER_URL).addCallback(function() { that.loadApi_(); });
     }
 };
 
@@ -127,7 +127,7 @@ vgps3.chart.Chart.prototype.handleMouseWheel_ = function(event) {
  */
 vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
     var track = event.track,
-        charts = this;
+        that = this;
 
 
     this.overlays_.render(goog.dom.getElement('charts'));
@@ -138,19 +138,19 @@ vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
     goog.events.listen(
         this.mouseWheelHandler_,
         goog.events.MouseWheelHandler.EventType.MOUSEWHEEL,
-        goog.bind(charts.handleMouseWheel_, charts)
+        goog.bind(that.handleMouseWheel_, that)
     );
 
     goog.events.listen(
         this.overlays_.getElement(),
         [goog.events.EventType.MOUSEDOWN, goog.events.EventType.MOUSEMOVE],
-        goog.bind(charts.handleMouseEvents_, charts)
+        goog.bind(that.handleMouseEvents_, that)
     );
 
     goog.events.listen(
         this.sliders_.getTitleElement(),
         goog.events.EventType.CLICK,
-        function() { charts.vgps_.dispatchEvent(new vgps3.chart.AboutEvent()); }
+        function() { that.vgps_.dispatchEvent(new vgps3.chart.AboutEvent()); }
     );
 
     // split for loading further tracks
@@ -188,8 +188,8 @@ vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
             }
         });
         view.setColumns([0, 1, 2]);
-        overlay = charts.overlays_.addLayer();
-        charts.sliders_.addSlider('h', overlay, 'red');
+        overlay = that.overlays_.addLayer();
+        that.sliders_.addSlider('h', overlay, 'red');
         chart = new google.visualization.AreaChart(overlay);
         chart.draw(view, options);
 
@@ -198,8 +198,8 @@ vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
         options.series = [{color: 'green'}];
         options.vAxis.format = '# km/h';
         view.setColumns([0, 3]);
-        overlay = charts.overlays_.addLayer();
-        charts.sliders_.addSlider('Vx', overlay, 'green');
+        overlay = that.overlays_.addLayer();
+        that.sliders_.addSlider('Vx', overlay, 'green');
         chart = new google.visualization.LineChart(overlay);
         chart.draw(view, options);
 
@@ -207,8 +207,8 @@ vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
         view.setColumns([0, 4]);
         options.series = [{color: 'blue'}];
         options.vAxis.format = '#.# m/s';
-        overlay = charts.overlays_.addLayer();
-        charts.sliders_.addSlider('Vz', overlay, 'blue');
+        overlay = that.overlays_.addLayer();
+        that.sliders_.addSlider('Vz', overlay, 'blue');
         chart = new google.visualization.LineChart(overlay);
         chart.draw(view, options);
     });
@@ -218,10 +218,10 @@ vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
  * @private
  */
 vgps3.chart.Chart.prototype.loadApi_ = function() {
-    var chart = this;
+    var that = this;
     google.load('visualization', '1.0', {
         packages: ['corechart'],
-        callback: function() { chart.chartLoaded_.callback(); }
+        callback: function() { that.chartLoaded_.callback(); }
     });
 };
 

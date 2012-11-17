@@ -133,10 +133,10 @@ vgps3.chart.Overlays.prototype.exitDocument = function() {
 
 /** @override */
 vgps3.chart.Overlays.prototype.disposeInternal = function() {
-    var overlays = this;
+    var that = this;
     delete this.cursor_;
     goog.array.forEach(this.layers_, function(el, index) {
-        delete overlays.layers_[index];
+        delete that.layers_[index];
     });
 };
 

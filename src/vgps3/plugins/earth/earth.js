@@ -68,12 +68,12 @@ vgps3.earth.Earth = function() {
      * @private
      */
     this.geLoaded_ = new goog.async.Deferred();
-    var earth = this;
+    var that = this;
 
     if (google && google.load) {
         this.loadApi_();
     } else {
-        goog.net.jsloader.load(vgps3.earth.LOADER_URL).addCallback(function() { earth.loadApi_(); });
+        goog.net.jsloader.load(vgps3.earth.LOADER_URL).addCallback(function() { that.loadApi_(); });
     }
 };
 
@@ -141,14 +141,14 @@ vgps3.earth.Earth.prototype.clickHandler_ = function(event) {
  */
 vgps3.earth.Earth.prototype.mapLoadHandler_ = function(event) {
     var track = event.track,
-        earth = this;
+        that = this;
 
 
     this.track_ = track;
 
     this.geLoaded_.addCallback(function() {
         // todo init in listen once for "earth" map
-        var ge = earth.ge_ = (new GoogleEarth(earth.gMap_)).getInstance(),
+        var ge = that.ge_ = (new GoogleEarth(that.gMap_)).getInstance(),
             lineString = ge.createLineString(''),
             lineStringPlacemark = ge.createPlacemark('');
 
@@ -166,7 +166,7 @@ vgps3.earth.Earth.prototype.mapLoadHandler_ = function(event) {
         ge.getFeatures().appendChild(lineStringPlacemark);
         lineString.setAltitudeMode(ge.ALTITUDE_ABSOLUTE);
 
-        google.earth.addEventListener(ge.getWindow(), 'mousedown', goog.bind(this.clickHandler_, earth));
+        google.earth.addEventListener(ge.getWindow(), 'mousedown', goog.bind(this.clickHandler_, that));
 
         if (!lineStringPlacemark.getStyleSelector()) {
             lineStringPlacemark.setStyleSelector(ge.createStyle(''));
@@ -180,11 +180,11 @@ vgps3.earth.Earth.prototype.mapLoadHandler_ = function(event) {
         var model3d = ge.createModel('');
         model3d.setLink(ge.createLink('').setHref(vgps3.earth.MODEL_URL));
         placemark.setGeometry(model3d);
-        model3d.setLocation(earth.location_ = ge.createLocation(''));
-        model3d.setOrientation(earth.orientation_ = ge.createOrientation(''));
+        model3d.setLocation(that.location_ = ge.createLocation(''));
+        model3d.setOrientation(that.orientation_ = ge.createOrientation(''));
         model3d.setScale(ge.createScale('').set(50, 50, 50));
         model3d.setAltitudeMode(ge.ALTITUDE_ABSOLUTE);
-        earth.moveTo(0);
+        that.moveTo(0);
     });
 };
 
@@ -192,8 +192,8 @@ vgps3.earth.Earth.prototype.mapLoadHandler_ = function(event) {
  * @private
  */
 vgps3.earth.Earth.prototype.loadApi_ = function() {
-    var earth = this;
-    google.load('earth', '1', { callback: function() { earth.geLoaded_.callback(); }});
+    var that = this;
+    google.load('that', '1', { callback: function() { that.geLoaded_.callback(); }});
 };
 
 /**
