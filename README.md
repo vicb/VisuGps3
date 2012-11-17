@@ -2,6 +2,8 @@
 
 Display GPS tracks on top of Google maps.
 
+![VisuGps3](https://raw.github.com/vicb/VisuGps3/master/doc/vgps3.jpg)
+
 Powered by:
 
 - [Google Maps API v3](https://developers.google.com/maps/documentation/javascript/),
