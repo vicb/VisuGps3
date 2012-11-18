@@ -4,6 +4,7 @@
  * @fileoverview Earth API library for Maps v3.
  * usage:  var ge = new GoogleEarth(map);.
  * @author jlivni@google.com (Josh Livni).
+ * @notypecheck
  */
 
 goog.provide('GoogleEarth');
@@ -803,6 +804,8 @@ GoogleEarth.prototype.findMapTypeControlDiv_ = function() {
       return sibling;
     }
   }
+
+  throw 'Unable to find the map type control div';
 };
 
 /**

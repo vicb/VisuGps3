@@ -2,17 +2,19 @@
 // All Rights Reserved.
 
 /**
- * This file exposes the external Google Visualization API.
-
+ * @fileoverview This file exposes the external Google Visualization API.
+ *
  * The file can be used to enable auto complete of objects and methods provided by the
  * Google Visualization API, and for easier exploration of the API.
-
+ *
  * To enable auto complete in a development environment - copy the file into the project
  * you are working on where the development tool you are using can index the file.
-
+ *
  * Disclaimer: there may be missing classes and methods and the file may
  * be updated and/or changed. For the most up to date API reference please visit:
  * {@link https://developers.google.com/chart/interactive/docs/reference?hl=iw}
+ *
+ * @externs
  */
 
 var google = {};

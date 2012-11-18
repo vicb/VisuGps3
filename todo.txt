@@ -4,9 +4,9 @@
 
 - google earth plugin
   - wire earth events
-  - show dialog when ge plugin is not installed / not supported
+  - show dialog when ge plugin is not installed (hide map type when not supported)
 
-- measure plugin
+- fix compilation warnings (externs & typedef)
 
 - allow resizing (map & chart)
 
@@ -14,10 +14,15 @@
 
 - capture slider events
 
-- FontAwesome w/ firefox (mime type ?)
-
-- fix compilation warnings (externs & typedef)
-
 - export symbols
 
+- chart plugin
+  - make it easier to extend & re-use
+
+- measure plugin
+
+- FontAwesome w/ firefox (mime type ?)
+
 - minify CSS
+
+- i18n

@@ -13,6 +13,7 @@
     ],
     "externs": [
         "src/vgps3/plugins/chart/externs/google_viz_api_v1.0.js",
+        "src/vgps3/plugins/earth/externs/google_earth_plugin.js",
         "//google_maps_api_v3.js",
         "//google_loader_api.js"
     ],

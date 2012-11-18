@@ -14,6 +14,7 @@
  */
 
 goog.provide('vgps3.track.Track');
+goog.provide('vgps3.track.TrackDef');
 
 goog.require('goog.events.Event');
 goog.require('goog.net.XhrIo');
@@ -26,6 +27,7 @@ goog.require('vgps3.track.LoadEvent');
 goog.require('vgps3.track.templates');
 goog.require('goog.events.Event');
 goog.require('goog.string.format');
+goog.require('goog.math');
 
 /**
  * @constructor
@@ -46,12 +48,18 @@ vgps3.track.Track = function() {
 
     /**
      * Track data
-     * @type {Object.<(goog.Uri|string), *>}
+     * @typedef {{
+     *   trackData: vgps3.track.TrackDef,
+     *   points: google.maps.Point,
+     *   bounds: google.maps.Bounds,
+     *   polyline: google.maps.Polyline,
+     *   marker: google.maps.Marker
+     * }}
      * @private
      */
     this.tracks_ = {};
     /**
-     * @type {goog.Uri|string}
+     * @type {?string}
      * @private
      */
     this.currentTrackIndex_ = null;
@@ -87,7 +95,7 @@ vgps3.track.Track.prototype.init = function(vgps) {
 };
 
 /**
- * @param {string|goog.Uri} url The track url.
+ * @param {string} url The track url.
  */
 vgps3.track.Track.prototype.load = function(url) {
     goog.net.XhrIo.send(
@@ -101,7 +109,11 @@ vgps3.track.Track.prototype.load = function(url) {
  * @param {boolean=} setCenter Whether to center the map.
  */
 vgps3.track.Track.prototype.moveTo = function(position, setCenter) {
-    position = Math.max(Math.min(position, 1), 0);
+    if (!this.currentTrackIndex_) {
+        return;
+    }
+
+    position = goog.math.clamp(position, 0, 1);
 
     var track = this.tracks_[this.currentTrackIndex_],
         pointIndex = Math.round(position * (track.trackData.nbTrackPt - 1)),
@@ -132,7 +144,7 @@ vgps3.track.Track.prototype.afterTrackLoad_ = function(url, event) {
     if (xhr.isSuccess()) {
         var track = xhr.getResponseJson();
         if (goog.isDef(track)) {
-            this.addTrack_(url, track);
+            this.addTrack_(url, /** @type {vgps3.track.TrackDef} */(track));
         }
     }
 
@@ -142,15 +154,14 @@ vgps3.track.Track.prototype.afterTrackLoad_ = function(url, event) {
 /**
  * Adds a track on the map.
  *
- * @param {!(goog.Uri|string)} url The url of the track.
- * @param {Object.<string, *>} track The track object.
+ * @param {string} url The url of the track.
+ * @param {vgps3.track.TrackDef} track The track object.
  *
  * @private
  */
 vgps3.track.Track.prototype.addTrack_ = function(url, track) {
     var point,
         bounds = new google.maps.LatLngBounds();
-
 
     // todo
     if (!this.currentTrackIndex_) {
@@ -168,8 +179,8 @@ vgps3.track.Track.prototype.addTrack_ = function(url, track) {
         bounds.extend(point);
     }
 
-    for (var i = 0; i < track.nbChartPoint; i++) {
-        track.elev[i] = Math.min(vgps3.track.MAX_ELEV, track.elev[i]);
+    for (var i = 0; i < track.nbChartPt; i++) {
+        track.elev[i] = goog.math.clamp(track.elev[i], 0, vgps3.track.MAX_ELEV);
         track.speed[i] = Math.min(vgps3.track.MAX_SPEED, track.speed[i]);
         track.vario[i] = Math.min(vgps3.track.MAX_VARIO, track.vario[i]);
     }
@@ -256,8 +267,7 @@ vgps3.track.Track.prototype.click = function(latlng) {
         that = this;
 
     goog.object.forEach(this.tracks_, function(track, trackIdx) {
-        var points = track.points,
-            nbPoints = points.length;
+        var nbPoints = track.points.length;
         if (goog.DEBUG) {
             var trials = 0;
         }
@@ -265,10 +275,10 @@ vgps3.track.Track.prototype.click = function(latlng) {
             if (goog.DEBUG) {
                 trials++;
             }
-            currentDistance = google.maps.geometry.spherical.computeDistanceBetween(latlng, points[pointIdx]);
+            currentDistance = google.maps.geometry.spherical.computeDistanceBetween(latlng, track.points[pointIdx]);
             if (currentDistance < distance) {
                 distance = currentDistance;
-                position = points[pointIdx];
+                position = track.points[pointIdx];
                 trackIndex = trackIdx;
                 pointIndex = pointIdx;
                 ++pointIdx;
@@ -307,7 +317,7 @@ vgps3.track.Track.prototype.onMapClick_ = function(event) {
 };
 
 /**
- * @param {goog.Uri|string?} trackIndex
+ * @param {string} trackIndex
  * @param {number} chartIndex
  * @private
  */
@@ -356,3 +366,31 @@ vgps3.track.MAX_VARIO = 15;
  * @define {number}
  */
 vgps3.track.MAX_ELEV = 9000;
+
+/**
+ * @typedef {{label: !Array.<string>, hour: !Array.<string>, min: !Array.<string>, sec: !Array.<string>}}
+ */
+vgps3.track.Time;
+
+/**
+ * @typedef {{day: !Array.<string>, month: !Array.<string>, year: !Array.<string>}}
+ */
+vgps3.track.Date;
+
+/**
+ * @typedef {{
+ *   time: vgps3.track.Time,
+ *   elev: !Array.<number>,
+ *   elevGnd: !Array.<number>,
+ *   speed: !Array.<number>,
+ *   vario: !Array.<number>,
+ *   lat: !Array.<number>,
+ *   lon: !Array.<number>,
+ *   nbTrackPt: number,
+ *   nbChartPt: number,
+ *   nbChartLbl: number,
+ *   date: vgps3.track.Date,
+ *   pilot: ?string
+ *   }}
+ */
+vgps3.track.TrackDef;
