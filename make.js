@@ -12,7 +12,7 @@
         "src/vgps3/plugins/earth"
     ],
     "externs": [
-        "src/vgps3/plugins/chart/externs/gviz-api.js",
+        "src/vgps3/plugins/chart/externs/google_viz_api_v1.0.js",
         "//google_maps_api_v3.js"
     ],
     "define": {
