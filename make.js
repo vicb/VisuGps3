@@ -13,7 +13,8 @@
     ],
     "externs": [
         "src/vgps3/plugins/chart/externs/google_viz_api_v1.0.js",
-        "//google_maps_api_v3.js"
+        "//google_maps_api_v3.js",
+        "//google_loader_api.js"
     ],
     "define": {
         "vgps3.VERSION": "3.0.0-beta1"
