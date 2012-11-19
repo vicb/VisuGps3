@@ -18,30 +18,33 @@ goog.provide('vgps3.track.InfoControl');
 goog.require('goog.dom');
 goog.require('goog.soy');
 
+
+
 /**
  * @param {google.maps.Map} map
  * @param {google.maps.ControlPosition} position
  * @constructor
  */
 vgps3.track.InfoControl = function(map, position) {
-    /**
-     * @type {!Element}
-     * @private
-     */
-    this.dom_ = goog.dom.createDom('div', 'map-ctrl', '<strong>Content</strong>');
+  /**
+  * @type {!Element}
+  * @private
+  */
+  this.dom_ = goog.dom.createDom('div', 'map-ctrl', '<strong>Content</strong>');
 
-    map.controls[position].push(this.dom_);
+  map.controls[position].push(this.dom_);
 };
+
 
 /**
  * @param {Object} pointData
  */
 vgps3.track.InfoControl.prototype.setInfo = function(pointData) {
-    goog.soy.renderElement(
-        this.dom_,
-        vgps3.track.templates.infoControl,
-        {data: pointData}
-    );
+  goog.soy.renderElement(
+      this.dom_,
+      vgps3.track.templates.infoControl,
+      {data: pointData}
+  );
 };
 
 

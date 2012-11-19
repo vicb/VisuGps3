@@ -18,25 +18,29 @@ goog.provide('vgps3.route.Route');
 goog.require('vgps3.IPlugin');
 goog.require('vgps3.Map');
 
+
+
 /**
  *
  * @constructor
  * @implements {vgps3.IPlugin}
  */
 vgps3.route.Route = function() {
-    /**
-     * @type {google.maps.Map}
-     * @private
-     */
-    this.gMap_;
+  /**
+  * @type {google.maps.Map}
+  * @private
+  */
+  this.gMap_;
 };
+
 
 /**
  * @override
  */
 vgps3.route.Route.prototype.init = function(vgps) {
-    this.gMap_ = vgps.getGoogleMap();
+  this.gMap_ = vgps.getGoogleMap();
 };
+
 
 /**
  *
@@ -46,58 +50,61 @@ vgps3.route.Route.prototype.init = function(vgps) {
  * @param {google.maps.LatLng=} end
  */
 vgps3.route.Route.prototype.draw = function(type, turnpoints, start, end) {
-    var startIcon = new google.maps.MarkerImage(vgps3.route.START_ICON_URL, new google.maps.Size(12, 20)),
-        endIcon = new google.maps.MarkerImage(vgps3.route.END_ICON_URL, new google.maps.Size(12, 20)),
-        icon = new google.maps.MarkerImage(vgps3.route.ICON_URL, new google.maps.Size(12, 20)),
-        closed = type.substr(-1) === 'c',
-        route = new google.maps.Polyline({
+  var startIcon = new google.maps.MarkerImage(vgps3.route.START_ICON_URL, new google.maps.Size(12, 20)),
+      endIcon = new google.maps.MarkerImage(vgps3.route.END_ICON_URL, new google.maps.Size(12, 20)),
+      icon = new google.maps.MarkerImage(vgps3.route.ICON_URL, new google.maps.Size(12, 20)),
+      closed = type.substr(-1) === 'c',
+      route = new google.maps.Polyline({
             clickable: false,
             map: this.gMap_,
             path: turnpoints,
             strokeColor: '#00f',
             strokeOpacity: 0.8,
             strokeWeight: 1
+      });
+
+
+  new google.maps.Marker({
+    clickable: false,
+    position: closed && goog.isDef(start) ? start : turnpoints[0],
+    map: this.gMap_,
+    icon: startIcon
+  });
+  new google.maps.Marker({
+    clickable: false,
+    position: closed && goog.isDef(end) ? end : turnpoints[turnpoints.length - 1],
+    map: this.gMap_,
+    icon: endIcon
+  });
+
+  closed && turnpoints.push(turnpoints[0]);
+
+  goog.array.forEach(
+      closed ? turnpoints : goog.array.slice(turnpoints, 1, -1),
+      function(tp) {
+        new google.maps.Marker({
+          clickable: false,
+          position: tp,
+          map: this.gMap_,
+          icon: icon
         });
-
-
-    new google.maps.Marker({
-        clickable: false,
-        position: closed && goog.isDef(start) ? start : turnpoints[0],
-        map: this.gMap_,
-        icon: startIcon
-    });
-    new google.maps.Marker({
-        clickable: false,
-        position: closed && goog.isDef(end) ? end : turnpoints[turnpoints.length - 1],
-        map: this.gMap_,
-        icon: endIcon
-    });
-
-    closed && turnpoints.push(turnpoints[0]);
-
-    goog.array.forEach(
-        closed ? turnpoints : goog.array.slice(turnpoints, 1, -1),
-        function(tp) {
-            new google.maps.Marker({
-                clickable: false,
-                position: tp,
-                map: this.gMap_,
-                icon: icon
-            });
-        },
-        this
-    );
+      },
+      this
+  );
 };
+
 
 /**
  * @define {string}
  */
 vgps3.route.START_ICON_URL = 'http://labs.google.com/ridefinder/images/mm_20_green.png';
 
+
 /**
  * @define {string}
  */
 vgps3.route.END_ICON_URL = 'http://labs.google.com/ridefinder/images/mm_20_red.png';
+
 
 /**
  * @define {string}

@@ -23,6 +23,8 @@ goog.require('goog.ui.Dialog');
 goog.require('goog.ui.Dialog.ButtonSet');
 goog.require('vgps3.templates');
 
+
+
 /**
  * @param {!Element} container The container.
  * @param {Object.<string>=} options Google Maps options.
@@ -32,71 +34,77 @@ goog.require('vgps3.templates');
  * @extends {goog.events.EventTarget}
  */
 vgps3.Map = function(container, options, plugins) {
-    /**
-     * @type {google.maps.Map}
-     * @private
-     */
-    this.map_ = null;
+  /**
+  * @type {google.maps.Map}
+  * @private
+  */
+  this.map_ = null;
 
-    /**
-     * @type {goog.ui.Dialog}
-     * @private
-     */
-    this.aboutDialog_ = null;
+  /**
+  * @type {goog.ui.Dialog}
+  * @private
+  */
+  this.aboutDialog_ = null;
 
-    /**
-     * @type {goog.events.EventHandler}
-     */
-    this.events = new goog.events.EventHandler(this);
+  /**
+  * @type {goog.events.EventHandler}
+  */
+  this.events = new goog.events.EventHandler(this);
 
-    goog.base(this);
+  goog.base(this);
 
-    var opt = {
-        center: new google.maps.LatLng(46.73986, 2.17529),
-        zoom: 5,
-        minZoom: 6,
-        mapTypeId: google.maps.MapTypeId.TERRAIN,
-        streetViewControl: false
-    };
+  var opt = {
+    center: new google.maps.LatLng(46.73986, 2.17529),
+    zoom: 5,
+    minZoom: 6,
+    mapTypeId: google.maps.MapTypeId.TERRAIN,
+    streetViewControl: false
+  };
 
-    goog.object.extend(opt, options || {});
+  goog.object.extend(opt, options || {});
 
-    this.map_ = new google.maps.Map(container, opt);
+  this.map_ = new google.maps.Map(container, opt);
 
-    this.initPlugins_(plugins);
+  this.initPlugins_(plugins);
 };
 goog.inherits(vgps3.Map, goog.events.EventTarget);
+
 
 /**
  * @return {google.maps.Map} The google map object.
  */
 vgps3.Map.prototype.getGoogleMap = function() {
-    return this.map_;
+  return this.map_;
 };
 
+
+/**
+ * @return {undefined}
+ */
 vgps3.Map.prototype.showAbout = function() {
-    var dialog = this.aboutDialog_ || (this.aboutDialog_ = new goog.ui.Dialog());
-    dialog.setTitle('VisuGps v' + vgps3.VERSION);
-    dialog.setContent(vgps3.templates.about());
-    dialog.setButtonSet(goog.ui.Dialog.ButtonSet.createOk());
-    dialog.setVisible(true);
+  var dialog = this.aboutDialog_ || (this.aboutDialog_ = new goog.ui.Dialog());
+  dialog.setTitle('VisuGps v' + vgps3.VERSION);
+  dialog.setContent(vgps3.templates.about());
+  dialog.setButtonSet(goog.ui.Dialog.ButtonSet.createOk());
+  dialog.setVisible(true);
 };
+
 
 /**
  * @param {(Array.<vgps3.IPlugin>|vgps3.IPlugin)=} plugins A list of plugins.
  * @private
  */
 vgps3.Map.prototype.initPlugins_ = function(plugins) {
-    if (goog.isDef(plugins)) {
-        plugins = goog.isArray(plugins) ? plugins : [plugins];
+  if (goog.isDef(plugins)) {
+    plugins = goog.isArray(plugins) ? plugins : [plugins];
 
-        goog.array.forEach(
-            plugins,
-            function(plugin) {
-                plugin.init(this);
-            },
-            this
-        );
-    }
+    goog.array.forEach(
+        plugins,
+        function(plugin) {
+          plugin.init(this);
+        },
+        this
+    );
+  }
 };
 

@@ -17,6 +17,8 @@ goog.provide('vgps3.earth.ClickEvent');
 
 goog.require('goog.events.Event');
 
+
+
 /**
  * @param {number} position [0...1].
  *
@@ -24,12 +26,12 @@ goog.require('goog.events.Event');
  * @extends {goog.events.Event}
  */
 vgps3.earth.ClickEvent = function(position) {
-    goog.base(this, vgps3.earth.EventType.CLICK);
+  goog.base(this, vgps3.earth.EventType.CLICK);
 
-    /**
-     * @type {number}
-     */
-    this.position = position;
+  /**
+  * @type {number}
+  */
+  this.position = position;
 };
 goog.inherits(vgps3.earth.ClickEvent, goog.events.Event);
 

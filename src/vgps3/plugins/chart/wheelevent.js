@@ -17,6 +17,8 @@ goog.provide('vgps3.chart.WheelEvent');
 
 goog.require('goog.events.Event');
 
+
+
 /**
  * @param {number} position
  * @param {number} direction
@@ -25,17 +27,17 @@ goog.require('goog.events.Event');
  * @extends {goog.events.Event}
  */
 vgps3.chart.WheelEvent = function(position, direction) {
-    goog.base(this, vgps3.chart.EventType.WHEEL);
+  goog.base(this, vgps3.chart.EventType.WHEEL);
 
-    /**
-     * @type {number}
-     */
-    this.position = position;
+  /**
+  * @type {number}
+  */
+  this.position = position;
 
-    /**
-     * @type {number}
-     */
-    this.direction = direction;
+  /**
+  * @type {number}
+  */
+  this.direction = direction;
 };
 goog.inherits(vgps3.chart.WheelEvent, goog.events.Event);
 

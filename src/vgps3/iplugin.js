@@ -17,6 +17,8 @@ goog.provide('vgps3.IPlugin');
 
 goog.require('vgps3.Map');
 
+
+
 /**
  * Interface for vgps3 plugins.
  *

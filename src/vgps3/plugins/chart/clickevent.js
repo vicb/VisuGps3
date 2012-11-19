@@ -17,6 +17,8 @@ goog.provide('vgps3.chart.ClickEvent');
 
 goog.require('goog.events.Event');
 
+
+
 /**
  * @param {number} position
  *
@@ -24,12 +26,12 @@ goog.require('goog.events.Event');
  * @extends {goog.events.Event}
  */
 vgps3.chart.ClickEvent = function(position) {
-    goog.base(this, vgps3.chart.EventType.CLICK);
+  goog.base(this, vgps3.chart.EventType.CLICK);
 
-    /**
-     * @type {number}
-     */
-    this.position = position;
+  /**
+  * @type {number}
+  */
+  this.position = position;
 };
 goog.inherits(vgps3.chart.ClickEvent, goog.events.Event);
 

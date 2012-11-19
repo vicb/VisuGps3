@@ -17,6 +17,8 @@ goog.provide('vgps3.track.LoadEvent');
 
 goog.require('goog.events.Event');
 
+
+
 /**
  * @param {!Object} track
  *
@@ -24,12 +26,12 @@ goog.require('goog.events.Event');
  * @extends {goog.events.Event}
  */
 vgps3.track.LoadEvent = function(track) {
-    goog.base(this, vgps3.track.EventType.LOAD);
+  goog.base(this, vgps3.track.EventType.LOAD);
 
-    /**
-     * @type {Object}
-     */
-    this.track = track;
+  /**
+  * @type {Object}
+  */
+  this.track = track;
 };
 goog.inherits(vgps3.track.LoadEvent, goog.events.Event);
 
