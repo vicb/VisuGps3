@@ -19,7 +19,6 @@ goog.require('goog.dom');
 goog.require('goog.style');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Slider');
-goog.require('soy');
 
 
 

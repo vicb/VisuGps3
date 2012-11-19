@@ -13,7 +13,7 @@
  * @author Victor Berchet <victor@suumit.com>
  */
 
-goog.provide('vgps3.track.Control');
+goog.provide('vgps3.Control');
 
 goog.require('goog.dom');
 goog.require('goog.soy');
@@ -23,11 +23,11 @@ goog.require('vgps3.track.templates');
 
 /**
  * @param {google.maps.Map} map
- * @param {string} template
+ * @param {!Function} template
  * @param {google.maps.ControlPosition} position
  * @constructor
  */
-vgps3.track.Control = function(map, template, position) {
+vgps3.Control = function(map, template, position) {
   /**
   * @type {!Element}
   * @private
@@ -35,7 +35,7 @@ vgps3.track.Control = function(map, template, position) {
   this.dom_ = goog.dom.createDom('div', 'map-ctrl');
 
   /**
-   * @type {string}
+   * @type {!Function}
    * @private
    */
   this.template_ = template;
@@ -47,14 +47,20 @@ vgps3.track.Control = function(map, template, position) {
 /**
  * @param {Object.<string, *>} templateData
  */
-vgps3.track.Control.prototype.update = function(templateData) {
+vgps3.Control.prototype.update = function(templateData) {
   goog.soy.renderElement(
       this.dom_,
-      vgps3.track.templates[this.template_],
+      this.template_,
       templateData
   );
 };
 
 
+/**
+ * @return {!Element}
+ */
+vgps3.Control.prototype.getElement = function() {
+  return this.dom_;
+};
 
 

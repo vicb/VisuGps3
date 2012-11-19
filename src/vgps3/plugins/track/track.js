@@ -14,16 +14,17 @@
  */
 
 goog.provide('vgps3.track.Track');
-goog.provide('vgps3.track.TrackDef');
 
+goog.require('goog.color');
 goog.require('goog.events.Event');
 goog.require('goog.math');
 goog.require('goog.net.XhrIo');
 goog.require('goog.string.format');
+goog.require('goog.style');
+goog.require('vgps3.Control');
 goog.require('vgps3.IPlugin');
 goog.require('vgps3.Map');
 goog.require('vgps3.track.ClickEvent');
-goog.require('vgps3.track.Control');
 goog.require('vgps3.track.LoadEvent');
 goog.require('vgps3.track.TrackSelectEvent');
 goog.require('vgps3.track.templates');
@@ -74,14 +75,14 @@ vgps3.track.Track = function() {
 
   /**
   * Info control
-  * @type {vgps3.track.Control}
+  * @type {vgps3.Control}
   * @private
   */
   this.infoControl_;
 
   /**
   * Info control
-  * @type {vgps3.track.Control}
+  * @type {vgps3.Control}
   * @private
   */
   this.dateControl_;
@@ -229,15 +230,15 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
       clickable: false
     });
 
-    this.infoControl_ = new vgps3.track.Control(
+    this.infoControl_ = new vgps3.Control(
         this.map_,
-        'infoControl',
+        vgps3.track.templates.infoControl,
         google.maps.ControlPosition.RIGHT_BOTTOM
         );
 
-    this.dateControl_ = new vgps3.track.Control(
+    this.dateControl_ = new vgps3.Control(
         this.map_,
-        'dateControl',
+        vgps3.track.templates.dateControl,
         google.maps.ControlPosition.RIGHT_TOP
         );
 
@@ -275,7 +276,7 @@ vgps3.track.Track.prototype.getPolylineOptions_ = function(index) {
  * @private
  */
 vgps3.track.Track.prototype.getTrackColor_ = function(index) {
-  var colors = ['red', '#5e008c', '#002b40', '#f2f200', '#00e64d', '#00ffff', '#e60099', 'white', '#0088cc'];
+  var colors = ['#ff0000', '#5e008c', '#002b40', '#f2f200', '#00e64d', '#00ffff', '#e60099', '#ffffff', '#0088cc'];
 
   return colors[index % colors.length];
 };
@@ -366,6 +367,11 @@ vgps3.track.Track.prototype.selectCurrentTrack_ = function(trackIdx) {
   if (trackIdx !== previousIndex) {
     this.currentTrackIndex_ = trackIdx;
     this.updateDateControl_(trackIdx);
+    goog.style.setStyle(
+        this.dateControl_.getElement(),
+        'background-color',
+        goog.color.rgbArrayToHex(goog.color.lighten(goog.color.hexToRgb(this.tracks_[trackIdx].color), .6))
+    );
     this.updateInfoControl_(0);
     this.moveTo(0);
     goog.array.forEach(

@@ -11,6 +11,10 @@
 
 - vgps3 Events
 
+- dispose in plugins
+
+- add skyways (requires a "more" control)
+
 - allow resizing (map & chart)
 
 - capture slider events
@@ -19,8 +23,6 @@
 
 - chart plugin
   - make it easier to extend & re-use
-
-- measure plugin
 
 - FontAwesome w/ firefox (mime type ?)
 

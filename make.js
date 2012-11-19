@@ -9,7 +9,8 @@
         "src/vgps3/plugins/chart",
         "src/vgps3/plugins/ign",
         "src/vgps3/plugins/route",
-        "src/vgps3/plugins/earth"
+        "src/vgps3/plugins/earth",
+        "src/vgps3/plugins/path"
     ],
     "externs": [
         "src/vgps3/plugins/chart/externs/google_viz_api_v1.0.js",
