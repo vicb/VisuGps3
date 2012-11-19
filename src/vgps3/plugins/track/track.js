@@ -19,13 +19,13 @@ goog.provide('vgps3.track.TrackDef');
 goog.require('goog.events.Event');
 goog.require('goog.math');
 goog.require('goog.net.XhrIo');
-goog.require('goog.object');
 goog.require('goog.string.format');
 goog.require('vgps3.IPlugin');
 goog.require('vgps3.Map');
 goog.require('vgps3.track.ClickEvent');
-goog.require('vgps3.track.InfoControl');
+goog.require('vgps3.track.Control');
 goog.require('vgps3.track.LoadEvent');
+goog.require('vgps3.track.TrackSelectEvent');
 goog.require('vgps3.track.templates');
 
 
@@ -39,44 +39,52 @@ vgps3.track.Track = function() {
   * @type {vgps3.Map}
   * @private
   */
-  this.vgps_ = null;
+  this.vgps_;
 
   /**
   * @type {google.maps.Map}
   * @private
   */
-  this.map_ = null;
+  this.map_;
 
   /**
   * Track data
-  * @typedef {{
-  *   trackData: vgps3.track.TrackDef,
+  * @typedef {Array.<{
+  *   fixes: vgps3.track.GpsFixes,
   *   points: google.maps.Point,
   *   bounds: google.maps.Bounds,
   *   polyline: google.maps.Polyline,
-  *   marker: google.maps.Marker
-  * }}
+  *   color: string
+  * }>}
   * @private
   */
-  this.tracks_ = {};
+  this.tracks_ = [];
+
   /**
-  * @type {?string}
+  * @type {?number}
   * @private
   */
-  this.currentTrackIndex_ = null;
+  this.currentTrackIndex_;
+
+  /**
+   * @type {google.maps.Marker}
+   * @private
+   */
+  this.currentTrackMarker_;
 
   /**
   * Info control
-  * @type {vgps3.track.InfoControl}
+  * @type {vgps3.track.Control}
   * @private
   */
-  this.infoControl_ = null;
+  this.infoControl_;
 
   /**
-  * @type {Element}
+  * Info control
+  * @type {vgps3.track.Control}
   * @private
   */
-  this.dateControlDom_ = null;
+  this.dateControl_;
 
   /**
   * @type {!goog.debug.Logger}
@@ -113,19 +121,14 @@ vgps3.track.Track.prototype.load = function(url) {
  * @param {boolean=} setCenter Whether to center the map.
  */
 vgps3.track.Track.prototype.moveTo = function(position, setCenter) {
-  if (!this.currentTrackIndex_) {
-    return;
-  }
-
   position = goog.math.clamp(position, 0, 1);
 
+  // todo position
   var track = this.tracks_[this.currentTrackIndex_],
-      pointIndex = Math.round(position * (track.trackData.nbTrackPt - 1)),
-      chartIndex = Math.round(position * (track.trackData.nbChartPt - 1));
+      pointIndex = Math.round(position * (track.fixes.nbTrackPt - 1));
 
-
-  this.updateInfoControl_(this.currentTrackIndex_, chartIndex);
-  track.marker.setPosition(track.points[pointIndex]);
+  this.updateInfoControl_(position);
+  this.currentTrackMarker_.setPosition(track.points[pointIndex]);
 
   if (setCenter) {
     this.map_.setCenter(track.points[pointIndex]);
@@ -147,9 +150,9 @@ vgps3.track.Track.prototype.afterTrackLoad_ = function(url, event) {
   var xhr = /** @type {goog.net.XhrIo} */ (event.target);
 
   if (xhr.isSuccess()) {
-    var track = xhr.getResponseJson();
+    var track = /** @type {vgps3.track.GpsFixes} */ (xhr.getResponseJson());
     if (goog.isDef(track)) {
-      this.addTrack_(url, /** @type {vgps3.track.TrackDef} */(track));
+      this.addTrack_(url, (track));
     }
   }
 
@@ -161,89 +164,120 @@ vgps3.track.Track.prototype.afterTrackLoad_ = function(url, event) {
  * Adds a track on the map.
  *
  * @param {string} url The url of the track.
- * @param {vgps3.track.TrackDef} track The track object.
+ * @param {vgps3.track.GpsFixes} gpsFixes The track object.
  *
  * @private
  */
-vgps3.track.Track.prototype.addTrack_ = function(url, track) {
-  var point,
-      bounds = new google.maps.LatLngBounds();
+vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
+  /**
+   * @type {google.maps.LatLng}
+   */
+  var point;
 
-  // todo
-  if (!this.currentTrackIndex_) {
-    this.currentTrackIndex_ = url;
-  }
+  /**
+   * @type {google.maps.LatLngBounds}
+   */
+  var bounds = new google.maps.LatLngBounds();
 
-  this.tracks_[url] = {
+  var trackIndex = this.tracks_.length;
+
+  this.tracks_.push({
     points: [],
-    trackData: track
-  };
+    fixes: gpsFixes
+  });
 
-  for (var i = 0; i < track.nbTrackPt; i++) {
-    point = new google.maps.LatLng(track.lat[i], track.lon[i]);
-    this.tracks_[url].points.push(point);
+  for (var i = 0; i < gpsFixes.nbTrackPt; i++) {
+    point = new google.maps.LatLng(gpsFixes.lat[i], gpsFixes.lon[i]);
+    this.tracks_[trackIndex].points.push(point);
     bounds.extend(point);
   }
 
-  for (var i = 0; i < track.nbChartPt; i++) {
-    track.elev[i] = goog.math.clamp(track.elev[i], 0, vgps3.track.MAX_ELEV);
-    track.speed[i] = Math.min(vgps3.track.MAX_SPEED, track.speed[i]);
-    track.vario[i] = Math.min(vgps3.track.MAX_VARIO, track.vario[i]);
+  for (var i = 0; i < gpsFixes.nbChartPt; i++) {
+    gpsFixes.elev[i] = goog.math.clamp(gpsFixes.elev[i], 0, vgps3.track.MAX_ELEV);
+    gpsFixes.speed[i] = Math.min(vgps3.track.MAX_SPEED, gpsFixes.speed[i]);
+    gpsFixes.vario[i] = Math.min(vgps3.track.MAX_VARIO, gpsFixes.vario[i]);
   }
 
-  this.tracks_[url].bounds = bounds;
+  this.tracks_[trackIndex].bounds = bounds;
 
-  this.tracks_[url].polyline = new google.maps.Polyline({
-    clickable: false,
-    map: this.map_,
-    path: this.tracks_[url].points,
-    strokeColor: '#ff0000',
-    strokeWeight: 2
-  });
+  this.tracks_[trackIndex].color = this.getTrackColor_(trackIndex);
 
-  this.tracks_[url].marker = new google.maps.Marker({
-    position: new google.maps.LatLng(track.lat[0], track.lon[0]),
-    map: this.map_,
-    clickable: false
-  });
+  this.tracks_[trackIndex].polyline = new google.maps.Polyline(
+      this.getPolylineOptions_(trackIndex)
+      );
 
   // todo compute maxDelta server side
   var maxDelta = 0;
-  var points = this.tracks_[url].points;
-  var nbPoints = points.length;
-  for (i = 1; i < nbPoints; ++i) {
+  var points = this.tracks_[trackIndex].points;
+  for (var i = 1, nbPoints = points.length; i < nbPoints; ++i) {
     maxDelta = Math.max(
         google.maps.geometry.spherical.computeDistanceBetween(points[i - 1], points[i]),
         maxDelta
         );
   }
-  this.tracks_[url].maxDelta = maxDelta;
+  this.tracks_[trackIndex].maxDelta = maxDelta;
   if (goog.DEBUG) {
-    this.logger_.info(goog.string.format('track[%s].maxDelta = %fm', url, maxDelta));
+    this.logger_.info(goog.string.format('track[%s].maxDelta = %fm', trackIndex, maxDelta));
   }
 
   this.map_.fitBounds(this.getTracksBounds_());
 
-  if (!this.infoControl_) {
-    this.infoControl_ = new vgps3.track.InfoControl(this.map_, google.maps.ControlPosition.RIGHT_BOTTOM);
-    this.updateInfoControl_(url, 0);
+  if (0 === trackIndex) {
+    this.currentTrackMarker_ = new google.maps.Marker({
+      position: new google.maps.LatLng(gpsFixes.lat[0], gpsFixes.lon[0]),
+      map: this.map_,
+      clickable: false
+    });
+
+    this.infoControl_ = new vgps3.track.Control(
+        this.map_,
+        'infoControl',
+        google.maps.ControlPosition.RIGHT_BOTTOM
+        );
+
+    this.dateControl_ = new vgps3.track.Control(
+        this.map_,
+        'dateControl',
+        google.maps.ControlPosition.RIGHT_TOP
+        );
+
+    this.selectCurrentTrack_(0);
   }
 
-  if (!this.dateControlDom_) {
-    this.dateControlDom_ = goog.dom.createDom('div', 'map-ctrl');
-    var data = {date: [track.date.day, track.date.month, track.date.year].join('/')};
-    if (track.pilot) {
-      data.pilot = track.pilot;
-    }
-    goog.soy.renderElement(
-        this.dateControlDom_,
-        vgps3.track.templates.dateControl,
-        {data: data}
-    );
-    this.map_.controls[google.maps.ControlPosition.RIGHT_TOP].push(this.dateControlDom_);
-  }
+  this.vgps_.dispatchEvent(new vgps3.track.LoadEvent(trackIndex, gpsFixes));
+};
 
-  this.vgps_.dispatchEvent(new vgps3.track.LoadEvent(track));
+
+/**
+ * @param {number} index
+ * @private
+ */
+vgps3.track.Track.prototype.getPolylineOptions_ = function(index) {
+  /**
+   * @type {boolean}
+   */
+  var current = !goog.isDef(this.currentTrackIndex_) || index === this.currentTrackIndex_;
+
+  return {
+    clickable: false,
+    map: this.map_,
+    path: this.tracks_[index].points,
+    strokeColor: this.tracks_[index].color,
+    strokeWeight: 2,
+    strokeOpacity: current ? 1 : 0.5
+  };
+};
+
+
+/**
+ * @param {number} index
+ * @return {string}
+ * @private
+ */
+vgps3.track.Track.prototype.getTrackColor_ = function(index) {
+  var colors = ['red', '#5e008c', '#002b40', '#f2f200', '#00e64d', '#00ffff', '#e60099', 'white', '#0088cc'];
+
+  return colors[index % colors.length];
 };
 
 
@@ -254,9 +288,12 @@ vgps3.track.Track.prototype.addTrack_ = function(url, track) {
  * @private
  */
 vgps3.track.Track.prototype.getTracksBounds_ = function() {
+  /**
+   * @type {google.maps.LatLngBounds}
+   */
   var bounds = new google.maps.LatLngBounds();
 
-  goog.object.forEach(this.tracks_, function(track) {
+  goog.array.forEach(this.tracks_, function(track) {
     bounds.union(track.bounds);
   });
 
@@ -269,25 +306,25 @@ vgps3.track.Track.prototype.getTracksBounds_ = function() {
  * @param {google.maps.LatLng} latlng
  */
 vgps3.track.Track.prototype.click = function(latlng) {
+  // todo bahhh public ! -> event if possible (see earth plugin)
   var trackIndex,
       pointIndex,
-      position,
+      location,
       currentDistance, distance = Number.MAX_VALUE,
       that = this;
 
-  goog.object.forEach(this.tracks_, function(track, trackIdx) {
-    var nbPoints = track.points.length;
+  goog.array.forEach(this.tracks_, function(track, trackIdx) {
     if (goog.DEBUG) {
       var trials = 0;
     }
-    for (var pointIdx = 0; pointIdx < nbPoints; ) {
+    for (var pointIdx = 0, nbPoints = track.points.length; pointIdx < nbPoints; ) {
       if (goog.DEBUG) {
         trials++;
       }
       currentDistance = google.maps.geometry.spherical.computeDistanceBetween(latlng, track.points[pointIdx]);
       if (currentDistance < distance) {
         distance = currentDistance;
-        position = track.points[pointIdx];
+        location = track.points[pointIdx];
         trackIndex = trackIdx;
         pointIndex = pointIdx;
         ++pointIdx;
@@ -304,16 +341,41 @@ vgps3.track.Track.prototype.click = function(latlng) {
     }
   });
 
-  if (position) {
-    var track = this.tracks_[trackIndex],
-            chartIndex = Math.round(pointIndex / (track.trackData.nbTrackPt - 1) * (track.trackData.nbChartPt - 1));
+  this.selectCurrentTrack_(trackIndex);
+  var position = pointIndex / (this.tracks_[trackIndex].fixes.nbTrackPt - 1);
 
-    track.marker.setPosition(position);
-    this.updateInfoControl_(trackIndex, chartIndex);
-    this.vgps_.dispatchEvent(new vgps3.track.ClickEvent(
-        track.trackData,
-        pointIndex / (track.trackData.nbTrackPt - 1)
-        ));
+  this.currentTrackMarker_.setPosition(location);
+  this.updateInfoControl_(position);
+  this.vgps_.dispatchEvent(new vgps3.track.ClickEvent(
+      this.tracks_[trackIndex].fixes,
+      position
+      ));
+};
+
+
+/**
+ * @param {number} trackIdx
+ * @private
+ */
+vgps3.track.Track.prototype.selectCurrentTrack_ = function(trackIdx) {
+  var previousIndex = goog.isDef(this.currentTrackIndex_)
+    ? this.currentTrackIndex_
+    : null;
+
+
+  if (trackIdx !== previousIndex) {
+    this.currentTrackIndex_ = trackIdx;
+    this.updateDateControl_(trackIdx);
+    this.updateInfoControl_(0);
+    this.moveTo(0);
+    goog.array.forEach(
+        [trackIdx, previousIndex],
+        function(index) {
+          !goog.isNull(index) && this.tracks_[index].polyline.setOptions(this.getPolylineOptions_(index));
+        },
+        this
+    );
+    this.vgps_.dispatchEvent(new vgps3.track.TrackSelectEvent(trackIdx, previousIndex));
   }
 };
 
@@ -328,25 +390,30 @@ vgps3.track.Track.prototype.onMapClick_ = function(event) {
 
 
 /**
- * @param {string} trackIndex
- * @param {number} chartIndex
+ * @param {number} position [0...1].
  * @private
  */
-vgps3.track.Track.prototype.updateInfoControl_ = function(trackIndex, chartIndex) {
-  if (!trackIndex) {
-    return;
-  }
+vgps3.track.Track.prototype.updateInfoControl_ = function(position) {
+  var fixes = this.tracks_[this.currentTrackIndex_].fixes,
+      chartIndex = Math.round(position * (fixes.nbChartPt - 1));
 
-  var trackData = this.tracks_[trackIndex].trackData;
+  this.infoControl_.update({
+    fixes: fixes,
+    index: chartIndex
+  });
+};
 
-  this.infoControl_.setInfo({
-    'elev': trackData.elev[chartIndex],
-    'elevGnd': trackData.elevGnd[chartIndex],
-    'vario': trackData.vario[chartIndex],
-    'speed': trackData.speed[chartIndex],
-    'hour': trackData.time.hour[chartIndex],
-    'min': trackData.time.min[chartIndex],
-    'sec': trackData.time.sec[chartIndex]
+
+/**
+ * @param {number} trackIndex
+ * @private
+ */
+vgps3.track.Track.prototype.updateDateControl_ = function(trackIndex) {
+  var fixes = this.tracks_[trackIndex].fixes;
+
+  this.dateControl_.update({
+    date: fixes.date,
+    pilot: fixes.pilot
   });
 };
 
@@ -356,7 +423,8 @@ vgps3.track.Track.prototype.updateInfoControl_ = function(trackIndex, chartIndex
  */
 vgps3.track.EventType = {
   CLICK: 'vgps3.track.click',
-  LOAD: 'vgps3.track.load'
+  LOAD: 'vgps3.track.load',
+  SELECT: 'vgps3.track.select'
 };
 
 
@@ -412,4 +480,6 @@ vgps3.track.Date;
  *   pilot: ?string
  *   }}
  */
-vgps3.track.TrackDef;
+vgps3.track.GpsFixes;
+
+// todo dispose

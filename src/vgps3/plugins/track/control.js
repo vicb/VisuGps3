@@ -13,37 +13,45 @@
  * @author Victor Berchet <victor@suumit.com>
  */
 
-goog.provide('vgps3.track.InfoControl');
+goog.provide('vgps3.track.Control');
 
 goog.require('goog.dom');
 goog.require('goog.soy');
+goog.require('vgps3.track.templates');
 
 
 
 /**
  * @param {google.maps.Map} map
+ * @param {string} template
  * @param {google.maps.ControlPosition} position
  * @constructor
  */
-vgps3.track.InfoControl = function(map, position) {
+vgps3.track.Control = function(map, template, position) {
   /**
   * @type {!Element}
   * @private
   */
-  this.dom_ = goog.dom.createDom('div', 'map-ctrl', '<strong>Content</strong>');
+  this.dom_ = goog.dom.createDom('div', 'map-ctrl');
+
+  /**
+   * @type {string}
+   * @private
+   */
+  this.template_ = template;
 
   map.controls[position].push(this.dom_);
 };
 
 
 /**
- * @param {Object} pointData
+ * @param {Object.<string, *>} templateData
  */
-vgps3.track.InfoControl.prototype.setInfo = function(pointData) {
+vgps3.track.Control.prototype.update = function(templateData) {
   goog.soy.renderElement(
       this.dom_,
-      vgps3.track.templates.infoControl,
-      {data: pointData}
+      vgps3.track.templates[this.template_],
+      templateData
   );
 };
 

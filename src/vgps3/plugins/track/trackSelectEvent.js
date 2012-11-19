@@ -13,7 +13,7 @@
  * @author Victor Berchet <victor@suumit.com>
  */
 
-goog.provide('vgps3.track.LoadEvent');
+goog.provide('vgps3.track.TrackSelectEvent');
 
 goog.require('goog.events.Event');
 
@@ -21,24 +21,24 @@ goog.require('goog.events.Event');
 
 /**
  * @param {number} index
- * @param {!Object} track
+ * @param {?number} previousIndex
  *
  * @constructor
  * @extends {goog.events.Event}
  */
-vgps3.track.LoadEvent = function(index, track) {
-  goog.base(this, vgps3.track.EventType.LOAD);
+vgps3.track.TrackSelectEvent = function(index, previousIndex) {
+  goog.base(this, vgps3.track.EventType.SELECT);
 
   /**
-  * @type {Object}
-  */
-  this.track = track;
-
-  /**
-   * @type {number}
+  * @type {number}
   */
   this.index = index;
+
+  /**
+  * @type {?number}
+  */
+  this.previousIndex = previousIndex;
 };
-goog.inherits(vgps3.track.LoadEvent, goog.events.Event);
+goog.inherits(vgps3.track.TrackSelectEvent, goog.events.Event);
 
 

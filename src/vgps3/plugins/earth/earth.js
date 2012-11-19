@@ -138,6 +138,7 @@ vgps3.earth.Earth.prototype.moveTo = function(position) {
  * @notypecheck
  */
 vgps3.earth.Earth.prototype.clickHandler_ = function(event) {
+  // todo: trigger a click event (and remove the public click())
   this.vgps_.click(new google.maps.LatLng(event.getLatitude(), event.getLongitude()));
 };
 

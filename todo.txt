@@ -1,3 +1,6 @@
+- multiple tracks
+ - gePlugin left
+
 - track plugin
   - load kml (!earth plugin)
   - add an overlay while loading (indicator)
@@ -6,11 +9,9 @@
   - wire earth events
   - show dialog when ge plugin is not installed (hide map type when not supported)
 
-- fix compilation warnings (externs & typedef)
+- vgps3 Events
 
 - allow resizing (map & chart)
-
-- multiple tracks
 
 - capture slider events
 
@@ -26,3 +27,8 @@
 - minify CSS
 
 - i18n
+
+- Dispose: check & add to avoid leaks
+  - https://wiki.mozilla.org/Performance%3aLeak_Tools
+  - https://addons.mozilla.org/en-US/firefox/addon/leak-monitor/
+  - https://code.google.com/p/leak-finder-for-javascript/

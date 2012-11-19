@@ -11,27 +11,29 @@
 {namespace vgps3.track.templates}
 
 /**
- * @param data
+ * @param fixes
+ * @param index
 */
 {template .infoControl}
-    <h3>...iNfO</h3>
-    <ul>
-        <li>{$data.elev}m [hV]</li>
-        <li>{$data.elevGnd}m [hS]</li>
-        <li>{$data.vario}m/s [Vz]</li>
-        <li>{$data.speed}km/h [Vx]</li>
-        <li>{$data.hour}:{$data.min}:{$data.sec} [Th]</li>
-    </ul>
+  <h3>...iNfO</h3>
+  <ul>
+    <li>{$fixes.elev[$index]}m [hV]</li>
+    <li>{$fixes.elevGnd[$index]}m [hS]</li>
+    <li>{$fixes.vario[$index]}m/s [Vz]</li>
+    <li>{$fixes.speed[$index]}km/h [Vx]</li>
+    <li>{$fixes.time.hour[$index]}:{$fixes.time.min[$index]}:{$fixes.time.sec[$index]} [Th]</li>
+</ul>
 {/template}
 
 /**
- * @param data
+ * @param date
+ * @param pilot
  */
 {template .dateControl}
-    <ul>
-        <li>{$data.date}</li>
-        {if $data.pilot}
-            <li>{$data.pilot}</li>
-        {/if}
-    </ul>
+  <ul>
+    <li>{$date.day}/{$date.month}/{$date.year}</li>
+    {if $pilot}
+      <li>{$pilot}</li>
+    {/if}
+  </ul>
 {/template}
