@@ -69,6 +69,7 @@ body {
   color: #000;
   position: absolute;
   box-shadow: 4px 4px 2px rgba(100, 100, 100, 0.6);
+  overflow: hidden;
 }
 
 .modal-dialog a,

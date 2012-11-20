@@ -209,7 +209,7 @@ vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
     goog.events.listen(
         this.sliders_.getTitleElement(),
         goog.events.EventType.CLICK,
-        function() { this.vgps_.dispatchEvent(new vgps3.chart.AboutEvent()); }
+        function() { that.vgps_.dispatchEvent(new vgps3.chart.AboutEvent()); }
     );
 
     this.currentTrackIndex_ = event.index;

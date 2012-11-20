@@ -45,13 +45,13 @@ vgps3.Control = function(map, template, position) {
 
 
 /**
- * @param {Object.<string, *>} templateData
+ * @param {Object=} opt_templateData
  */
-vgps3.Control.prototype.update = function(templateData) {
+vgps3.Control.prototype.update = function(opt_templateData) {
   goog.soy.renderElement(
       this.dom_,
       this.template_,
-      templateData
+      opt_templateData
   );
 };
 

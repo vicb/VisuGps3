@@ -78,7 +78,7 @@ vgps3.path.Path.prototype.init = function(vgps) {
       vgps3.path.templates.pathControl,
       google.maps.ControlPosition.RIGHT_TOP
       );
-  this.control_.update(null);
+  this.control_.update();
   this.element_ = goog.dom.getFirstElementChild(this.control_.getElement());
   goog.style.showElement(this.element_, false);
   this.events_.listen(this.control_.getElement(), 'mousedown', this.clickHandler_);
