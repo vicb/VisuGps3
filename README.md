@@ -14,6 +14,15 @@ This is the next version of [VisuGps](https://github.com/vicb/VisuGps), one of m
 first web project. It has been rewritten to leverage the latest JS API form Google
 as the maps API v2 will be deprecated in 2013.
 
+## Supported features
+
+- Display a single or multiple track on top of the map,
+- Display charts for elevation, horizontal & vertical speeds,
+- The track can be viewed in 3D on platforms where the [GE plugin is supported](http://www.google.com/earth/explore/products/plugin.html),
+- Display markers for routes,
+- Measure distances with the path plugin,
+- Display IGN maps for France.
+
 ## Roadmap
 
 ### v3.0
