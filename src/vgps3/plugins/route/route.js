@@ -46,10 +46,10 @@ vgps3.route.Route.prototype.init = function(vgps) {
  *
  * @param {string} type
  * @param {Array.<google.maps.LatLng>} turnpoints
- * @param {google.maps.LatLng=} start
- * @param {google.maps.LatLng=} end
+ * @param {google.maps.LatLng=} opt_start
+ * @param {google.maps.LatLng=} opt_end
  */
-vgps3.route.Route.prototype.draw = function(type, turnpoints, start, end) {
+vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end) {
   var startIcon = new google.maps.MarkerImage(vgps3.route.START_ICON_URL, new google.maps.Size(12, 20)),
       endIcon = new google.maps.MarkerImage(vgps3.route.END_ICON_URL, new google.maps.Size(12, 20)),
       icon = new google.maps.MarkerImage(vgps3.route.ICON_URL, new google.maps.Size(12, 20)),
@@ -61,18 +61,40 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, start, end) {
             strokeColor: '#00f',
             strokeOpacity: 0.8,
             strokeWeight: 1
+
       });
 
+  if (closed && goog.isDef(opt_start)) {
+    new google.maps.Polyline({
+      clickable: false,
+      map: this.gMap_,
+      path: [opt_start, turnpoints[0]],
+      strokeColor: '#222',
+      strokeOpacity: 0.8,
+      strokeWeight: 1
+    });
+  }
+
+  if (closed && goog.isDef(opt_end)) {
+    new google.maps.Polyline({
+      clickable: false,
+      map: this.gMap_,
+      path: [opt_end, turnpoints[turnpoints.length - 1]],
+      strokeColor: '#222',
+      strokeOpacity: 0.8,
+      strokeWeight: 1
+    });
+  }
 
   new google.maps.Marker({
     clickable: false,
-    position: closed && goog.isDef(start) ? start : turnpoints[0],
+    position: closed && goog.isDef(opt_start) ? opt_start : turnpoints[0],
     map: this.gMap_,
     icon: startIcon
   });
   new google.maps.Marker({
     clickable: false,
-    position: closed && goog.isDef(end) ? end : turnpoints[turnpoints.length - 1],
+    position: closed && goog.isDef(opt_end) ? opt_end : turnpoints[turnpoints.length - 1],
     map: this.gMap_,
     icon: endIcon
   });
