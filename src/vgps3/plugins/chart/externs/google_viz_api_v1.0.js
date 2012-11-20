@@ -1,23 +1,40 @@
-// Copyright 2009 Google Inc.
-// All Rights Reserved.
+/*
+ * Copyright 2012 The Closure Compiler Authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 /**
  * @fileoverview This file exposes the external Google Visualization API.
  *
- * The file can be used to enable auto complete of objects and methods provided by the
- * Google Visualization API, and for easier exploration of the API.
+ * The file can be used to enable auto complete of objects and methods provided
+ * by the Google Visualization API, and for easier exploration of the API.
  *
- * To enable auto complete in a development environment - copy the file into the project
- * you are working on where the development tool you are using can index the file.
+ * To enable auto complete in a development environment - copy the file into the
+ * project you are working on where the development tool you are using can index
+ * the file.
  *
  * Disclaimer: there may be missing classes and methods and the file may
  * be updated and/or changed. For the most up to date API reference please visit:
- * {@link https://developers.google.com/chart/interactive/docs/reference?hl=iw}
+ * {@link https://developers.google.com/chart/interactive/docs/reference}
  *
  * @externs
  */
 
-var google = {};
+
+/**
+ * @const
+ */
 google.visualization = {};
 
 
@@ -36,7 +53,8 @@ google.visualization.DataTable = function(opt_data, opt_version) {};
  * @param {string=} opt_id
  * @return {number}
  */
-google.visualization.DataTable.prototype.addColumn = function(type, opt_label, opt_id) {};
+google.visualization.DataTable.prototype.addColumn =
+    function(type, opt_label, opt_id) {};
 
 
 /**
@@ -70,21 +88,24 @@ google.visualization.DataTable.prototype.getColumnId = function(columnIndex) {};
  * @param {number} columnIndex
  * @return {string}
  */
-google.visualization.DataTable.prototype.getColumnLabel = function(columnIndex) {};
+google.visualization.DataTable.prototype.getColumnLabel =
+    function(columnIndex) {};
 
 
 /**
  * @param {number} columnIndex
  * @return {string}
  */
-google.visualization.DataTable.prototype.getColumnPattern = function(columnIndex) {};
+google.visualization.DataTable.prototype.getColumnPattern =
+    function(columnIndex) {};
 
 
 /**
  * @param {number} columnIndex
  * @return {!Object}
  */
-google.visualization.DataTable.prototype.getColumnProperties = function(columnIndex) {};
+google.visualization.DataTable.prototype.getColumnProperties =
+    function(columnIndex) {};
 
 
 /**
@@ -92,42 +113,48 @@ google.visualization.DataTable.prototype.getColumnProperties = function(columnIn
  * @param {string} property
  * @return {string}
  */
-google.visualization.DataTable.prototype.getColumnProperty = function(columnIndex, property) {};
+google.visualization.DataTable.prototype.getColumnProperty =
+    function(columnIndex, property) {};
 
 
 /**
  * @param {number} columnIndex
  * @return {!Object}
  */
-google.visualization.DataTable.prototype.getColumnRange = function(columnIndex) {};
+google.visualization.DataTable.prototype.getColumnRange =
+    function(columnIndex) {};
 
 
 /**
  * @param {number} columnIndex
  * @return {string}
  */
-google.visualization.DataTable.prototype.getColumnRole = function(columnIndex) {};
+google.visualization.DataTable.prototype.getColumnRole =
+    function(columnIndex) {};
 
 
 /**
  * @param {number} columnIndex
  * @return {string}
  */
-google.visualization.DataTable.prototype.getColumnType = function(columnIndex) {};
+google.visualization.DataTable.prototype.getColumnType =
+    function(columnIndex) {};
 
 
 /**
  * @param {number} columnIndex
  * @return {!Array.<Object>}
  */
-google.visualization.DataTable.prototype.getDistinctValues = function(columnIndex) {};
+google.visualization.DataTable.prototype.getDistinctValues =
+    function(columnIndex) {};
 
 
 /**
  * @param {!Array.<Object>} columnFilters
  * @return {!Array.<number>}
  */
-google.visualization.DataTable.prototype.getFilteredRows = function(columnFilters) {};
+google.visualization.DataTable.prototype.getFilteredRows =
+    function(columnFilters) {};
 
 
 /**
@@ -135,7 +162,8 @@ google.visualization.DataTable.prototype.getFilteredRows = function(columnFilter
  * @param {number} columnIndex
  * @return {string}
  */
-google.visualization.DataTable.prototype.getFormattedValue = function(rowIndex, columnIndex) {};
+google.visualization.DataTable.prototype.getFormattedValue =
+    function(rowIndex, columnIndex) {};
 
 
 /**
@@ -155,7 +183,8 @@ google.visualization.DataTable.prototype.getNumberOfRows = function() {};
  * @param {number} columnIndex
  * @return {!Object}
  */
-google.visualization.DataTable.prototype.getProperties = function(rowIndex, columnIndex) {};
+google.visualization.DataTable.prototype.getProperties =
+    function(rowIndex, columnIndex) {};
 
 
 /**
@@ -164,14 +193,16 @@ google.visualization.DataTable.prototype.getProperties = function(rowIndex, colu
  * @param {string} property
  * @return {*}
  */
-google.visualization.DataTable.prototype.getProperty = function(rowIndex, columnIndex, property) {};
+google.visualization.DataTable.prototype.getProperty =
+    function(rowIndex, columnIndex, property) {};
 
 
 /**
  * @param {number} rowIndex
  * @return {!Object}
  */
-google.visualization.DataTable.prototype.getRowProperties = function(rowIndex) {};
+google.visualization.DataTable.prototype.getRowProperties =
+    function(rowIndex) {};
 
 
 /**
@@ -179,14 +210,16 @@ google.visualization.DataTable.prototype.getRowProperties = function(rowIndex) {
  * @param {string} property
  * @return {*}
  */
-google.visualization.DataTable.prototype.getRowProperty = function(rowIndex, property) {};
+google.visualization.DataTable.prototype.getRowProperty =
+    function(rowIndex, property) {};
 
 
 /**
  * @param {number|!Object|Array.<number>|Array.<Object>} sortColumns
  * @return {!Array.<number>}
  */
-google.visualization.DataTable.prototype.getSortedRows = function(sortColumns) {};
+google.visualization.DataTable.prototype.getSortedRows =
+    function(sortColumns) {};
 
 
 /**
@@ -199,7 +232,8 @@ google.visualization.DataTable.prototype.getTableProperties = function() {};
  * @param {string} property
  * @return {*}
  */
-google.visualization.DataTable.prototype.getTableProperty = function(property) {};
+google.visualization.DataTable.prototype.getTableProperty =
+    function(property) {};
 
 
 /**
@@ -207,7 +241,8 @@ google.visualization.DataTable.prototype.getTableProperty = function(property) {
  * @param {number} columnIndex
  * @return {*}
  */
-google.visualization.DataTable.prototype.getValue = function(rowIndex, columnIndex) {};
+google.visualization.DataTable.prototype.getValue =
+    function(rowIndex, columnIndex) {};
 
 
 /**
@@ -217,7 +252,8 @@ google.visualization.DataTable.prototype.getValue = function(rowIndex, columnInd
  * @param {string=} opt_id
  * @return {undefined}
  */
-google.visualization.DataTable.prototype.insertColumn = function(atColIndex, type, opt_label, opt_id) {};
+google.visualization.DataTable.prototype.insertColumn =
+    function(atColIndex, type, opt_label, opt_id) {};
 
 
 /**
@@ -225,7 +261,8 @@ google.visualization.DataTable.prototype.insertColumn = function(atColIndex, typ
  * @param {number|Array} numOrArray
  * @return {undefined}
  */
-google.visualization.DataTable.prototype.insertRows = function(atRowIndex, numOrArray) {};
+google.visualization.DataTable.prototype.insertRows =
+    function(atRowIndex, numOrArray) {};
 
 
 /**
@@ -240,7 +277,8 @@ google.visualization.DataTable.prototype.removeColumn = function(colIndex) {};
  * @param {number} numCols
  * @return {undefined}
  */
-google.visualization.DataTable.prototype.removeColumns = function(fromColIndex, numCols) {};
+google.visualization.DataTable.prototype.removeColumns =
+    function(fromColIndex, numCols) {};
 
 
 /**
@@ -254,7 +292,8 @@ google.visualization.DataTable.prototype.removeRow = function(rowIndex) {};
  * @param {number} fromRowIndex
  * @param {number} numRows
  */
-google.visualization.DataTable.prototype.removeRows = function(fromRowIndex, numRows) {};
+google.visualization.DataTable.prototype.removeRows =
+    function(fromRowIndex, numRows) {};
 
 
 /**
@@ -262,10 +301,11 @@ google.visualization.DataTable.prototype.removeRows = function(fromRowIndex, num
  * @param {number} columnIndex
  * @param {*=} opt_value
  * @param {string=} opt_formattedValue
- * @param {Object=} opt_properties
+ * @param {Object=} opt_props
  * @return {undefined}
  */
-google.visualization.DataTable.prototype.setCell = function(rowIndex, columnIndex, opt_value, opt_formattedValue, opt_properties) {};
+google.visualization.DataTable.prototype.setCell =
+    function(rowIndex, columnIndex, opt_value, opt_formattedValue, opt_props) {};
 
 
 /**
@@ -273,7 +313,8 @@ google.visualization.DataTable.prototype.setCell = function(rowIndex, columnInde
  * @param {string} newLabel
  * @return {undefined}
  */
-google.visualization.DataTable.prototype.setColumnLabel = function(columnIndex, newLabel) {};
+google.visualization.DataTable.prototype.setColumnLabel =
+    function(columnIndex, newLabel) {};
 
 
 /**
@@ -281,7 +322,8 @@ google.visualization.DataTable.prototype.setColumnLabel = function(columnIndex, 
  * @param {Object} properties
  * @return {undefined}
  */
-google.visualization.DataTable.prototype.setColumnProperties = function(columnIndex, properties) {};
+google.visualization.DataTable.prototype.setColumnProperties =
+    function(columnIndex, properties) {};
 
 
 /**
@@ -289,7 +331,8 @@ google.visualization.DataTable.prototype.setColumnProperties = function(columnIn
  * @param {string} property
  * @param {*} value
  */
-google.visualization.DataTable.prototype.setColumnProperty = function(columnIndex, property, value) {};
+google.visualization.DataTable.prototype.setColumnProperty =
+    function(columnIndex, property, value) {};
 
 
 /**
@@ -298,7 +341,8 @@ google.visualization.DataTable.prototype.setColumnProperty = function(columnInde
  * @param {?string} formattedValue
  * @return {undefined}
  */
-google.visualization.DataTable.prototype.setFormattedValue = function(rowIndex, columnIndex, formattedValue) {};
+google.visualization.DataTable.prototype.setFormattedValue =
+    function(rowIndex, columnIndex, formattedValue) {};
 
 
 /**
@@ -307,7 +351,8 @@ google.visualization.DataTable.prototype.setFormattedValue = function(rowIndex, 
  * @param {Object} properties
  * @return {undefined}
  */
-google.visualization.DataTable.prototype.setProperties = function(rowIndex, columnIndex, properties) {};
+google.visualization.DataTable.prototype.setProperties =
+    function(rowIndex, columnIndex, properties) {};
 
 
 /**
@@ -317,7 +362,8 @@ google.visualization.DataTable.prototype.setProperties = function(rowIndex, colu
  * @param {*} value
  * @return {undefined}
  */
-google.visualization.DataTable.prototype.setProperty = function(rowIndex, columnIndex, property, value) {};
+google.visualization.DataTable.prototype.setProperty =
+    function(rowIndex, columnIndex, property, value) {};
 
 
 /**
@@ -325,7 +371,8 @@ google.visualization.DataTable.prototype.setProperty = function(rowIndex, column
  * @param {Object} properties
  * @return {undefined}
  */
-google.visualization.DataTable.prototype.setRowProperties = function(rowIndex, properties) {};
+google.visualization.DataTable.prototype.setRowProperties =
+    function(rowIndex, properties) {};
 
 
 /**
@@ -334,14 +381,16 @@ google.visualization.DataTable.prototype.setRowProperties = function(rowIndex, p
  * @param {*} value
  * @return {undefined}
  */
-google.visualization.DataTable.prototype.setRowProperty = function(rowIndex, property, value) {};
+google.visualization.DataTable.prototype.setRowProperty =
+    function(rowIndex, property, value) {};
 
 
 /**
  * @param {Object} properties
  * @return {undefined}
  */
-google.visualization.DataTable.prototype.setTableProperties = function(properties) {};
+google.visualization.DataTable.prototype.setTableProperties =
+    function(properties) {};
 
 
 /**
@@ -349,7 +398,8 @@ google.visualization.DataTable.prototype.setTableProperties = function(propertie
  * @param {*} value
  * @return {undefined}
  */
-google.visualization.DataTable.prototype.setTableProperty = function(property, value) {};
+google.visualization.DataTable.prototype.setTableProperty =
+    function(property, value) {};
 
 
 /**
@@ -358,7 +408,8 @@ google.visualization.DataTable.prototype.setTableProperty = function(property, v
  * @param {*} value
  * @return {undefined}
  */
-google.visualization.DataTable.prototype.setValue = function(rowIndex, columnIndex, value) {};
+google.visualization.DataTable.prototype.setValue =
+    function(rowIndex, columnIndex, value) {};
 
 
 /**
@@ -451,7 +502,8 @@ google.visualization.Query.prototype.setQuery = function(queryString) {};
  * @param {number} intervalSeconds
  * @return {undefined}
  */
-google.visualization.Query.prototype.setRefreshInterval = function(intervalSeconds) {};
+google.visualization.Query.prototype.setRefreshInterval =
+    function(intervalSeconds) {};
 
 
 /**
@@ -460,7 +512,10 @@ google.visualization.Query.prototype.setRefreshInterval = function(intervalSecon
  */
 google.visualization.Query.prototype.setTimeout = function(timeoutSeconds) {};
 
-// namespace
+
+/**
+ * @const
+ */
 google.visualization.errors = {};
 
 
@@ -471,7 +526,8 @@ google.visualization.errors = {};
  * @param {Object=} opt_options
  * @return {string}
  */
-google.visualization.errors.addError = function(container, message, opt_detailedMessage, opt_options) {};
+google.visualization.errors.addError =
+    function(container, message, opt_detailedMessage, opt_options) {};
 
 
 /**
@@ -479,7 +535,8 @@ google.visualization.errors.addError = function(container, message, opt_detailed
  * @param {google.visualization.QueryResponse} response
  * @return {string}
  */
-google.visualization.errors.addErrorFromQueryResponse = function(container, response) {};
+google.visualization.errors.addErrorFromQueryResponse =
+    function(container, response) {};
 
 
 /**
@@ -502,7 +559,10 @@ google.visualization.errors.removeAll = function(container) {};
  */
 google.visualization.errors.removeError = function(id) {};
 
-// namespace
+
+/**
+ * @const
+ */
 google.visualization.events = {};
 
 
@@ -512,7 +572,8 @@ google.visualization.events = {};
  * @param {!Function} eventHandler
  * @return {Object}
  */
-google.visualization.events.addListener = function(eventSource, eventName, eventHandler) {};
+google.visualization.events.addListener =
+    function(eventSource, eventName, eventHandler) {};
 
 
 /**
@@ -534,7 +595,8 @@ google.visualization.events.removeAllListeners = function(eventSource) {};
  * @param {string} eventName
  * @param {Object=} opt_eventDetails
  */
-google.visualization.events.trigger = function(eventSource, eventName, opt_eventDetails) {};
+google.visualization.events.trigger =
+    function(eventSource, eventName, opt_eventDetails) {};
 
 
 
@@ -564,21 +626,24 @@ google.visualization.DataView.prototype.getColumnId = function(columnIndex) {};
  * @param {number} columnIndex
  * @return {string}
  */
-google.visualization.DataView.prototype.getColumnLabel = function(columnIndex) {};
+google.visualization.DataView.prototype.getColumnLabel =
+    function(columnIndex) {};
 
 
 /**
  * @param {number} columnIndex
  * @return {string}
  */
-google.visualization.DataView.prototype.getColumnPattern = function(columnIndex) {};
+google.visualization.DataView.prototype.getColumnPattern =
+    function(columnIndex) {};
 
 
 /**
  * @param {number} columnIndex
  * @return {!Object}
  */
-google.visualization.DataView.prototype.getColumnProperties = function(columnIndex) {};
+google.visualization.DataView.prototype.getColumnProperties =
+    function(columnIndex) {};
 
 
 /**
@@ -586,42 +651,48 @@ google.visualization.DataView.prototype.getColumnProperties = function(columnInd
  * @param {string} property
  * @return {string}
  */
-google.visualization.DataView.prototype.getColumnProperty = function(columnIndex, property) {};
+google.visualization.DataView.prototype.getColumnProperty =
+    function(columnIndex, property) {};
 
 
 /**
  * @param {number} columnIndex
  * @return {!Object}
  */
-google.visualization.DataView.prototype.getColumnRange = function(columnIndex) {};
+google.visualization.DataView.prototype.getColumnRange =
+    function(columnIndex) {};
 
 
 /**
  * @param {number} columnIndex
  * @return {string}
  */
-google.visualization.DataView.prototype.getColumnRole = function(columnIndex) {};
+google.visualization.DataView.prototype.getColumnRole =
+    function(columnIndex) {};
 
 
 /**
  * @param {number} columnIndex
  * @return {string}
  */
-google.visualization.DataView.prototype.getColumnType = function(columnIndex) {};
+google.visualization.DataView.prototype.getColumnType =
+    function(columnIndex) {};
 
 
 /**
  * @param {number} columnIndex
  * @return {!Array.<Object>}
  */
-google.visualization.DataView.prototype.getDistinctValues = function(columnIndex) {};
+google.visualization.DataView.prototype.getDistinctValues =
+    function(columnIndex) {};
 
 
 /**
  * @param {!Array.<Object>} columnFilters
  * @return {!Array.<number>}
  */
-google.visualization.DataView.prototype.getFilteredRows = function(columnFilters) {};
+google.visualization.DataView.prototype.getFilteredRows =
+    function(columnFilters) {};
 
 
 /**
@@ -629,7 +700,8 @@ google.visualization.DataView.prototype.getFilteredRows = function(columnFilters
  * @param {number} columnIndex
  * @return {string}
  */
-google.visualization.DataView.prototype.getFormattedValue = function(rowIndex, columnIndex) {};
+google.visualization.DataView.prototype.getFormattedValue =
+    function(rowIndex, columnIndex) {};
 
 
 /**
@@ -649,7 +721,8 @@ google.visualization.DataView.prototype.getNumberOfRows = function() {};
  * @param {number} columnIndex
  * @return {!Object}
  */
-google.visualization.DataView.prototype.getProperties = function(rowIndex, columnIndex) {};
+google.visualization.DataView.prototype.getProperties =
+    function(rowIndex, columnIndex) {};
 
 
 /**
@@ -658,14 +731,16 @@ google.visualization.DataView.prototype.getProperties = function(rowIndex, colum
  * @param {string} property
  * @return {*}
  */
-google.visualization.DataView.prototype.getProperty = function(rowIndex, columnIndex, property) {};
+google.visualization.DataView.prototype.getProperty =
+    function(rowIndex, columnIndex, property) {};
 
 
 /**
  * @param {number} rowIndex
  * @return {!Object}
  */
-google.visualization.DataView.prototype.getRowProperties = function(rowIndex) {};
+google.visualization.DataView.prototype.getRowProperties =
+    function(rowIndex) {};
 
 
 /**
@@ -673,14 +748,16 @@ google.visualization.DataView.prototype.getRowProperties = function(rowIndex) {}
  * @param {string} property
  * @return {*}
  */
-google.visualization.DataView.prototype.getRowProperty = function(rowIndex, property) {};
+google.visualization.DataView.prototype.getRowProperty =
+    function(rowIndex, property) {};
 
 
 /**
  * @param {number|!Object|Array.<number>|Array.<Object>} sortColumns
  * @return {!Array.<number>}
  */
-google.visualization.DataView.prototype.getSortedRows = function(sortColumns) {};
+google.visualization.DataView.prototype.getSortedRows =
+    function(sortColumns) {};
 
 
 /**
@@ -693,7 +770,8 @@ google.visualization.DataView.prototype.getTableProperties = function() {};
  * @param {string} property
  * @return {*}
  */
-google.visualization.DataView.prototype.getTableProperty = function(property) {};
+google.visualization.DataView.prototype.getTableProperty =
+    function(property) {};
 
 
 /**
@@ -701,21 +779,24 @@ google.visualization.DataView.prototype.getTableProperty = function(property) {}
  * @param {number} columnIndex
  * @return {*}
  */
-google.visualization.DataView.prototype.getValue = function(rowIndex, columnIndex) {};
+google.visualization.DataView.prototype.getValue =
+    function(rowIndex, columnIndex) {};
 
 
 /**
  * @param {number} viewColumnIndex
  * @return {number}
  */
-google.visualization.DataView.prototype.getTableColumnIndex = function(viewColumnIndex) {};
+google.visualization.DataView.prototype.getTableColumnIndex =
+    function(viewColumnIndex) {};
 
 
 /**
  * @param {number} viewRowIndex
  * @return {number}
  */
-google.visualization.DataView.prototype.getTableRowIndex = function(viewRowIndex) {};
+google.visualization.DataView.prototype.getTableRowIndex =
+    function(viewRowIndex) {};
 
 
 /**
@@ -723,7 +804,8 @@ google.visualization.DataView.prototype.getTableRowIndex = function(viewRowIndex
  * @param {number} tableColumnIndex
  * @return {number}
  */
-google.visualization.DataView.prototype.getViewColumnIndex = function(tableColumnIndex) {};
+google.visualization.DataView.prototype.getViewColumnIndex =
+    function(tableColumnIndex) {};
 
 
 /**
@@ -737,7 +819,8 @@ google.visualization.DataView.prototype.getViewColumns = function() {};
  * @param {number} tableRowIndex
  * @return {number}
  */
-google.visualization.DataView.prototype.getViewRowIndex = function(tableRowIndex) {};
+google.visualization.DataView.prototype.getViewRowIndex =
+    function(tableRowIndex) {};
 
 
 /**
@@ -801,7 +884,8 @@ google.visualization.ArrowFormat = function(opt_options) {};
  * @param {number} columnIndex
  * @return {undefined}
  */
-google.visualization.ArrowFormat.prototype.format = function(dataTable, columnIndex) {};
+google.visualization.ArrowFormat.prototype.format =
+    function(dataTable, columnIndex) {};
 
 
 
@@ -817,7 +901,8 @@ google.visualization.BarFormat = function(opt_options) {};
  * @param {number} columnIndex
  * @return {undefined}
  */
-google.visualization.BarFormat.prototype.format = function(dataTable, columnIndex) {};
+google.visualization.BarFormat.prototype.format =
+    function(dataTable, columnIndex) {};
 
 
 
@@ -834,7 +919,8 @@ google.visualization.ColorFormat = function() {};
  * @param {string} bgcolor
  * @return {undefined}
  */
-google.visualization.ColorFormat.prototype.addRange = function(from, to, color, bgcolor) {};
+google.visualization.ColorFormat.prototype.addRange =
+    function(from, to, color, bgcolor) {};
 
 /**
  * @param {*} from
@@ -845,7 +931,8 @@ google.visualization.ColorFormat.prototype.addRange = function(from, to, color, 
  * @return {undefined}
  */
 
-google.visualization.ColorFormat.prototype.addGradientRange = function(from, to, color, fromBgColor, toBgColor) {};
+google.visualization.ColorFormat.prototype.addGradientRange =
+    function(from, to, color, fromBgColor, toBgColor) {};
 
 
 /**
@@ -853,7 +940,8 @@ google.visualization.ColorFormat.prototype.addGradientRange = function(from, to,
  * @param {number} columnIndex
  * @return {undefined}
  */
-google.visualization.ColorFormat.prototype.format = function(dataTable, columnIndex) {};
+google.visualization.ColorFormat.prototype.format =
+    function(dataTable, columnIndex) {};
 
 
 
@@ -869,7 +957,8 @@ google.visualization.DateFormat = function(opt_options) {};
  * @param {number} columnIndex
  * @return {undefined}
  */
-google.visualization.DateFormat.prototype.format = function(dataTable, columnIndex) {};
+google.visualization.DateFormat.prototype.format =
+    function(dataTable, columnIndex) {};
 
 
 /**
@@ -892,7 +981,8 @@ google.visualization.NumberFormat = function(opt_options) {};
  * @param {number} columnIndex
  * @return {undefined}
  */
-google.visualization.NumberFormat.prototype.format = function(dataTable, columnIndex) {};
+google.visualization.NumberFormat.prototype.format =
+    function(dataTable, columnIndex) {};
 
 
 /**
@@ -900,10 +990,6 @@ google.visualization.NumberFormat.prototype.format = function(dataTable, columnI
  * @return {*}
  */
 google.visualization.NumberFormat.prototype.formatValue = function(value) {};
-
-google.visualization.NumberFormat.DECIMAL_SEP;
-google.visualization.NumberFormat.GROUP_SEP;
-google.visualization.NumberFormat.DECIMAL_PATTERN;
 
 
 
@@ -920,7 +1006,8 @@ google.visualization.PatternFormat = function(pattern) {};
  * @param {number=} opt_dstColumnIndex
  * @return {undefined}
  */
-google.visualization.PatternFormat.prototype.format = function(dataTable, srcColumnIndices, opt_dstColumnIndex) {};
+google.visualization.PatternFormat.prototype.format =
+    function(dataTable, srcColumnIndices, opt_dstColumnIndex) {};
 
 
 
@@ -934,14 +1021,50 @@ google.visualization.GadgetHelper = function() {};
  * @param {!Object} prefs
  * @return  {google.visualization.Query}
  */
-google.visualization.GadgetHelper.prototype.createQueryFromPrefs = function(prefs) {};
+google.visualization.GadgetHelper.prototype.createQueryFromPrefs =
+    function(prefs) {};
 
 
 /**
  * @param {google.visualization.QueryResponse} response
  * @return {boolean}
  */
-google.visualization.GadgetHelper.prototype.validateResponse = function(response) {};
+google.visualization.GadgetHelper.prototype.validateResponse =
+    function(response) {};
+
+
+
+/**
+ * @interface
+ */
+google.visualization.IChart = function() {};
+
+
+/**
+ * @return {undefined}
+ */
+google.visualization.IChart.prototype.clearChart = function() {};
+
+
+/**
+ * @param {!Object} data
+ * @param {Object=} opt_options
+ * @return {undefined}
+ */
+google.visualization.IChart.prototype.draw = function(data, opt_options) {};
+
+
+/**
+ * @return {!Array.<Object>}
+ */
+google.visualization.IChart.prototype.getSelection = function() {};
+
+
+/**
+ * @param {(!Array.<Object>|Array|null)=} opt_selection
+ * @return {undefined}
+ */
+google.visualization.IChart.prototype.setSelection = function(opt_selection) {};
 
 
 
@@ -957,7 +1080,8 @@ google.visualization.AnnotatedTimeLine = function(container) {};
  * @param {Object=} opt_options
  * @return {undefined}
  */
-google.visualization.AnnotatedTimeLine.prototype.draw = function(data, opt_options) {};
+google.visualization.AnnotatedTimeLine.prototype.draw =
+    function(data, opt_options) {};
 
 
 /**
@@ -970,13 +1094,15 @@ google.visualization.AnnotatedTimeLine.prototype.getSelection = function() {};
  * @param {(!Array.<Object>|Array|null)=} opt_selection
  * @return {undefined}
  */
-google.visualization.AnnotatedTimeLine.prototype.setSelection = function(opt_selection) {};
+google.visualization.AnnotatedTimeLine.prototype.setSelection =
+    function(opt_selection) {};
 
 
 /**
  * @return {!Object}
  */
-google.visualization.AnnotatedTimeLine.prototype.getVisibleChartRange = function() {};
+google.visualization.AnnotatedTimeLine.prototype.getVisibleChartRange =
+    function() {};
 
 
 /**
@@ -984,231 +1110,228 @@ google.visualization.AnnotatedTimeLine.prototype.getVisibleChartRange = function
  * @param {Date} lastDate
  * @return {undefined}
  */
-google.visualization.AnnotatedTimeLine.prototype.setVisibleChartRange = function(firstDate, lastDate) {};
+google.visualization.AnnotatedTimeLine.prototype.setVisibleChartRange =
+    function(firstDate, lastDate) {};
 
 
 /**
  * @param {number|!Array.<number>} columnIndexes
  * @return {undefined}
  */
-google.visualization.AnnotatedTimeLine.prototype.showDataColumns = function(columnIndexes) {};
+google.visualization.AnnotatedTimeLine.prototype.showDataColumns =
+    function(columnIndexes) {};
 
 
 /**
  * @param {number|!Array.<number>} columnIndexes
  * @return {undefined}
  */
-google.visualization.AnnotatedTimeLine.prototype.hideDataColumns = function(columnIndexes) {};
+google.visualization.AnnotatedTimeLine.prototype.hideDataColumns =
+    function(columnIndexes) {};
 
 
 
 /**
  * @param {Node} container
  * @constructor
+ * @implements {google.visualization.IChart}
  */
 google.visualization.AreaChart = function(container) {};
 
 
 /**
- * @return {undefined}
+ * @override
  */
 google.visualization.AreaChart.prototype.clearChart = function() {};
 
 
 /**
- * @param {!Object} data
- * @param {Object=} opt_options
- * @return {undefined}
+ * @override
  */
 google.visualization.AreaChart.prototype.draw = function(data, opt_options) {};
 
 
 /**
- * @return {!Array.<Object>}
+ * @override
  */
 google.visualization.AreaChart.prototype.getSelection = function() {};
 
 
 /**
- * @param {(!Array.<Object>|Array|null)=} opt_selection
- * @return {undefined}
+ * @override
  */
-google.visualization.AreaChart.prototype.setSelection = function(opt_selection) {};
+google.visualization.AreaChart.prototype.setSelection =
+    function(opt_selection) {};
 
 
 
 /**
  * @param {Node} container
  * @constructor
+ * @implements {google.visualization.IChart}
  */
 google.visualization.BarChart = function(container) {};
 
 
 /**
- * @return {undefined}
+ * @override
  */
 google.visualization.BarChart.prototype.clearChart = function() {};
 
 
 /**
- * @param {!Object} data
- * @param {Object=} opt_options
- * @return {undefined}
- */
+ * @override */
 google.visualization.BarChart.prototype.draw = function(data, opt_options) {};
 
 
 /**
- * @return {!Array.<Object>}
- */
+ * @override */
 google.visualization.BarChart.prototype.getSelection = function() {};
 
 
 /**
- * @param {(!Array.<Object>|Array|null)=} opt_selection
- * @return {undefined}
- */
-google.visualization.BarChart.prototype.setSelection = function(opt_selection) {};
+ * @override */
+google.visualization.BarChart.prototype.setSelection =
+    function(opt_selection) {};
 
 
 
 /**
  * @param {Node} container
  * @constructor
+ * @implements {google.visualization.IChart}
  */
 google.visualization.BubbleChart = function(container) {};
 
 
 /**
- * @return {undefined}
+ * @override
  */
 google.visualization.BubbleChart.prototype.clearChart = function() {};
 
 
 /**
- * @param {!Object} data
- * @param {Object=} opt_options
- * @return {undefined}
+ * @override
  */
-google.visualization.BubbleChart.prototype.draw = function(data, opt_options) {};
+google.visualization.BubbleChart.prototype.draw =
+    function(data, opt_options) {};
 
 
 /**
- * @return {!Array.<Object>}
+ * @override
  */
 google.visualization.BubbleChart.prototype.getSelection = function() {};
 
 
 /**
- * @param {(!Array.<Object>|Array|null)=} opt_selection
- * @return {undefined}
+ * @override
  */
-google.visualization.BubbleChart.prototype.setSelection = function(opt_selection) {};
+google.visualization.BubbleChart.prototype.setSelection =
+    function(opt_selection) {};
 
 
 
 /**
  * @param {Node} container
  * @constructor
+ * @implements {google.visualization.IChart}
  */
 google.visualization.CandlestickChart = function(container) {};
 
 
 /**
- * @return {undefined}
+ * @override
  */
 google.visualization.CandlestickChart.prototype.clearChart = function() {};
 
 
 /**
- * @param {!Object} data
- * @param {Object=} opt_options
- * @return {undefined}
+ * @override
  */
-google.visualization.CandlestickChart.prototype.draw = function(data, opt_options) {};
+google.visualization.CandlestickChart.prototype.draw =
+    function(data, opt_options) {};
 
 
 /**
- * @return {!Array.<Object>}
+ * @override
  */
 google.visualization.CandlestickChart.prototype.getSelection = function() {};
 
 
 /**
- * @param {(!Array.<Object>|Array|null)=} opt_selection
- * @return {undefined}
+ * @override
  */
-google.visualization.CandlestickChart.prototype.setSelection = function(opt_selection) {};
+google.visualization.CandlestickChart.prototype.setSelection =
+    function(opt_selection) {};
 
 
 
 /**
  * @param {Node} container
  * @constructor
+ * @implements {google.visualization.IChart}
  */
 google.visualization.ColumnChart = function(container) {};
 
 
 /**
- * @return {undefined}
+ * @override
  */
 google.visualization.ColumnChart.prototype.clearChart = function() {};
 
 
 /**
- * @param {!Object} data
- * @param {Object=} opt_options
- * @return {undefined}
+ * @override
  */
-google.visualization.ColumnChart.prototype.draw = function(data, opt_options) {};
+google.visualization.ColumnChart.prototype.draw =
+    function(data, opt_options) {};
 
 
 /**
- * @return {!Array.<Object>}
+ * @override
  */
 google.visualization.ColumnChart.prototype.getSelection = function() {};
 
 
 /**
- * @param {(!Array.<Object>|Array|null)=} opt_selection
- * @return {undefined}
+ * @override
  */
-google.visualization.ColumnChart.prototype.setSelection = function(opt_selection) {};
+google.visualization.ColumnChart.prototype.setSelection =
+    function(opt_selection) {};
 
 
 
 /**
  * @param {Node} container
  * @constructor
+ * @implements {google.visualization.IChart}
  */
 google.visualization.ComboChart = function(container) {};
 
 
 /**
- * @return {undefined}
+ * @override
  */
 google.visualization.ComboChart.prototype.clearChart = function() {};
 
 
 /**
- * @param {!Object} data
- * @param {Object=} opt_options
- * @return {undefined}
+ * @override
  */
 google.visualization.ComboChart.prototype.draw = function(data, opt_options) {};
 
 
 /**
- * @return {!Array.<Object>}
+ * @override
  */
 google.visualization.ComboChart.prototype.getSelection = function() {};
 
 
 /**
- * @param {(!Array.<Object>|Array|null)=} opt_selection
- * @return {undefined}
+ * @override
  */
-google.visualization.ComboChart.prototype.setSelection = function(opt_selection) {};
+google.visualization.ComboChart.prototype.setSelection =
+    function(opt_selection) {};
 
 
 
@@ -1237,35 +1360,34 @@ google.visualization.Gauge.prototype.draw = function(data, opt_options) {};
 /**
  * @param {Node} container
  * @constructor
+ * @implements {google.visualization.IChart}
  */
 google.visualization.GeoChart = function(container) {};
 
 
 /**
- * @return {undefined}
+ * @override
  */
 google.visualization.GeoChart.prototype.clearChart = function() {};
 
 
 /**
- * @param {!Object} data
- * @param {Object=} opt_options
- * @return {undefined}
+ * @override
  */
 google.visualization.GeoChart.prototype.draw = function(data, opt_options) {};
 
 
 /**
- * @return {!Array.<Object>}
+ * @override
  */
 google.visualization.GeoChart.prototype.getSelection = function() {};
 
 
 /**
- * @param {(!Array.<Object>|Array|null)=} opt_selection
- * @return {undefined}
+ * @override
  */
-google.visualization.GeoChart.prototype.setSelection = function(opt_selection) {};
+google.visualization.GeoChart.prototype.setSelection =
+    function(opt_selection) {};
 
 
 
@@ -1340,7 +1462,8 @@ google.visualization.ImageAreaChart = function(container) {};
  * @param {Object=} opt_options
  * @return {undefined}
  */
-google.visualization.ImageAreaChart.prototype.draw = function(data, opt_options) {};
+google.visualization.ImageAreaChart.prototype.draw =
+    function(data, opt_options) {};
 
 
 
@@ -1357,7 +1480,8 @@ google.visualization.ImageBarChart = function(container) {};
  * @param {Object=} opt_options
  * @return {undefined}
  */
-google.visualization.ImageBarChart.prototype.draw = function(data, opt_options) {};
+google.visualization.ImageBarChart.prototype.draw =
+    function(data, opt_options) {};
 
 
 
@@ -1374,7 +1498,8 @@ google.visualization.ImageCandlestickChart = function(container) {};
  * @param {Object=} opt_options
  * @return {undefined}
  */
-google.visualization.ImageCandlestickChart.prototype.draw = function(data, opt_options) {};
+google.visualization.ImageCandlestickChart.prototype.draw =
+    function(data, opt_options) {};
 
 
 
@@ -1408,7 +1533,8 @@ google.visualization.ImageLineChart = function(container) {};
  * @param {Object=} opt_options
  * @return {undefined}
  */
-google.visualization.ImageLineChart.prototype.draw = function(data, opt_options) {};
+google.visualization.ImageLineChart.prototype.draw =
+    function(data, opt_options) {};
 
 
 
@@ -1425,7 +1551,8 @@ google.visualization.ImagePieChart = function(container) {};
  * @param {Object=} opt_options
  * @return {undefined}
  */
-google.visualization.ImagePieChart.prototype.draw = function(data, opt_options) {};
+google.visualization.ImagePieChart.prototype.draw =
+    function(data, opt_options) {};
 
 
 
@@ -1441,7 +1568,8 @@ google.visualization.ImageSparkLine = function(container) {};
  * @param {Object=} opt_options
  * @return {undefined}
  */
-google.visualization.ImageSparkLine.prototype.draw = function(data, opt_options) {};
+google.visualization.ImageSparkLine.prototype.draw =
+    function(data, opt_options) {};
 
 
 /**
@@ -1454,7 +1582,8 @@ google.visualization.ImageSparkLine.prototype.getSelection = function() {};
  * @param {(!Array.<Object>|Array|null)=} opt_selection
  * @return {undefined}
  */
-google.visualization.ImageSparkLine.prototype.setSelection = function(opt_selection) {};
+google.visualization.ImageSparkLine.prototype.setSelection =
+    function(opt_selection) {};
 
 
 
@@ -1470,7 +1599,8 @@ google.visualization.IntensityMap = function(container) {};
  * @param {Object=} opt_options
  * @return {undefined}
  */
-google.visualization.IntensityMap.prototype.draw = function(data, opt_options) {};
+google.visualization.IntensityMap.prototype.draw =
+    function(data, opt_options) {};
 
 
 /**
@@ -1483,42 +1613,41 @@ google.visualization.IntensityMap.prototype.getSelection = function() {};
  * @param {(!Array.<Object>|Array|null)=} opt_selection
  * @return {undefined}
  */
-google.visualization.IntensityMap.prototype.setSelection = function(opt_selection) {};
+google.visualization.IntensityMap.prototype.setSelection =
+    function(opt_selection) {};
 
 
 
 /**
  * @param {Node} container
  * @constructor
+ * @implements {google.visualization.IChart}
  */
 google.visualization.LineChart = function(container) {};
 
 
 /**
- * @return {undefined}
+ * @override
  */
 google.visualization.LineChart.prototype.clearChart = function() {};
 
 
 /**
- * @param {!Object} data
- * @param {Object=} opt_options
- * @return {undefined}
- */
+ * @override */
 google.visualization.LineChart.prototype.draw = function(data, opt_options) {};
 
 
 /**
- * @return {!Array.<Object>}
+ * @override
  */
 google.visualization.LineChart.prototype.getSelection = function() {};
 
 
 /**
- * @param {(!Array.<Object>|Array|null)=} opt_selection
- * @return {undefined}
+ * @override
  */
-google.visualization.LineChart.prototype.setSelection = function(opt_selection) {};
+google.visualization.LineChart.prototype.setSelection =
+    function(opt_selection) {};
 
 
 
@@ -1534,7 +1663,8 @@ google.visualization.MotionChart = function(container) {};
  * @param {Object=} opt_options
  * @return {undefined}
  */
-google.visualization.MotionChart.prototype.draw = function(data, opt_options) {};
+google.visualization.MotionChart.prototype.draw =
+    function(data, opt_options) {};
 
 
 /**
@@ -1569,7 +1699,8 @@ google.visualization.OrgChart.prototype.getSelection = function() {};
  * @param {(!Array.<Object>|Array|null)=} opt_selection
  * @return {undefined}
  */
-google.visualization.OrgChart.prototype.setSelection = function(opt_selection) {};
+google.visualization.OrgChart.prototype.setSelection =
+    function(opt_selection) {};
 
 
 /**
@@ -1582,7 +1713,8 @@ google.visualization.OrgChart.prototype.getCollapsedNodes = function() {};
  * @param {number} rowInd
  * @return {!Array.<number>}
  */
-google.visualization.OrgChart.prototype.getChildrenIndexes = function(rowInd) {};
+google.visualization.OrgChart.prototype.getChildrenIndexes =
+    function(rowInd) {};
 
 
 /**
@@ -1590,77 +1722,77 @@ google.visualization.OrgChart.prototype.getChildrenIndexes = function(rowInd) {}
  * @param {boolean} collapse
  * @return {undefined}
  */
-google.visualization.OrgChart.prototype.collapse = function(rowInd, collapse) {};
+google.visualization.OrgChart.prototype.collapse =
+    function(rowInd, collapse) {};
 
 
 
 /**
  * @param {Node} container
  * @constructor
+ * @implements {google.visualization.IChart}
  */
 google.visualization.PieChart = function(container) {};
 
 
 /**
- * @return {undefined}
+ * @override
  */
 google.visualization.PieChart.prototype.clearChart = function() {};
 
 
 /**
- * @param {!Object} data
- * @param {Object=} opt_options
- * @return {undefined}
+ * @override
  */
 google.visualization.PieChart.prototype.draw = function(data, opt_options) {};
 
 
 /**
- * @return {!Array.<Object>}
+ * @override
  */
 google.visualization.PieChart.prototype.getSelection = function() {};
 
 
 /**
- * @param {(!Array.<Object>|Array|null)=} opt_selection
- * @return {undefined}
+ * @override
  */
-google.visualization.PieChart.prototype.setSelection = function(opt_selection) {};
+google.visualization.PieChart.prototype.setSelection =
+    function(opt_selection) {};
 
 
 
 /**
  * @param {Node} container
  * @constructor
+ * @implements {google.visualization.IChart}
  */
 google.visualization.ScatterChart = function(container) {};
 
 
 /**
- * @return {undefined}
+ * @override
  */
 google.visualization.ScatterChart.prototype.clearChart = function() {};
 
 
 /**
- * @param {!Object} data
- * @param {Object=} opt_options
- * @return {undefined}
+ * @override
  */
-google.visualization.ScatterChart.prototype.draw = function(data, opt_options) {};
+google.visualization.ScatterChart.prototype.draw =
+    function(data, opt_options) {};
 
 
 /**
- * @return {!Array.<Object>}
+ * @override
  */
 google.visualization.ScatterChart.prototype.getSelection = function() {};
 
 
 /**
- * @param {(!Array.<Object>|Array|null)=} opt_selection
- * @return {undefined}
+ * @override
  */
-google.visualization.ScatterChart.prototype.setSelection = function(opt_selection) {};
+google.visualization.ScatterChart.prototype.setSelection =
+    function(opt_selection) {};
 
 
 
@@ -1669,71 +1801,72 @@ google.visualization.ScatterChart.prototype.setSelection = function(opt_selectio
  * @constructor
  */
 google.visualization.SparklineChart = function(container) {};
-google.visualization.SparklineChart.prototype.draw = function(data, opt_options, opt_state) {};
+google.visualization.SparklineChart.prototype.draw =
+    function(data, opt_options, opt_state) {};
 google.visualization.SparklineChart.prototype.clearChart = function() {};
 google.visualization.SparklineChart.prototype.getSelection = function() {};
-google.visualization.SparklineChart.prototype.setSelection = function(selection) {};
+google.visualization.SparklineChart.prototype.setSelection =
+    function(selection) {};
 
 
 
 /**
  * @param {Node} container
  * @constructor
+ * @implements {google.visualization.IChart}
  */
 google.visualization.SteppedAreaChart = function(container) {};
 
 
 /**
- * @return {undefined}
+ * @override
  */
 google.visualization.SteppedAreaChart.prototype.clearChart = function() {};
 
 
 /**
- * @param {!Object} data
- * @param {Object=} opt_options
- * @return {undefined}
+ * @override
  */
-google.visualization.SteppedAreaChart.prototype.draw = function(data, opt_options) {};
+google.visualization.SteppedAreaChart.prototype.draw =
+    function(data, opt_options) {};
 
 
 /**
- * @return {!Array.<Object>}
+ * @override
  */
 google.visualization.SteppedAreaChart.prototype.getSelection = function() {};
 
 
 /**
- * @param {(!Array.<Object>|Array|null)=} opt_selection
- * @return {undefined}
+ * @override
  */
-google.visualization.SteppedAreaChart.prototype.setSelection = function(opt_selection) {};
+google.visualization.SteppedAreaChart.prototype.setSelection =
+    function(opt_selection) {};
 
 
 
 /**
  * @param {Node} container
  * @constructor
+ * @implements {google.visualization.IChart}
  */
 google.visualization.Table = function(container) {};
 
 
 /**
- * @return {undefined}
+ * @override
  */
 google.visualization.Table.prototype.clearChart = function() {};
 
 
 /**
- * @param {!Object} data
- * @param {Object=} opt_options
- * @return {undefined}
+ * @override
  */
 google.visualization.Table.prototype.draw = function(data, opt_options) {};
 
 
 /**
- * @return {!Array.<Object>}
+ * @override
  */
 google.visualization.Table.prototype.getSelection = function() {};
 
@@ -1745,8 +1878,7 @@ google.visualization.Table.prototype.getSortInfo = function() {};
 
 
 /**
- * @param {(!Array.<Object>|Array|null)=} opt_selection
- * @return {undefined}
+ * @override
  */
 google.visualization.Table.prototype.setSelection = function(opt_selection) {};
 
@@ -1755,26 +1887,24 @@ google.visualization.Table.prototype.setSelection = function(opt_selection) {};
 /**
  * @param {Node} container
  * @constructor
+ * @implements {google.visualization.IChart}
  */
 google.visualization.TreeMap = function(container) {};
 
 
 /**
- * @return {undefined}
+ * @override
  */
 google.visualization.TreeMap.prototype.clearChart = function() {};
 
 
 /**
- * @param {!Object} data
- * @param {Object=} opt_options
- * @return {undefined}
- */
+ * @override */
 google.visualization.TreeMap.prototype.draw = function(data, opt_options) {};
 
 
 /**
- * @return {!Array.<Object>}
+ * @override
  */
 google.visualization.TreeMap.prototype.getSelection = function() {};
 
@@ -1786,10 +1916,10 @@ google.visualization.TreeMap.prototype.goUpAndDraw = function() {};
 
 
 /**
- * @param {(!Array.<Object>|Array|null)=} opt_selection
- * @return {undefined}
+ * @override
  */
-google.visualization.TreeMap.prototype.setSelection = function(opt_selection) {};
+google.visualization.TreeMap.prototype.setSelection =
+    function(opt_selection) {};
 
 google.visualization.drawToolbar = function(container, components) {};
 
@@ -1873,7 +2003,8 @@ google.visualization.ChartWrapper.prototype.getRefreshInterval = function() {};
  * @param {string} key
  * @param {*=} opt_default
  */
-google.visualization.ChartWrapper.prototype.getOption = function(key, opt_default) {};
+google.visualization.ChartWrapper.prototype.getOption =
+    function(key, opt_default) {};
 
 
 /**
@@ -1892,35 +2023,40 @@ google.visualization.ChartWrapper.prototype.getView = function() {};
  * @param {string} dataSourceUrl
  * @return {undefined}
  */
-google.visualization.ChartWrapper.prototype.setDataSourceUrl = function(dataSourceUrl) {};
+google.visualization.ChartWrapper.prototype.setDataSourceUrl =
+    function(dataSourceUrl) {};
 
 
 /**
  * @param {null|string|google.visualization.DataTable} dataTable
  * @return {undefined}
  */
-google.visualization.ChartWrapper.prototype.setDataTable = function(dataTable) {};
+google.visualization.ChartWrapper.prototype.setDataTable =
+    function(dataTable) {};
 
 
 /**
  * @param {string} chartName
  * @return {undefined}
  */
-google.visualization.ChartWrapper.prototype.setChartName = function(chartName) {};
+google.visualization.ChartWrapper.prototype.setChartName =
+    function(chartName) {};
 
 
 /**
  * @param {string} chartType
  * @return {undefined}
  */
-google.visualization.ChartWrapper.prototype.setChartType = function(chartType) {};
+google.visualization.ChartWrapper.prototype.setChartType =
+    function(chartType) {};
 
 
 /**
  * @param {string} containerId
  * @return {undefined}
  */
-google.visualization.ChartWrapper.prototype.setContainerId = function(containerId) {};
+google.visualization.ChartWrapper.prototype.setContainerId =
+    function(containerId) {};
 
 
 /**
@@ -1934,7 +2070,8 @@ google.visualization.ChartWrapper.prototype.setQuery = function(query) {};
  * @param {number} refreshInterval
  * @return {undefined}
  */
-google.visualization.ChartWrapper.prototype.setRefreshInterval = function(refreshInterval) {};
+google.visualization.ChartWrapper.prototype.setRefreshInterval =
+    function(refreshInterval) {};
 
 
 /**
@@ -2012,7 +2149,8 @@ google.visualization.ControlWrapper.prototype.getContainerId = function() {};
  * @param {string} key
  * @param {*=} opt_default
  */
-google.visualization.ControlWrapper.prototype.getOption = function(key, opt_default) {};
+google.visualization.ControlWrapper.prototype.getOption =
+    function(key, opt_default) {};
 
 
 /**
@@ -2031,28 +2169,32 @@ google.visualization.ControlWrapper.prototype.getState = function() {};
  * @param {string} controlType
  * @return {undefined}
  */
-google.visualization.ControlWrapper.prototype.setControlType = function(controlType) {};
+google.visualization.ControlWrapper.prototype.setControlType =
+    function(controlType) {};
 
 
 /**
  * @param {string} controlName
  * @return {undefined}
  */
-google.visualization.ControlWrapper.prototype.setControlName = function(controlName) {};
+google.visualization.ControlWrapper.prototype.setControlName =
+    function(controlName) {};
 
 
 /**
  * @param {string} containerId
  * @return {undefined}
  */
-google.visualization.ControlWrapper.prototype.setContainerId = function(containerId) {};
+google.visualization.ControlWrapper.prototype.setContainerId =
+    function(containerId) {};
 
 
 /**
  * @param {string} key
  * @param {*} value
  */
-google.visualization.ControlWrapper.prototype.setOption = function(key, value) {};
+google.visualization.ControlWrapper.prototype.setOption =
+    function(key, value) {};
 
 
 /**
@@ -2080,7 +2222,8 @@ google.visualization.ChartEditor = function(opt_config) {};
  * @param {Object=} opt_options
  * @return {null}
  */
-google.visualization.ChartEditor.prototype.openDialog = function(chartWrapper, opt_options) {};
+google.visualization.ChartEditor.prototype.openDialog =
+    function(chartWrapper, opt_options) {};
 
 
 /**
@@ -2093,7 +2236,8 @@ google.visualization.ChartEditor.prototype.getChartWrapper = function() {};
  * @param {google.visualization.ChartWrapper} chartWrapper
  * @return {null}
  */
-google.visualization.ChartEditor.prototype.setChartWrapper = function(chartWrapper) {};
+google.visualization.ChartEditor.prototype.setChartWrapper =
+    function(chartWrapper) {};
 
 
 /**
@@ -2126,7 +2270,8 @@ google.visualization.Dashboard.prototype.draw = function(dataTable) {};
 
 /** @constructor */
 google.visualization.StringFilter = function(container) {};
-google.visualization.StringFilter.prototype.draw = function(dataTable, opt_options, opt_state) {};
+google.visualization.StringFilter.prototype.draw =
+    function(dataTable, opt_options, opt_state) {};
 google.visualization.StringFilter.prototype.applyFilter = function() {};
 google.visualization.StringFilter.prototype.getState = function() {};
 google.visualization.StringFilter.prototype.resetControl = function() {};
@@ -2138,7 +2283,8 @@ google.visualization.StringFilter.prototype.resetControl = function() {};
  * @constructor
  */
 google.visualization.NumberRangeFilter = function(container) {};
-google.visualization.NumberRangeFilter.prototype.draw = function(dataTable, opt_options, opt_state) {};
+google.visualization.NumberRangeFilter.prototype.draw =
+    function(dataTable, opt_options, opt_state) {};
 google.visualization.NumberRangeFilter.prototype.applyFilter = function() {};
 google.visualization.NumberRangeFilter.prototype.getState = function() {};
 google.visualization.NumberRangeFilter.prototype.resetControl = function() {};
@@ -2150,7 +2296,8 @@ google.visualization.NumberRangeFilter.prototype.resetControl = function() {};
  * @constructor
  */
 google.visualization.CategoryFilter = function(container) {};
-google.visualization.CategoryFilter.prototype.draw = function(dataTable, opt_options, opt_state) {};
+google.visualization.CategoryFilter.prototype.draw =
+    function(dataTable, opt_options, opt_state) {};
 google.visualization.CategoryFilter.prototype.applyFilter = function() {};
 google.visualization.CategoryFilter.prototype.getState = function() {};
 google.visualization.CategoryFilter.prototype.resetControl = function() {};
@@ -2162,7 +2309,8 @@ google.visualization.CategoryFilter.prototype.resetControl = function() {};
  * @constructor
  */
 google.visualization.ChartRangeFilter = function(container) {};
-google.visualization.ChartRangeFilter.prototype.draw = function(dataTable, opt_options, opt_state) {};
+google.visualization.ChartRangeFilter.prototype.draw =
+    function(dataTable, opt_options, opt_state) {};
 google.visualization.ChartRangeFilter.prototype.applyFilter = function() {};
 google.visualization.ChartRangeFilter.prototype.getState = function() {};
 google.visualization.ChartRangeFilter.prototype.resetControl = function() {};
