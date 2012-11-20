@@ -1,6 +1,3 @@
-- multiple tracks
- - gePlugin left
-
 - track plugin
   - load kml (!earth plugin)
   - add an overlay while loading (indicator)
@@ -8,6 +5,7 @@
 - google earth plugin
   - wire earth events
   - show dialog when ge plugin is not installed (hide map type when not supported)
+  - multiple tracks
 
 - vgps3 Events
 
@@ -23,8 +21,6 @@
 
 - chart plugin
   - make it easier to extend & re-use
-
-- FontAwesome w/ firefox (mime type ?)
 
 - minify CSS
 
