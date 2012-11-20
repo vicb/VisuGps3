@@ -82,6 +82,7 @@ vgps3.path.Path.prototype.init = function(vgps) {
   this.element_ = goog.dom.getFirstElementChild(this.control_.getElement());
   goog.style.showElement(this.element_, false);
   this.events_.listen(this.control_.getElement(), 'mousedown', this.clickHandler_);
+  goog.style.setStyle(this.control_.getElement(), 'cursor', 'pointer');
 };
 
 
@@ -106,25 +107,31 @@ vgps3.path.Path.prototype.clickHandler_ = function(event) {
         strokeWeight: 4,
         zIndex: 100
       });
-
-      google.maps.event.addListener(
-          this.line_,
-          'mouseup',
-          goog.bind(function() { that.updateControl_(); }, that)
-      );
-    } else {
-      this.line_.setVisible(true);
     }
 
     /**
      * @type {google.maps.LatLng}
      */
-    var src = this.map_.getCenter();
+    var center = this.map_.getCenter();
 
     this.line_.setPath([
-      src,
-      google.maps.geometry.spherical.computeOffset(src, 30000, 90)
+      google.maps.geometry.spherical.computeOffset(center, 15000, 270),
+      google.maps.geometry.spherical.computeOffset(center, 15000, 90)
     ]);
+
+    google.maps.event.addListener(
+        this.line_.getPath(),
+        'insert_at',
+        goog.bind(function() { that.updateControl_(); }, that)
+    );
+
+    google.maps.event.addListener(
+        this.line_.getPath(),
+        'set_at',
+        goog.bind(function() { that.updateControl_(); }, that)
+    );
+
+    this.line_.setVisible(true);
 
     this.updateControl_();
   } else {
@@ -144,7 +151,3 @@ vgps3.path.Path.prototype.updateControl_ = function() {
     + ' km';
 
 };
-
-
-
-
