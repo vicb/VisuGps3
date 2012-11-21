@@ -46,7 +46,7 @@ vgps3.track.Track = function() {
   * @type {google.maps.Map}
   * @private
   */
-  this.map_;
+  this.gMap_;
 
   /**
   * Track data
@@ -100,9 +100,9 @@ vgps3.track.Track = function() {
  */
 vgps3.track.Track.prototype.init = function(vgps) {
   this.vgps_ = vgps;
-  this.map_ = vgps.getGoogleMap();
+  this.gMap_ = vgps.getGoogleMap();
 
-  google.maps.event.addListener(this.map_, 'click', goog.bind(this.onMapClick_, this));
+  google.maps.event.addListener(this.gMap_, 'click', goog.bind(this.onMapClick_, this));
 };
 
 
@@ -132,7 +132,7 @@ vgps3.track.Track.prototype.moveTo = function(position, setCenter) {
   this.currentTrackMarker_.setPosition(track.points[pointIndex]);
 
   if (setCenter) {
-    this.map_.setCenter(track.points[pointIndex]);
+    this.gMap_.setCenter(track.points[pointIndex]);
   }
 };
 
@@ -218,26 +218,26 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
   }
   this.tracks_[trackIndex].maxDelta = maxDelta;
   if (goog.DEBUG) {
-    this.logger_.info(goog.string.format('track[%s].maxDelta = %fm', trackIndex, maxDelta));
+    this.logger_.info(goog.string.format('track[%s].maxDelta = %.1fm', trackIndex, maxDelta));
   }
 
-  this.map_.fitBounds(this.getTracksBounds_());
+  this.gMap_.fitBounds(this.getTracksBounds_());
 
   if (0 === trackIndex) {
     this.currentTrackMarker_ = new google.maps.Marker({
       position: new google.maps.LatLng(gpsFixes.lat[0], gpsFixes.lon[0]),
-      map: this.map_,
+      map: this.gMap_,
       clickable: false
     });
 
     this.infoControl_ = new vgps3.Control(
-        this.map_,
+        this.gMap_,
         vgps3.track.templates.infoControl,
         google.maps.ControlPosition.RIGHT_BOTTOM
         );
 
     this.dateControl_ = new vgps3.Control(
-        this.map_,
+        this.gMap_,
         vgps3.track.templates.dateControl,
         google.maps.ControlPosition.RIGHT_TOP
         );
@@ -245,7 +245,7 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
     this.selectCurrentTrack_(0);
   }
 
-  this.vgps_.dispatchEvent(new vgps3.track.LoadEvent(trackIndex, gpsFixes));
+  this.vgps_.dispatchEvent(new vgps3.track.LoadEvent(trackIndex, gpsFixes, this.tracks_[trackIndex].color));
 };
 
 
@@ -261,7 +261,7 @@ vgps3.track.Track.prototype.getPolylineOptions_ = function(index) {
 
   return {
     clickable: false,
-    map: this.map_,
+    map: this.gMap_,
     path: this.tracks_[index].points,
     strokeColor: this.tracks_[index].color,
     strokeWeight: 2,

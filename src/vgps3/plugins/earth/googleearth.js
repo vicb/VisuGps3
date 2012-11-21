@@ -37,7 +37,7 @@ GoogleEarth = function(map) {
   /**
    * @private
    * @type {google.maps.Map} */
-  this.map_ = map;
+  this.gMap_ = map;
 
   /**
    * @private
@@ -117,7 +117,7 @@ GoogleEarth.prototype['getInstance'] = GoogleEarth.prototype.getInstance;
  * @private
  */
 GoogleEarth.prototype.addEarthMapType_ = function() {
-  var map = this.map_;
+  var map = this.gMap_;
 
   var earthMapType = /** @type {google.maps.MapType} */({
     tileSize: new google.maps.Size(256, 256),
@@ -151,7 +151,7 @@ GoogleEarth.prototype.addEarthMapType_ = function() {
  * @private
  */
 GoogleEarth.prototype.mapTypeChanged_ = function() {
-  if (this.map_.getMapTypeId() == GoogleEarth.MAP_TYPE_ID) {
+  if (this.gMap_.getMapTypeId() == GoogleEarth.MAP_TYPE_ID) {
     this.showEarth_();
   } else {
     this.switchToMapView_();
@@ -214,15 +214,17 @@ GoogleEarth.prototype.clearPlacemarks_ = function() {
 };
 
 
+
+
 /**
  * Fly to the current map zoom, add slight tilt.
  * @private
  * @param {boolean} tilt whether to teleport and tilt, or just flyto.
  */
 GoogleEarth.prototype.flyToMapView_ = function(tilt) {
-  var center = this.map_.getCenter();
+  var center = this.gMap_.getCenter();
   var lookAt = this.instance_.createLookAt('');
-  var range = Math.pow(2, GoogleEarth.MAX_EARTH_ZOOM_ - this.map_.getZoom());
+  var range = Math.pow(2, GoogleEarth.MAX_EARTH_ZOOM_ - this.gMap_.getZoom());
   lookAt.setRange(range);
   lookAt.setLatitude(center.lat());
   lookAt.setLongitude(center.lng());
@@ -641,7 +643,7 @@ GoogleEarth.prototype.initializeEarth_ = function() {
   }, function(e) {
     that.hideEarth_();
     //TODO(jlivni) record previous maptype
-    that.map_.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+    that.gMap_.setMapTypeId(google.maps.MapTypeId.ROADMAP);
     throw 'Google Earth API failed to initialize: ' + e;
   });
 };
@@ -668,7 +670,7 @@ GoogleEarth.prototype.addEarthEvents_ = function() {
   layerRoot.enableLayerById(ge.LAYER_ROADS, true);
 
   var that = this;
-  google.maps.event.addListener(this.map_,
+  google.maps.event.addListener(this.gMap_,
                                 GoogleEarth.INFO_WINDOW_OPENED_EVENT_,
                                 function(infowindow) {
         //If Earth is open, create balloon
@@ -712,14 +714,14 @@ GoogleEarth.prototype.matchMapToEarth_ = function() {
   var range = lookAt.getRange();
   var zoom = Math.round(
       GoogleEarth.MAX_EARTH_ZOOM_ - (Math.log(range) / Math.log(2)));
-  if (!this.map_.getZoom() == zoom) {
-    this.map_.setZoom(zoom - 1);
+  if (!this.gMap_.getZoom() == zoom) {
+    this.gMap_.setZoom(zoom - 1);
   } else {
-    this.map_.setZoom(zoom);
+    this.gMap_.setZoom(zoom);
   }
   var center = new google.maps.LatLng(lookAt.getLatitude(),
                                       lookAt.getLongitude());
-  this.map_.panTo(center);
+  this.gMap_.panTo(center);
 };
 
 
@@ -873,11 +875,11 @@ GoogleEarth.prototype.addEarthControl_ = function() {
 
   inner.appendChild(earthDiv);
 
-  this.map_.controls[google.maps.ControlPosition.TOP_LEFT].push(control);
+  this.gMap_.controls[google.maps.ControlPosition.TOP_LEFT].push(control);
 
   var that = this;
 
-  google.maps.event.addListener(this.map_, 'resize', function() {
+  google.maps.event.addListener(this.gMap_, 'resize', function() {
     that.resizeEarth_();
   });
 };
@@ -905,7 +907,7 @@ GoogleEarth.prototype.getOverlaysForType_ = function(type) {
   for (var i in overlays) {
     if (overlays.hasOwnProperty(i)) {
       var overlay = overlays[i];
-      if (overlay.get('map') == this.map_) {
+      if (overlay.get('map') == this.gMap_) {
         tmp.push(overlay);
       }
     }

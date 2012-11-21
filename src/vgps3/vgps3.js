@@ -15,7 +15,6 @@
 
 goog.provide('vgps3.Viewer');
 
-goog.require('GoogleEarth');
 goog.require('goog.Uri');
 goog.require('goog.array');
 goog.require('goog.debug.Console');
@@ -70,8 +69,8 @@ vgps3.Viewer = function(mapContainer, chartContainer) {
             google.maps.MapTypeId.ROADMAP,
             google.maps.MapTypeId.SATELLITE,
             google.maps.MapTypeId.TERRAIN,
-            'ign_terrain',
-            GoogleEarth.MAP_TYPE_ID
+            vgps3.ign.MapTypeId.TERRAIN,
+            vgps3.earth.MapTypeId.EARTH
           ]
         }
       },
