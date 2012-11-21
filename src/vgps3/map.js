@@ -38,7 +38,7 @@ vgps3.Map = function(container, options, plugins) {
   * @type {google.maps.Map}
   * @private
   */
-  this.map_ = null;
+  this.gMap_ = null;
 
   /**
   * @type {goog.ui.Dialog}
@@ -63,7 +63,7 @@ vgps3.Map = function(container, options, plugins) {
 
   goog.object.extend(opt, options || {});
 
-  this.map_ = new google.maps.Map(container, opt);
+  this.gMap_ = new google.maps.Map(container, opt);
 
   this.initPlugins_(plugins);
 };
@@ -74,7 +74,7 @@ goog.inherits(vgps3.Map, goog.events.EventTarget);
  * @return {google.maps.Map} The google map object.
  */
 vgps3.Map.prototype.getGoogleMap = function() {
-  return this.map_;
+  return this.gMap_;
 };
 
 

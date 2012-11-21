@@ -22,11 +22,12 @@ goog.require('goog.events.Event');
 /**
  * @param {number} index
  * @param {!Object} track
+ * @param {string} color
  *
  * @constructor
  * @extends {goog.events.Event}
  */
-vgps3.track.LoadEvent = function(index, track) {
+vgps3.track.LoadEvent = function(index, track, color) {
   goog.base(this, vgps3.track.EventType.LOAD);
 
   /**
@@ -38,6 +39,11 @@ vgps3.track.LoadEvent = function(index, track) {
    * @type {number}
   */
   this.index = index;
+
+  /**
+   * @type {string}
+   */
+  this.color = color;
 };
 goog.inherits(vgps3.track.LoadEvent, goog.events.Event);
 

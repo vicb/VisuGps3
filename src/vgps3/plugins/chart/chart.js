@@ -108,12 +108,11 @@ vgps3.chart.Chart = function(container) {
   * @private
   */
   this.chartLoaded_ = new goog.async.Deferred();
-  var that = this;
 
   if (google && google.load) {
-    this.loadApi_();
+    this.apiLoadHandler_();
   } else {
-    goog.net.jsloader.load(vgps3.chart.LOADER_URL).addCallback(function() { that.loadApi_(); });
+    goog.net.jsloader.load(vgps3.chart.LOADER_URL).addCallback(this.apiLoadHandler_, this);
   }
 };
 
@@ -284,11 +283,11 @@ vgps3.chart.Chart.prototype.createDataView_ = function(index) {
 /**
  * @private
  */
-vgps3.chart.Chart.prototype.loadApi_ = function() {
+vgps3.chart.Chart.prototype.apiLoadHandler_ = function() {
   var that = this;
   google.load('visualization', '1.0', {
     packages: ['corechart'],
-    callback: function() { that.chartLoaded_.callback(); }
+    callback: goog.bind(this.chartLoaded_.callback, this.chartLoaded_)
   });
 };
 

@@ -86,7 +86,7 @@ vgps3.chart.Sliders.prototype.getTitleElement = function() {
 vgps3.chart.Sliders.prototype.createDom = function() {
   this.element_ = this.dom_.createElement('div');
 
-  goog.dom.append(
+  goog.dom.appendChild(
       this.element_,
       this.title_ = goog.dom.createDom(
       'div',

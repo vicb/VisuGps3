@@ -3,13 +3,11 @@
   - add an overlay while loading (indicator)
 
 - google earth plugin
-  - wire earth events
-  - show dialog when ge plugin is not installed (hide map type when not supported)
+  - resize event
   - multiple tracks
+  - ge should be static (single instance)
 
 - vgps3 Events
-
-- dispose in plugins
 
 - add skyways (requires a "more" control)
 
@@ -22,11 +20,17 @@
 - chart plugin
   - make it easier to extend & re-use
 
-- minify CSS
-
-- i18n
+- plugin interface:
+  - loadJsApi(config, callback) -> centralize JS api loading
+  - dispose()
 
 - Dispose: check & add to avoid leaks
   - https://wiki.mozilla.org/Performance%3aLeak_Tools
   - https://addons.mozilla.org/en-US/firefox/addon/leak-monitor/
   - https://code.google.com/p/leak-finder-for-javascript/
+
+- ign: request a key
+
+- minify CSS
+
+- i18n

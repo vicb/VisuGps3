@@ -21,6 +21,8 @@ goog.require('goog.events.EventHandler');
 goog.require('goog.style');
 goog.require('vgps3.Control');
 goog.require('vgps3.path.templates');
+goog.require('goog.net.Cookies');
+goog.require('goog.Timer');
 
 
 
@@ -39,7 +41,7 @@ vgps3.path.Path = function() {
   * @type {google.maps.Map}
   * @private
   */
-  this.map_;
+  this.gMap_;
 
   /**
    * @type {google.maps.Polyline}
@@ -72,9 +74,9 @@ vgps3.path.Path = function() {
  */
 vgps3.path.Path.prototype.init = function(vgps) {
   this.vgps_ = vgps;
-  this.map_ = vgps.getGoogleMap();
+  this.gMap_ = vgps.getGoogleMap();
   this.control_ = new vgps3.Control(
-      this.map_,
+      this.gMap_,
       vgps3.path.templates.pathControl,
       google.maps.ControlPosition.RIGHT_TOP
       );
@@ -97,42 +99,32 @@ vgps3.path.Path.prototype.clickHandler_ = function(event) {
   var visible = goog.style.isElementShown(this.element_);
 
   if (!visible) {
-    var that = this;
-
-    if (!goog.isDef(this.line_)) {
-      this.line_ = new google.maps.Polyline({
-        editable: true,
-        map: this.map_,
-        strokeColor: 'black',
-        strokeWeight: 4,
-        zIndex: 100
-      });
-    }
-
     /**
      * @type {google.maps.LatLng}
      */
-    var center = this.map_.getCenter();
+    var center = this.gMap_.getCenter();
+
+    if (!goog.isDef(this.line_)) {
+      var cookies = new goog.net.Cookies(document);
+
+      this.createLine_();
+
+      if ('hide' !== cookies.get(vgps3.path.HELP, 'show')) {
+        var help = new google.maps.InfoWindow({
+          content: vgps3.path.templates.help(),
+          position: center
+        });
+        help.open(this.gMap_);
+        goog.Timer.callOnce(help.close, 8000, help);
+        cookies.set(vgps3.path.HELP, 'hide');
+      }
+    }
 
     this.line_.setPath([
       google.maps.geometry.spherical.computeOffset(center, 15000, 270),
       google.maps.geometry.spherical.computeOffset(center, 15000, 90)
     ]);
-
-    google.maps.event.addListener(
-        this.line_.getPath(),
-        'insert_at',
-        goog.bind(function() { that.updateControl_(); }, that)
-    );
-
-    google.maps.event.addListener(
-        this.line_.getPath(),
-        'set_at',
-        goog.bind(function() { that.updateControl_(); }, that)
-    );
-
     this.line_.setVisible(true);
-
     this.updateControl_();
   } else {
     this.line_.setVisible(false);
@@ -140,6 +132,38 @@ vgps3.path.Path.prototype.clickHandler_ = function(event) {
 
   goog.style.showElement(this.element_, !visible);
 };
+
+/**
+ * @private
+ */
+vgps3.path.Path.prototype.createLine_ = function() {
+  var that = this;
+
+  this.line_ = new google.maps.Polyline({
+    editable: true,
+    map: this.gMap_,
+    strokeColor: 'black',
+    strokeWeight: 4,
+    zIndex: 100
+  });
+
+  google.maps.event.addListener(
+      this.line_,
+      'mousemove',
+      goog.bind(function() { that.updateControl_(); }, that)
+  );
+
+  google.maps.event.addListener(
+      this.line_,
+      'rightclick',
+      function(event) {
+        if (goog.isDef(event.vertex)) {
+          var path = this.getPath();
+          path.getLength() > 2 && path.removeAt(event.vertex);
+        }
+      }
+  );
+}
 
 
 /**
@@ -151,3 +175,8 @@ vgps3.path.Path.prototype.updateControl_ = function() {
     + ' km';
 
 };
+
+/**
+ * @const
+ */
+vgps3.path.HELP = 'vgps3.path.help';

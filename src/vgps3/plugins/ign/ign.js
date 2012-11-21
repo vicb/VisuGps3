@@ -33,7 +33,7 @@ vgps3.ign.Map = function() {
  */
 vgps3.ign.Map.prototype.init = function(vgps) {
   var gMap = vgps.getGoogleMap();
-  gMap.mapTypes.set('ign_terrain', this.getIgnMapType_());
+  gMap.mapTypes.set(vgps3.ign.MapTypeId.TERRAIN, this.getIgnMapType_());
 };
 
 
@@ -75,5 +75,10 @@ vgps3.ign.API_KEY = 'tyujsdxmzox31ituc2uw0qwl';
  */
 vgps3.ign.TILES_URL = 'http://gpp3-wxs.ign.fr/' + vgps3.ign.API_KEY + '/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER={layer}&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={zoom}&TILEROW={y}&TILECOL={x};';
 
-
+/**
+ * @enum {string}
+ */
+vgps3.ign.MapTypeId = {
+  TERRAIN: 'vgps3-ign-terrain'
+};
 
