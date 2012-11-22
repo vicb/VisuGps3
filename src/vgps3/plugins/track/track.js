@@ -63,7 +63,7 @@ vgps3.track.Track = function() {
   this.tracks_ = [];
 
   /**
-  * @type {?number}
+  * @type {number|undefined}
   * @private
   */
   this.currentTrackIndex_;
@@ -304,17 +304,44 @@ vgps3.track.Track.prototype.getTracksBounds_ = function() {
   return bounds;
 };
 
+/**
+ * @param {number} trackIdx
+ * @param {number=} previousTrackIndex
+ * @private
+ */
+vgps3.track.Track.prototype.selectCurrentTrack_ = function(trackIdx, previousTrackIndex) {
+  if (trackIdx !== previousTrackIndex) {
+    this.currentTrackIndex_ = trackIdx;
+    this.updateDateControl_(trackIdx);
+    goog.style.setStyle(
+      this.dateControl_.getElement(),
+      'background-color',
+      goog.color.rgbArrayToHex(goog.color.lighten(goog.color.hexToRgb(this.tracks_[trackIdx].color), .6))
+    );
+    this.updateInfoControl_(0);
+    this.moveTo(0);
+    this.tracks_[trackIdx].polyline.setOptions(this.getPolylineOptions_(trackIdx));
+    goog.isDef(previousTrackIndex) && this.tracks_[previousTrackIndex].polyline.setOptions(this.getPolylineOptions_(previousTrackIndex));
+    this.vgps_.dispatchEvent(new vgps3.track.TrackSelectEvent(
+        trackIdx,
+        goog.isDef(previousTrackIndex) ? previousTrackIndex: null
+    ));
+  }
+};
+
 
 /**
- *
- * @param {google.maps.LatLng} latlng
+ * @param {google.maps.MouseEvent} event
+ * @private
  */
-vgps3.track.Track.prototype.click = function(latlng) {
-  // todo bahhh public ! -> event if possible (see earth plugin)
+vgps3.track.Track.prototype.clickHandler_ = function(event) {
+  this.logger_.info(goog.string.format('Click %.5f %.5f', event.latLng.lat(), event.latLng.lng()));
+
   var trackIndex,
       pointIndex,
       location,
       currentDistance, distance = 10000,
+      latlng = event.latLng,
       that = this;
 
   goog.array.forEach(this.tracks_, function(track, trackIdx) {
@@ -341,12 +368,12 @@ vgps3.track.Track.prototype.click = function(latlng) {
           'Click location search: %d trials for %d points',
           trials,
           nbPoints
-          ));
+      ));
     }
   });
 
   if (goog.isDef(location)) {
-    this.selectCurrentTrack_(trackIndex);
+    this.selectCurrentTrack_(trackIndex, this.currentTrackIndex_);
     var position = pointIndex / (this.tracks_[trackIndex].fixes.nbTrackPt - 1);
 
     this.currentTrackMarker_.setPosition(location);
@@ -356,48 +383,7 @@ vgps3.track.Track.prototype.click = function(latlng) {
         position
     ));
   }
-};
 
-
-/**
- * @param {number} trackIdx
- * @private
- */
-vgps3.track.Track.prototype.selectCurrentTrack_ = function(trackIdx) {
-  var previousIndex = goog.isDef(this.currentTrackIndex_)
-    ? this.currentTrackIndex_
-    : null;
-
-
-  if (trackIdx !== previousIndex) {
-    this.currentTrackIndex_ = trackIdx;
-    this.updateDateControl_(trackIdx);
-    goog.style.setStyle(
-        this.dateControl_.getElement(),
-        'background-color',
-        goog.color.rgbArrayToHex(goog.color.lighten(goog.color.hexToRgb(this.tracks_[trackIdx].color), .6))
-    );
-    this.updateInfoControl_(0);
-    this.moveTo(0);
-    goog.array.forEach(
-        [trackIdx, previousIndex],
-        function(index) {
-          !goog.isNull(index) && this.tracks_[index].polyline.setOptions(this.getPolylineOptions_(index));
-        },
-        this
-    );
-    this.vgps_.dispatchEvent(new vgps3.track.TrackSelectEvent(trackIdx, previousIndex));
-  }
-};
-
-
-/**
- * @param {google.maps.MouseEvent} event
- * @private
- */
-vgps3.track.Track.prototype.clickHandler_ = function(event) {
-  this.logger_.info(goog.string.format('Click %.5f %.5f', event.latLng.lat(), event.latLng.lng()));
-  this.click(event.latLng);
 };
 
 

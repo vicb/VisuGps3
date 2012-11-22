@@ -39,3 +39,8 @@ as the maps API v2 will be deprecated in 2013.
 
 - [Victor Berchet](https://github.com/vicb)
 - [Tom Payne](https://github.com/twpayne)
+
+## Credits
+
+- [Josh Livni](https://github.com/jlivni): Parts of the earth plugin have been inspired by his
+  [Earth API library for Maps v3](http://code.google.com/p/google-maps-utility-library-v3/source/browse/trunk/googleearth/src/googleearth.js)

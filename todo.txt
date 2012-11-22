@@ -31,6 +31,8 @@
 
 - ign: request a key
 
+- scale control on map + earth
+
 - minify CSS
 
 - i18n
