@@ -20,6 +20,7 @@ goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventTarget');
 goog.require('goog.object');
 goog.require('goog.ui.Dialog');
+goog.require('goog.ui.IframeMask');
 goog.require('goog.ui.Dialog.ButtonSet');
 goog.require('vgps3.templates');
 
@@ -90,11 +91,24 @@ vgps3.Map.prototype.getGoogleMap = function() {
  * @return {undefined}
  */
 vgps3.Map.prototype.showAbout = function() {
-  var dialog = this.aboutDialog_ || (this.aboutDialog_ = new goog.ui.Dialog());
-  dialog.setTitle('VisuGps v' + vgps3.VERSION);
-  dialog.setContent(vgps3.templates.about());
-  dialog.setButtonSet(goog.ui.Dialog.ButtonSet.createOk());
-  dialog.setVisible(true);
+  if (goog.isDef(this.aboutDialog_)) {
+    this.aboutDialog_ = new goog.ui.Dialog(undefined);
+    this.aboutDialog_.setTitle('VisuGps v' + vgps3.VERSION);
+    this.aboutDialog_.setContent(vgps3.templates.about());
+    this.aboutDialog_.setButtonSet(goog.ui.Dialog.ButtonSet.createOk());
+    this.aboutDialog_.setEscapeToCancel(true);
+    this.aboutDialog_.getDialogElement();
+    this.aboutDialog_.setDraggable(false);
+    var mask = new goog.ui.IframeMask();
+    mask.setOpacity(1);
+    mask.listenOnTarget(
+        this.aboutDialog_,
+        goog.ui.Component.EventType.SHOW,
+        goog.ui.Component.EventType.HIDE,
+        this.aboutDialog_.getDialogElement()
+    );
+  }
+  this.aboutDialog_.setVisible(true);
 };
 
 

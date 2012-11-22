@@ -32,7 +32,6 @@ goog.require('goog.string.format');
 goog.require('goog.math');
 goog.require('goog.functions');
 goog.require('goog.array');
-goog.require('goog.ui.IframeMask');
 
 
 /**
@@ -177,12 +176,12 @@ vgps3.earth.Earth.prototype.mapTypeChanged_ = function() {
   if (this.gMap_.getMapTypeId() === vgps3.earth.MapTypeId.EARTH) {
     if (!goog.isDef(this.ge_)) {
       this.createEarth_();
-      this.mapCreated_.addCallback(function() {
+    }
+    this.mapCreated_.addCallback(function() {
           this.currentMapTypeId_ = this.gMap_.getMapTypeId();
         },
         this
-      );
-    }
+    );
     goog.style.showElement(this.earthDom_, true);
     this.showControls_(true);
   } else {
