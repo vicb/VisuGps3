@@ -372,10 +372,29 @@ vgps3.earth.Earth.prototype.displayTrack_ = function(index, fixes, color) {
   lineStringPm.setGeometry(lineString);
   lineString.setTessellate(false);
 
+  if (!goog.isDef(this.location_)) {
+    // Location where to first display the 3D model
+    this.location_ = this.ge_.createLocation('');
+    this.location_.setLatitude(fixes.lat[0]);
+    this.location_.setLongitude(fixes.lon[0]);
+    this.location_.setAltitude(fixes.elev[0]);
+    // fly to this location
+    var lookAt = this.ge_.getView().copyAsLookAt(this.ge_.ALTITUDE_ABSOLUTE);
+    var range = Math.pow(2, vgps3.earth.MAX_EARTH_ZOOM_ - 12);
+    lookAt.setRange(range);
+    lookAt.setLatitude(fixes.lat[0]);
+    lookAt.setLongitude(fixes.lon[0]);
+    lookAt.setHeading(0);
+    lookAt.setAltitude(fixes.elev[0]);
+    lookAt.setTilt(45);
+    this.ge_.getView().setAbstractView(lookAt);
+  }
+
   google.earth.executeBatch(this.ge_, function() {
     var points = lineString.getCoordinates();
+    var getElevation = goog.bind(that.estimateElevation_, that, (fixes.nbChartPt - 1) / (fixes.nbTrackPt - 1));
     for (var i = 0; i < fixes.nbTrackPt; i++) {
-      points.pushLatLngAlt(fixes.lat[i], fixes.lon[i], that.estimateElevation_(fixes, i));
+      points.pushLatLngAlt(fixes.lat[i], fixes.lon[i], getElevation(fixes, i));
     }
   });
 
@@ -387,24 +406,18 @@ vgps3.earth.Earth.prototype.displayTrack_ = function(index, fixes, color) {
   lineStyle.setWidth(2);
   // color format: aabbggrr
   lineStyle.getColor().set(goog.color.parse(color).hex.replace(/#(..)(..)(..)/, 'ff$3$2$1'));
-
-  if (!goog.isDef(this.location_)) {
-    this.location_ = this.ge_.createLocation('');
-    this.location_.setLatitude(fixes.lat[0]);
-    this.location_.setLongitude(fixes.lon[0]);
-    this.location_.setAltitude(fixes.elev[0]);
-  }
 };
 
 /**
  * Interpolates the elevation for the given position
+ * @param {number} factor The ratio elevation points / track points
  * @param {vgps3.track.GpsFixes} fixes
  * @param {number} index [0...fixes.nbTrackPt]
  * @return {number}
  * @private
  */
-vgps3.earth.Earth.prototype.estimateElevation_ = function(fixes, index) {
-  index = index * (fixes.nbChartPt - 1) / (fixes.nbTrackPt - 1);
+vgps3.earth.Earth.prototype.estimateElevation_ = function(factor, fixes, index) {
+  index = index * factor;
   var chartIndex = Math.round(index),
       nextChartIndex = chartIndex + 1 < fixes.nbTrackPt ? chartIndex + 1 : chartIndex;
   return fixes.elev[chartIndex] + (index - chartIndex) * (fixes.elev[nextChartIndex] - fixes.elev[chartIndex]);
@@ -445,6 +458,13 @@ vgps3.earth.LOADER_URL = 'https://www.google.com/jsapi';
 // todo
 vgps3.earth.MODEL_URL = 'http://victorb.fr/visugps/img/paraglider.dae';
 
+
+/**
+ * @const
+ * @private
+ * @type {number}
+ */
+vgps3.earth.MAX_EARTH_ZOOM_ = 27;
 
 /**
  * @enum {string}
