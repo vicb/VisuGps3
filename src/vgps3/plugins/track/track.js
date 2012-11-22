@@ -32,6 +32,7 @@ goog.require('goog.string.format');
 
 
 
+
 /**
  * @constructor
  * @implements {vgps3.IPlugin}
@@ -125,7 +126,7 @@ vgps3.track.Track.prototype.load = function(url) {
  */
 vgps3.track.Track.prototype.moveTo = function(position, setCenter, zoomOffset) {
   var track = this.tracks_[this.currentTrackIndex_],
-      pointIndex = Math.round(position * (track.fixes.nbTrackPt - 1));
+      pointIndex = Math.round(position * (track.fixes['nbTrackPt'] - 1));
 
   this.updateInfoControl_(position);
   this.currentTrackMarker_.setPosition(track.points[pointIndex]);
@@ -190,16 +191,16 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
     fixes: gpsFixes
   });
 
-  for (var i = 0; i < gpsFixes.nbTrackPt; i++) {
-    point = new google.maps.LatLng(gpsFixes.lat[i], gpsFixes.lon[i]);
+  for (var i = 0; i < gpsFixes['nbTrackPt']; i++) {
+    point = new google.maps.LatLng(gpsFixes['lat'][i], gpsFixes['lon'][i]);
     this.tracks_[trackIndex].points.push(point);
     bounds.extend(point);
   }
 
-  for (var i = 0; i < gpsFixes.nbChartPt; i++) {
-    gpsFixes.elev[i] = goog.math.clamp(gpsFixes.elev[i], 0, vgps3.track.MAX_ELEV);
-    gpsFixes.speed[i] = Math.min(vgps3.track.MAX_SPEED, gpsFixes.speed[i]);
-    gpsFixes.vario[i] = Math.min(vgps3.track.MAX_VARIO, gpsFixes.vario[i]);
+  for (var i = 0; i < gpsFixes['nbChartPt']; i++) {
+    gpsFixes['elev'][i] = goog.math.clamp(gpsFixes['elev'][i], 0, vgps3.track.MAX_ELEV);
+    gpsFixes['speed'][i] = Math.min(vgps3.track.MAX_SPEED, gpsFixes['speed'][i]);
+    gpsFixes['vario'][i] = Math.min(vgps3.track.MAX_VARIO, gpsFixes['vario'][i]);
   }
 
   this.tracks_[trackIndex].bounds = bounds;
@@ -228,7 +229,7 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
 
   if (0 === trackIndex) {
     this.currentTrackMarker_ = new google.maps.Marker({
-      position: new google.maps.LatLng(gpsFixes.lat[0], gpsFixes.lon[0]),
+      position: this.tracks_[0].points[0],
       map: this.gMap_,
       clickable: false
     });
@@ -374,7 +375,7 @@ vgps3.track.Track.prototype.clickHandler_ = function(event) {
 
   if (goog.isDef(location)) {
     this.selectCurrentTrack_(trackIndex, this.currentTrackIndex_);
-    var position = pointIndex / (this.tracks_[trackIndex].fixes.nbTrackPt - 1);
+    var position = pointIndex / (this.tracks_[trackIndex].fixes['nbTrackPt'] - 1);
 
     this.currentTrackMarker_.setPosition(location);
     this.updateInfoControl_(position);
@@ -393,7 +394,7 @@ vgps3.track.Track.prototype.clickHandler_ = function(event) {
  */
 vgps3.track.Track.prototype.updateInfoControl_ = function(position) {
   var fixes = this.tracks_[this.currentTrackIndex_].fixes,
-      chartIndex = Math.round(position * (fixes.nbChartPt - 1));
+      chartIndex = Math.round(position * (fixes['nbChartPt'] - 1));
 
   this.infoControl_.update({
     fixes: fixes,
@@ -410,8 +411,8 @@ vgps3.track.Track.prototype.updateDateControl_ = function(trackIndex) {
   var fixes = this.tracks_[trackIndex].fixes;
 
   this.dateControl_.update({
-    date: fixes.date,
-    pilot: fixes.pilot
+    date: fixes['date'],
+    pilot: fixes['pilot']
   });
 };
 
@@ -481,3 +482,6 @@ vgps3.track.Date;
 vgps3.track.GpsFixes;
 
 // todo dispose
+
+goog.exportSymbol('vgps3.track.Track', vgps3.track.Track);
+goog.exportSymbol('vgps3.track.Track.init', vgps3.track.Track.prototype.init);

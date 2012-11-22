@@ -22,7 +22,7 @@ goog.require('goog.style');
 goog.require('vgps3.Control');
 goog.require('vgps3.path.templates');
 goog.require('goog.net.Cookies');
-goog.require('goog.Timer');
+
 
 
 
@@ -180,3 +180,6 @@ vgps3.path.Path.prototype.updateControl_ = function() {
  * @const
  */
 vgps3.path.HELP = 'vgps3.path.help';
+
+goog.exportSymbol('vgps3.path.Path', vgps3.path.Path);
+goog.exportSymbol('vgps3.path.Path.init', vgps3.path.Path.prototype.init);

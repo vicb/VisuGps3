@@ -1,5 +1,5 @@
 /**
- * @license Copyright 2012 Victor Berchet.
+ * Copyright 2012 Victor Berchet.
  *
  * VisuGps3
  *
@@ -159,3 +159,5 @@ vgps3.Viewer.prototype.array2LatLng_ = function(latlng) {
  * @define {string}
  */
 vgps3.VERSION = '3.0';
+
+goog.exportSymbol('vgps3.Viewer', vgps3.Viewer);

@@ -19,7 +19,6 @@ goog.require('vgps3.IPlugin');
 goog.require('vgps3.Map');
 
 
-
 /**
  * @constructor
  * @implements {vgps3.IPlugin}
@@ -82,3 +81,5 @@ vgps3.ign.MapTypeId = {
   TERRAIN: 'vgps3-ign-terrain'
 };
 
+goog.exportSymbol('vgps3.ign.Map', vgps3.ign.Map);
+goog.exportSymbol('vgps3.ign.Map.init', vgps3.ign.Map.prototype.init);

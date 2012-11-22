@@ -132,3 +132,6 @@ vgps3.route.END_ICON_URL = 'http://labs.google.com/ridefinder/images/mm_20_red.p
  * @define {string}
  */
 vgps3.route.ICON_URL = 'http://labs.google.com/ridefinder/images/mm_20_orange.png';
+
+goog.exportSymbol('vgps3.route.Route', vgps3.route.Route);
+goog.exportSymbol('vgps3.route.Route.init', vgps3.route.Route.prototype.init);

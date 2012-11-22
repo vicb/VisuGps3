@@ -33,8 +33,6 @@ goog.require('vgps3.chart.Overlays');
 goog.require('vgps3.chart.Sliders');
 goog.require('vgps3.chart.WheelEvent');
 
-
-
 /**
  * @param {!Element} container
  *
@@ -76,7 +74,7 @@ vgps3.chart.Chart = function(container) {
   this.chartData_ = [];
 
   /**
-   * @typdef {{
+   * @typedef {{
    *     elevation: Node,
    *     speed: Node,
    *     vario: Node
@@ -123,15 +121,8 @@ vgps3.chart.Chart = function(container) {
 vgps3.chart.Chart.prototype.init = function(vgps) {
   this.vgps_ = vgps;
 
-  this.vgps_.addEventListener(
-      vgps3.track.EventType.LOAD,
-      goog.bind(this.mapLoadHandler_, this)
-  );
-
-  this.vgps_.addEventListener(
-      vgps3.track.EventType.SELECT,
-      goog.bind(this.mapSelectHandler_, this)
-  );
+  this.vgps_.addEventListener(vgps3.track.EventType.LOAD, goog.bind(this.mapLoadHandler_, this));
+  this.vgps_.addEventListener(vgps3.track.EventType.SELECT, goog.bind(this.mapSelectHandler_, this));
 };
 
 
@@ -266,13 +257,13 @@ vgps3.chart.Chart.prototype.createDataView_ = function(index) {
   dataTable.addColumn('number', 'Vx');
   dataTable.addColumn('number', 'Vz');
 
-  for (var chartIndex = 0; chartIndex < track.nbChartPt; chartIndex++) {
+  for (var chartIndex = 0; chartIndex < track['nbChartPt']; chartIndex++) {
     dataTable.addRow([
-      track.time.hour[chartIndex] + 'h' + track.time.min[chartIndex],
-      track.elev[chartIndex],
-      track.elevGnd[chartIndex],
-      track.speed[chartIndex],
-      track.vario[chartIndex]
+      track['time']['hour'][chartIndex] + 'h' + track['time']['min'][chartIndex],
+      track['elev'][chartIndex],
+      track['elevGnd'][chartIndex],
+      track['speed'][chartIndex],
+      track['vario'][chartIndex]
     ]);
   }
 
@@ -384,4 +375,6 @@ vgps3.chart.CHART_OPTIONS = {
   }
 };
 
+goog.exportSymbol('vgps3.chart.Chart', vgps3.chart.Chart);
+goog.exportSymbol('vgps3.chart.Chart.init', vgps3.chart.Chart.prototype.init);
 

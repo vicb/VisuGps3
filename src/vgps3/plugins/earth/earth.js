@@ -12,7 +12,7 @@
  * @fileoverview Google Earth integration on top of google Maps
  * @author Victor Berchet <victor@suumit.com>
  *
- * @note some code is inspired by the Earth API library for Maps v3 authored by Josh Livni:
+ * Some code is inspired by the Earth API library for Maps v3 authored by Josh Livni:
  * http://code.google.com/p/google-maps-utility-library-v3/source/browse/trunk/googleearth/src/googleearth.js
  */
 
@@ -32,7 +32,6 @@ goog.require('goog.string.format');
 goog.require('goog.math');
 goog.require('goog.functions');
 goog.require('goog.array');
-
 
 /**
  *
@@ -484,9 +483,9 @@ vgps3.earth.Earth.prototype.displayTrack_ = function(index, fixes, color) {
 
   google.earth.executeBatch(this.ge_, function() {
     var points = lineString.getCoordinates();
-    var getElevation = goog.bind(that.estimateElevation_, that, (fixes.nbChartPt - 1) / (fixes.nbTrackPt - 1));
-    for (var i = 0; i < fixes.nbTrackPt; i++) {
-      points.pushLatLngAlt(fixes.lat[i], fixes.lon[i], getElevation(fixes, i));
+    var getElevation = goog.bind(that.estimateElevation_, that, (fixes['nbChartPt'] - 1) / (fixes['nbTrackPt'] - 1));
+    for (var i = 0; i < fixes['nbTrackPt']; i++) {
+      points.pushLatLngAlt(fixes['lat'][i], fixes['lon'][i], getElevation(fixes, i));
     }
   });
 
@@ -506,17 +505,17 @@ vgps3.earth.Earth.prototype.displayTrack_ = function(index, fixes, color) {
     google.earth.executeBatch(this.ge_, function() {
       // Location where to first display the 3D model
       that.location_ = that.ge_.createLocation('');
-      that.location_.setLatitude(fixes.lat[0]);
-      that.location_.setLongitude(fixes.lon[0]);
-      that.location_.setAltitude(fixes.elev[0]);
+      that.location_.setLatitude(fixes['lat'][0]);
+      that.location_.setLongitude(fixes['lon'][0]);
+      that.location_.setAltitude(fixes['elev'][0]);
       // fly to that location
       var lookAt = that.ge_.getView().copyAsLookAt(that.ge_.ALTITUDE_ABSOLUTE);
       var range = Math.pow(2, vgps3.earth.MAX_EARTH_ZOOM_ - 12);
       lookAt.setRange(range);
-      lookAt.setLatitude(fixes.lat[0]);
-      lookAt.setLongitude(fixes.lon[0]);
+      lookAt.setLatitude(fixes['lat'][0]);
+      lookAt.setLongitude(fixes['lon'][0]);
       lookAt.setHeading(0);
-      lookAt.setAltitude(fixes.elev[0]);
+      lookAt.setAltitude(fixes['elev'][0]);
       lookAt.setTilt(60);
       that.ge_.getView().setAbstractView(lookAt);
     });
@@ -528,15 +527,15 @@ vgps3.earth.Earth.prototype.displayTrack_ = function(index, fixes, color) {
  * Interpolates the elevation for the given position
  * @param {number} factor The ratio (elevation samples - 1) / (track samples -1)
  * @param {vgps3.track.GpsFixes} fixes
- * @param {number} index [0...fixes.nbTrackPt]
+ * @param {number} index [0...fixes['nbTrackPt']]
  * @return {number}
  * @private
  */
 vgps3.earth.Earth.prototype.estimateElevation_ = function(factor, fixes, index) {
   index *=  factor;
   var chartIndex = Math.round(index),
-      nextChartIndex = chartIndex + 1 < fixes.nbTrackPt ? chartIndex + 1 : chartIndex;
-  return fixes.elev[chartIndex] + (index - chartIndex) * (fixes.elev[nextChartIndex] - fixes.elev[chartIndex]);
+      nextChartIndex = chartIndex + 1 < fixes['nbTrackPt'] ? chartIndex + 1 : chartIndex;
+  return fixes['elev'][chartIndex] + (index - chartIndex) * (fixes['elev'][nextChartIndex] - fixes['elev'][chartIndex]);
 };
 
 /**
@@ -595,3 +594,6 @@ vgps3.earth.MAX_EARTH_ZOOM_ = 27;
 vgps3.earth.MapTypeId = {
   EARTH: 'vgps3-earth-3d'
 };
+
+goog.exportSymbol('vgps3.earth.Earth', vgps3.earth.Earth);
+goog.exportSymbol('vgps3.earth.Earth.init', vgps3.earth.Earth.prototype.init);
