@@ -353,20 +353,23 @@ vgps3.earth.Earth.prototype.trackSelectHandler_ = function(event) {
   this.mapCreated_.addCallback(function() {
       // Create the 3D model
       if (!goog.isDef(this.orientation_)) {
+        var that = this;
         this.logger_.info(goog.string.format('Creating 3D model', event.index));
-        var placemark = this.ge_.createPlacemark('model');
-        var model = this.ge_.createModel('');
-        placemark.setGeometry(model);
-        var link = this.ge_.createLink('');
-        link.setHref(vgps3.earth.MODEL_URL)
-        model.setLink(link);
-        model.setLocation(this.location_);
-        model.setOrientation(this.orientation_ = this.ge_.createOrientation(''));
-        var scale = this.ge_.createScale('');
-        scale.set(50, 50, 50);
-        model.setScale(scale);
-        model.setAltitudeMode(this.ge_.ALTITUDE_ABSOLUTE);
-        this.ge_.getFeatures().appendChild(placemark);
+        google.earth.executeBatch(this.ge_, function() {
+          var placemark = that.ge_.createPlacemark('model');
+          var model = that.ge_.createModel('');
+          placemark.setGeometry(model);
+          var link = that.ge_.createLink('');
+          link.setHref(vgps3.earth.MODEL_URL)
+          model.setLink(link);
+          model.setLocation(that.location_);
+          model.setOrientation(that.orientation_ = that.ge_.createOrientation(''));
+          var scale = that.ge_.createScale('');
+          scale.set(50, 50, 50);
+          model.setScale(scale);
+          model.setAltitudeMode(that.ge_.ALTITUDE_ABSOLUTE);
+          that.ge_.getFeatures().appendChild(placemark);
+        });
       }
       // Set tracks style
       //todo
@@ -376,6 +379,9 @@ vgps3.earth.Earth.prototype.trackSelectHandler_ = function(event) {
 };
 
 /**
+ * Displays a track on the earth map.
+ * Note: Using several batches as a single big one would not work.
+ *
  * @param {number} index
  * @param {vgps3.track.GpsFixes} fixes
  * @param {string} color
@@ -383,33 +389,35 @@ vgps3.earth.Earth.prototype.trackSelectHandler_ = function(event) {
  * @notypecheck
  */
 vgps3.earth.Earth.prototype.displayTrack_ = function(index, fixes, color) {
-  var that = this;
+  var that = this,
+      lineString = that.ge_.createLineString('track-' + index),
+      lineStringPm = that.ge_.createPlacemark('');
 
   this.logger_.info(goog.string.format('Displaying track[%d]', index));
-
-  var lineString = this.ge_.createLineString('track-' + index),
-      lineStringPm = this.ge_.createPlacemark('');
 
   lineStringPm.setGeometry(lineString);
   lineString.setTessellate(false);
 
-  if (!goog.isDef(this.location_)) {
-    // Location where to first display the 3D model
-    this.location_ = this.ge_.createLocation('');
-    this.location_.setLatitude(fixes.lat[0]);
-    this.location_.setLongitude(fixes.lon[0]);
-    this.location_.setAltitude(fixes.elev[0]);
-    // fly to this location
-    var lookAt = this.ge_.getView().copyAsLookAt(this.ge_.ALTITUDE_ABSOLUTE);
-    var range = Math.pow(2, vgps3.earth.MAX_EARTH_ZOOM_ - 12);
-    lookAt.setRange(range);
-    lookAt.setLatitude(fixes.lat[0]);
-    lookAt.setLongitude(fixes.lon[0]);
-    lookAt.setHeading(0);
-    lookAt.setAltitude(fixes.elev[0]);
-    lookAt.setTilt(45);
-    this.ge_.getView().setAbstractView(lookAt);
-  }
+    if (!goog.isDef(that.location_)) {
+      that.location_ = null;
+      google.earth.executeBatch(this.ge_, function() {
+        // Location where to first display the 3D model
+        that.location_ = that.ge_.createLocation('');
+        that.location_.setLatitude(fixes.lat[0]);
+        that.location_.setLongitude(fixes.lon[0]);
+        that.location_.setAltitude(fixes.elev[0]);
+        // fly to that location
+        var lookAt = that.ge_.getView().copyAsLookAt(that.ge_.ALTITUDE_ABSOLUTE);
+        var range = Math.pow(2, vgps3.earth.MAX_EARTH_ZOOM_ - 12);
+        lookAt.setRange(range);
+        lookAt.setLatitude(fixes.lat[0]);
+        lookAt.setLongitude(fixes.lon[0]);
+        lookAt.setHeading(0);
+        lookAt.setAltitude(fixes.elev[0]);
+        lookAt.setTilt(45);
+        that.ge_.getView().setAbstractView(lookAt);
+      });
+    }
 
   google.earth.executeBatch(this.ge_, function() {
     var points = lineString.getCoordinates();
@@ -419,14 +427,16 @@ vgps3.earth.Earth.prototype.displayTrack_ = function(index, fixes, color) {
     }
   });
 
-  this.ge_.getFeatures().appendChild(lineStringPm);
-  lineString.setAltitudeMode(this.ge_.ALTITUDE_ABSOLUTE);
+  google.earth.executeBatch(this.ge_, function() {
+    that.ge_.getFeatures().appendChild(lineStringPm);
+    lineString.setAltitudeMode(that.ge_.ALTITUDE_ABSOLUTE);
 
-  lineStringPm.setStyleSelector(this.ge_.createStyle(''));
-  var lineStyle = lineStringPm.getStyleSelector().getLineStyle();
-  lineStyle.setWidth(2);
-  // color format: aabbggrr
-  lineStyle.getColor().set(goog.color.parse(color).hex.replace(/#(..)(..)(..)/, 'ff$3$2$1'));
+    lineStringPm.setStyleSelector(that.ge_.createStyle(''));
+    var lineStyle = lineStringPm.getStyleSelector().getLineStyle();
+    lineStyle.setWidth(2);
+    // color format: aabbggrr
+    lineStyle.getColor().set(goog.color.parse(color).hex.replace(/#(..)(..)(..)/, 'ff$3$2$1'));
+  });
 };
 
 /**
