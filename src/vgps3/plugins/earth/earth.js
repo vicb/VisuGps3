@@ -31,6 +31,8 @@ goog.require('goog.Timer');
 goog.require('goog.string.format');
 goog.require('goog.math');
 goog.require('goog.functions');
+goog.require('goog.array');
+goog.require('goog.ui.IframeMask');
 
 
 /**
@@ -107,6 +109,17 @@ vgps3.earth.Earth = function() {
   this.trackAdded_ = new goog.async.Deferred();
 
   /**
+   * @type {Element} The earth map selection control div
+   * @private
+   */
+  this.mapControlDiv_;
+
+  /**
+   * @type {Node} Allow to make map type controls useable with the GE plugin
+   * @private
+   */
+  this.shim_;
+  /**
    * Mouse down event used to discriminate click vs drag
    * @private
    */
@@ -162,42 +175,73 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
  */
 vgps3.earth.Earth.prototype.mapTypeChanged_ = function() {
   if (this.gMap_.getMapTypeId() === vgps3.earth.MapTypeId.EARTH) {
-    this.showEarth_();
-    this.mapCreated_.addCallback(function() {
-        this.currentMapTypeId_ = this.gMap_.getMapTypeId();
-      },
-      this
-    );
+    if (!goog.isDef(this.ge_)) {
+      this.createEarth_();
+      this.mapCreated_.addCallback(function() {
+          this.currentMapTypeId_ = this.gMap_.getMapTypeId();
+        },
+        this
+      );
+    }
+    goog.style.showElement(this.earthDom_, true);
+    this.showControls_(true);
   } else {
-    //this.switchToMapView_();
+    this.showControls_(false);
+    goog.style.showElement(this.earthDom_, false);
     this.currentMapTypeId_ = this.gMap_.getMapTypeId();
   }
 };
 
 /**
+ * Make the map type controls available when the GE plugin is in use
+ * @param {boolean} show
  * @private
  */
-vgps3.earth.Earth.prototype.showEarth_ = function() {
-  if (!goog.isDef(this.ge_)) {
-    this.createEarthControl_();
+vgps3.earth.Earth.prototype.showControls_ = function(show) {
+  if (show) {
+    // Sets the z-index of all controls except for the map type control so that they appear behind Earth.
+    var oldIndex = this.mapControlDiv_.style.zIndex;
+    // Sets the zIndex of all controls to be behind Earth
+    goog.array.forEach(this.earthDom_.parentNode.childNodes, function(sibling) {
+      sibling['__gme_ozi'] = sibling.style.zIndex;
+      sibling.style.zIndex = -10;
+    });
+    this.mapControlDiv_['__gme_ozi'] = oldIndex;
+    this.earthDom_.style.zIndex = -1;
+    this.mapControlDiv_.style.zIndex = 0;
+    // Create a shim so that controls appear in front of the plugin
+    if (!goog.isDef(this.shim_)) {
+      this.shim_ = document.createElement('iframe');
+      this.shim_.src = 'javascript:false;';
+      this.shim_.scrolling = 'no';
+      this.shim_.frameBorder = '0';
+
+      var style = this.shim_.style;
+      style.zIndex = -100000;
+      style.width = style.height = '100%';
+      style.position = 'absolute';
+      style.left = style.top = 0;
+
+      goog.dom.appendChild(this.mapControlDiv_, this.shim_);
+    }
+  } else {
+    // Restore saved zIndexes
+    goog.array.forEach(this.earthDom_.parentNode.childNodes, function(sibling) {
+      sibling.style.zIndex = sibling['__gme_ozi'];
+    });
   }
-  goog.style.showElement(this.earthDom_, true);
-}
+};
 
 /**
- * Add a google maps control to host the earth view.
+ * Adds a google maps control to host the earth view and start the plugin on supported platforms.
  *
  * @private
  */
-vgps3.earth.Earth.prototype.createEarthControl_ = function() {
+vgps3.earth.Earth.prototype.createEarth_ = function() {
   var that = this;
 
   this.earthDom_ = goog.dom.createDom('div', { index: 0 });
-  goog.style.setStyle(this.earthDom_, {
-    position: 'absolute',
-    width: 0,
-    height: 0
-  });
+  goog.style.setStyle(this.earthDom_, { position: 'absolute', width: 0, height: 0, zIndex: 0 });
 
   var inner = goog.dom.createElement('div');
   goog.style.setStyle(inner, {
@@ -206,15 +250,10 @@ vgps3.earth.Earth.prototype.createEarthControl_ = function() {
     position: 'absolute'
   });
 
-  goog.dom.appendChild(this.earthDom_, inner);
-
   var earthDiv = goog.dom.createElement('div');
-  goog.style.setStyle(earthDiv, {
-    width: '100%',
-    height: '100%',
-    position: 'absolute'
-  });
+  goog.style.setStyle(earthDiv, { width: '100%', height: '100%', position: 'absolute' });
 
+  goog.dom.appendChild(this.earthDom_, inner);
   goog.dom.appendChild(inner, earthDiv);
 
   google.maps.event.addListener(this.gMap_, 'resize', function() {
@@ -225,6 +264,12 @@ vgps3.earth.Earth.prototype.createEarthControl_ = function() {
   });
 
   this.gMap_.controls[google.maps.ControlPosition.TOP_LEFT].push(this.earthDom_);
+
+  var title = 'title=[\'\"]?' + vgps3.earth.TITLE_ + '[\"\']?';
+  var regex = new RegExp(title);
+  this.mapControlDiv_ = goog.array.find(this.earthDom_.parentNode.childNodes, function(sibling) {
+    return regex.test(sibling.innerHTML);
+  });
 
   this.logger_.info('Starting the GE Plugin');
   google.earth.createInstance(
@@ -482,14 +527,14 @@ vgps3.earth.Earth.prototype.displayTrack_ = function(index, fixes, color) {
 
 /**
  * Interpolates the elevation for the given position
- * @param {number} factor The ratio elevation points / track points
+ * @param {number} factor The ratio (elevation samples - 1) / (track samples -1)
  * @param {vgps3.track.GpsFixes} fixes
  * @param {number} index [0...fixes.nbTrackPt]
  * @return {number}
  * @private
  */
 vgps3.earth.Earth.prototype.estimateElevation_ = function(factor, fixes, index) {
-  index = index * factor;
+  index *=  factor;
   var chartIndex = Math.round(index),
       nextChartIndex = chartIndex + 1 < fixes.nbTrackPt ? chartIndex + 1 : chartIndex;
   return fixes.elev[chartIndex] + (index - chartIndex) * (fixes.elev[nextChartIndex] - fixes.elev[chartIndex]);
@@ -504,6 +549,13 @@ vgps3.earth.Earth.prototype.apiLoadHandler_ = function() {
 };
 
 /**
+ * @type {string}
+ * @const
+ * @private
+ */
+vgps3.earth.TITLE_ = "Earth";
+
+/**
  * @type {google.maps.MapType}
  * @const
  * @private
@@ -511,8 +563,8 @@ vgps3.earth.Earth.prototype.apiLoadHandler_ = function() {
 vgps3.earth.EarthMapType_ = /** @type {google.maps.MapType} */ {
   tileSize: new google.maps.Size(256, 256),
   maxZoom: 19,
-  name: 'Earth',
-  alt: 'Earth',
+  name: vgps3.earth.TITLE_,
+  alt: vgps3.earth.TITLE_,
   getTile: function(tileCoord, zoom, ownerDocument) {
     var div = ownerDocument.createElement('div');
     return div;
