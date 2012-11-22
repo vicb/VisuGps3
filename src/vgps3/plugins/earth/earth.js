@@ -264,40 +264,42 @@ vgps3.earth.Earth.prototype.moveTo = function(position, setCenter, zoomOffset) {
       if (!goog.isDef(this.currentTrackIndex_) || vgps3.earth.MapTypeId.EARTH !== this.currentMapTypeId_) {
         return;
       }
+      var that = this;
+      google.earth.executeBatch(this.ge_, function() {
+        var kmlLine = that.ge_.getElementById('track-' + that.currentTrackIndex_),
+            kmlCoordinates = kmlLine.getCoordinates(),
+            lineMaxIndex = kmlCoordinates.getLength() - 1,
+            index = Math.round(position * lineMaxIndex),
+            location = kmlCoordinates.get(index);
 
-      var kmlLine = this.ge_.getElementById('track-' + this.currentTrackIndex_),
-          kmlCoordinates = kmlLine.getCoordinates(),
-          lineMaxIndex = kmlCoordinates.getLength() - 1,
-          index = Math.round(position * lineMaxIndex),
-          location = kmlCoordinates.get(index);
+        that.location_.setLatLngAlt(location.getLatitude(), location.getLongitude(), location.getAltitude());
 
-      this.location_.setLatLngAlt(location.getLatitude(), location.getLongitude(), location.getAltitude());
+        var nextIndex = Math.min(index + 1, lineMaxIndex),
+            nextLocation = kmlCoordinates.get(nextIndex),
+            heading;
 
-      var nextIndex = Math.min(index + 1, lineMaxIndex),
-          nextLocation = kmlCoordinates.get(nextIndex),
-          heading;
+        heading = google.maps.geometry.spherical.computeHeading(
+          new google.maps.LatLng(location.getLatitude(), location.getLongitude()),
+          new google.maps.LatLng(nextLocation.getLatitude(), nextLocation.getLongitude())
+        );
 
-      heading = google.maps.geometry.spherical.computeHeading(
-            new google.maps.LatLng(location.getLatitude(), location.getLongitude()),
-            new google.maps.LatLng(nextLocation.getLatitude(), nextLocation.getLongitude())
-          );
+        // Apply model origin (255deg)
+        that.orientation_.setHeading(goog.math.standardAngle(heading + 255));
 
-      // Apply model origin (255deg)
-      this.orientation_.setHeading(goog.math.standardAngle(heading + 255));
+        var lookAt = that.ge_.getView().copyAsLookAt(that.ge_.ALTITUDE_ABSOLUTE);
 
-      var lookAt = this.ge_.getView().copyAsLookAt(this.ge_.ALTITUDE_ABSOLUTE);
+        if (setCenter) {
+          lookAt.setLatitude(location.getLatitude());
+          lookAt.setLongitude(location.getLongitude());
+          lookAt.setAltitude(location.getAltitude());
+        }
 
-      if (setCenter) {
-        lookAt.setLatitude(location.getLatitude());
-        lookAt.setLongitude(location.getLongitude());
-        lookAt.setAltitude(location.getAltitude());
-      }
+        if (zoomOffset) {
+          lookAt.setRange(Math.pow(2, zoomOffset) * lookAt.getRange());
+        }
 
-      if (zoomOffset) {
-        lookAt.setRange(Math.pow(2, zoomOffset) * lookAt.getRange());
-      }
-
-      (setCenter || zoomOffset) && this.ge_.getView().setAbstractView(lookAt);
+        (setCenter || zoomOffset) && that.ge_.getView().setAbstractView(lookAt);
+      });
     },
     this
   );
