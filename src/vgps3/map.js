@@ -65,6 +65,14 @@ vgps3.Map = function(container, options, plugins) {
 
   this.gMap_ = new google.maps.Map(container, opt);
 
+  goog.events.listen(
+      window,
+      'resize',
+      function() { google.maps.event.trigger(this.gMap_, 'resize') },
+      undefined,
+      this
+  );
+
   this.initPlugins_(plugins);
 };
 goog.inherits(vgps3.Map, goog.events.EventTarget);

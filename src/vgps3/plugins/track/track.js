@@ -28,6 +28,7 @@ goog.require('vgps3.track.ClickEvent');
 goog.require('vgps3.track.LoadEvent');
 goog.require('vgps3.track.TrackSelectEvent');
 goog.require('vgps3.track.templates');
+goog.require('goog.string.format');
 
 
 
@@ -102,7 +103,7 @@ vgps3.track.Track.prototype.init = function(vgps) {
   this.vgps_ = vgps;
   this.gMap_ = vgps.getGoogleMap();
 
-  google.maps.event.addListener(this.gMap_, 'click', goog.bind(this.onMapClick_, this));
+  google.maps.event.addListener(this.gMap_, 'click', goog.bind(this.clickHandler_, this));
 };
 
 
@@ -394,7 +395,8 @@ vgps3.track.Track.prototype.selectCurrentTrack_ = function(trackIdx) {
  * @param {google.maps.MouseEvent} event
  * @private
  */
-vgps3.track.Track.prototype.onMapClick_ = function(event) {
+vgps3.track.Track.prototype.clickHandler_ = function(event) {
+  this.logger_.info(goog.string.format('Click %.5f %.5f', event.latLng.lat(), event.latLng.lng()));
   this.click(event.latLng);
 };
 

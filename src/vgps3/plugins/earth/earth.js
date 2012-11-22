@@ -210,7 +210,6 @@ vgps3.earth.Earth.prototype.createEarthControl_ = function() {
 
   goog.dom.appendChild(inner, earthDiv);
 
-  // todo does not work
   google.maps.event.addListener(this.gMap_, 'resize', function() {
     goog.style.setStyle(inner, {
       width: goog.style.getSize(/** @type {Element} */(that.gMap_.getDiv())).width + 'px',
@@ -231,11 +230,11 @@ vgps3.earth.Earth.prototype.createEarthControl_ = function() {
         that.logger_.info('GE Plugin started');
         that.ge_ = /** @type {google.earth.GEPlugin} */(ge);
         ge.getWindow().setVisibility(true);
-//        google.earth.addEventListener(
-//            ge.getWindow(),
-//            'mousedown',
-//            goog.bind(that.clickHandler_, that)
-//        );
+        google.earth.addEventListener(
+            ge.getWindow(),
+            'click',
+            goog.bind(that.clickHandler_, that)
+        );
         var navControl = ge.getNavigationControl();
         navControl.setVisibility(ge.VISIBILITY_AUTO);
         var screen = navControl.getScreenXY();
@@ -260,16 +259,11 @@ vgps3.earth.Earth.prototype.createEarthControl_ = function() {
  * @notypecheck
  */
 vgps3.earth.Earth.prototype.moveTo = function(position, setCenter, zoomOffset) {
-  this.logger_.info('Entering move to ' + position);
-
   this.mapCreated_.addCallback(function() {
-      this.logger_.info(goog.string.format('Entering move to callback %d %s',  this.currentTrackIndex_, this.currentMapTypeId_));
       // Return if the earth is not currently visible or if no track is currently selected
       if (!goog.isDef(this.currentTrackIndex_) || vgps3.earth.MapTypeId.EARTH !== this.currentMapTypeId_) {
         return;
       }
-
-      this.logger_.info('Move to ' + position);
 
       var kmlLine = this.ge_.getElementById('track-' + this.currentTrackIndex_),
           kmlCoordinates = kmlLine.getCoordinates(),
@@ -317,20 +311,13 @@ vgps3.earth.Earth.prototype.moveTo = function(position, setCenter, zoomOffset) {
  * @notypecheck
  */
 vgps3.earth.Earth.prototype.clickHandler_ = function(event) {
-  // todo: trigger a click event (and remove the public click())
-  //google.maps.event.trigger(overlay, 'click');
-  //this.vgps_.click(new google.maps.LatLng(event.getLatitude(), event.getLongitude()));
+  this.logger_.info(goog.string.format('Click %.5f %.5f', event.getLatitude(), event.getLongitude()));
 //  var mdEvent = new google.maps.MouseEvent();
 //  mdEvent.latLng = new google.maps.LatLng(event.getLatitude(), event.getLongitude());
-//  google.maps.event.trigger(
-//      this.gMap_,
-//      'mousedown',
-//      mdEvent
-//  );
-//  var lookAt = this.ge.getView().copyAsLookAt(this.ge.ALTITUDE_ABSOLUTE);
-//  lookAt.setLatitude(this.track.lat[idx]);
-//  lookAt.setLongitude(this.track.lon[idx]);
-//  this.ge.getView().setAbstractView(lookAt);
+  google.maps.event.trigger(this.gMap_, 'click');
+  //this.vgps_.track.click(new google.maps.LatLng(event.getLatitude(), event.getLongitude()));
+
+
 };
 
 
