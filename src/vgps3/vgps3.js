@@ -92,19 +92,16 @@ vgps3.Viewer = function(mapContainer, chartContainer) {
 vgps3.Viewer.prototype.wireEvents_ = function() {
 
   var map = this.map,
-      track = this.plugins.track,
-      chart = this.plugins.chart,
-      eventMap = new goog.structs.Map(
-      vgps3.chart.EventType.MOVE, function(e) { track.moveTo(e.position); },
-      vgps3.chart.EventType.CLICK, function(e) { track.moveTo(e.position, true); },
-      vgps3.chart.EventType.WHEEL, function(e) {
-            var gMap = map.getGoogleMap();
-            track.moveTo(e.position, true);
-            gMap.setZoom((gMap.getZoom() - e.direction));
-      },
+    track = this.plugins.track,
+    chart = this.plugins.chart,
+    earth = this.plugins.earth,
+    eventMap = new goog.structs.Map(
+      vgps3.chart.EventType.MOVE, function(e) { track.moveTo(e.position); earth.moveTo(e.position); },
+      vgps3.chart.EventType.CLICK, function(e) { track.moveTo(e.position, true); earth.moveTo(e.position, true); },
+      vgps3.chart.EventType.WHEEL, function(e) { track.moveTo(e.position, true, -e.direction); earth.moveTo(e.position, true, e.direction);},
       vgps3.chart.EventType.ABOUT, function(e) { map.showAbout(); },
-      vgps3.track.EventType.CLICK, function(e) { chart.moveTo(e.position); }
-      );
+      vgps3.track.EventType.CLICK, function(e) { chart.moveTo(e.position); earth.moveTo(e.position, true); }
+   );
 
   goog.object.forEach(eventMap.toObject(), function(handler, event) {
     map.addEventListener(event, handler);
@@ -126,21 +123,21 @@ vgps3.Viewer.prototype.parseUrl_ = function(url) {
 
 
   goog.array.forEach(
-      uri.getParameterValues('track') || [],
-      function(track) {
-        this.logger_.info('Loading track: ' + track);
-        this.plugins.track.load(track);
-      },
-      this
+    uri.getParameterValues('track') || [],
+    function(track) {
+      this.logger_.info('Loading track: ' + track);
+      this.plugins.track.load(track);
+    },
+    this
   );
 
   if (routeType && turnpoints) {
     turnpoints = goog.array.map(/** @type {!Array.<number>} */(goog.json.parse(turnpoints)), this.array2LatLng_);
     this.plugins.route.draw(
-        routeType,
-        turnpoints,
-        start ? this.array2LatLng_(/** @type {!Array.<number>} */(goog.json.parse(start))) : undefined,
-        end ? this.array2LatLng_(/** @type {!Array.<number>} */(goog.json.parse(end))) : undefined
+      routeType,
+      turnpoints,
+      start ? this.array2LatLng_(/** @type {!Array.<number>} */(goog.json.parse(start))) : undefined,
+      end ? this.array2LatLng_(/** @type {!Array.<number>} */(goog.json.parse(end))) : undefined
     );
   }
 };

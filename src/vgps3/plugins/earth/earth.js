@@ -26,6 +26,7 @@ goog.require('goog.style');
 goog.require('goog.color');
 goog.require('goog.Timer');
 goog.require('goog.string.format');
+goog.require('goog.math');
 
 
 /**
@@ -76,6 +77,12 @@ vgps3.earth.Earth = function() {
    * @private
    */
   this.currentMapTypeId_;
+
+  /**
+   * @type {number}
+   * @private
+   */
+  this.currentTrackIndex_;
 
   /**
   * @type {goog.async.Deferred} Triggered when the plugin is loaded
@@ -148,12 +155,13 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
 vgps3.earth.Earth.prototype.mapTypeChanged_ = function() {
   if (this.gMap_.getMapTypeId() === vgps3.earth.MapTypeId.EARTH) {
     this.showEarth_();
+    this.mapCreated_.addCallback(function() {
+        this.currentMapTypeId_ = this.gMap_.getMapTypeId();
+      },
+      this
+    );
   } else {
     //this.switchToMapView_();
-  }
-
-  if (this.mapCreated_.hasFired()) {
-    // The map creation is asynchronous (@see google.earth.createInstance())
     this.currentMapTypeId_ = this.gMap_.getMapTypeId();
   }
 };
@@ -165,6 +173,7 @@ vgps3.earth.Earth.prototype.showEarth_ = function() {
   if (!goog.isDef(this.ge_)) {
     this.createEarthControl_();
   }
+  goog.style.showElement(this.earthDom_, true);
 
 }
 
@@ -246,38 +255,58 @@ vgps3.earth.Earth.prototype.createEarthControl_ = function() {
 /**
  *
  * @param {number} position [0...1].
+ * @param {boolean=} setCenter
+ * @param {number=} zoomOffset
  * @notypecheck
  */
-vgps3.earth.Earth.prototype.moveTo = function(position) {
-  var trackIdx = Math.round((this.fixes_.nbTrackPt - 1) * position),
-      nextIdx = Math.min(this.track_.nbTrackPt - 1, trackIdx + 1),
-      deltaLat = this.track_.lat[nextIdx] - this.track_.lat[trackIdx],
-      deltaLon = this.track_.lon[nextIdx] - this.track_.lon[trackIdx],
-      angle;
+vgps3.earth.Earth.prototype.moveTo = function(position, setCenter, zoomOffset) {
+  this.logger_.info('Entering move to ' + position);
 
+  this.mapCreated_.addCallback(function() {
+      this.logger_.info(goog.string.format('Entering move to callback %d %s',  this.currentTrackIndex_, this.currentMapTypeId_));
+      // Return if the earth is not currently visible or if no track is currently selected
+      if (!goog.isDef(this.currentTrackIndex_) || vgps3.earth.MapTypeId.EARTH !== this.currentMapTypeId_) {
+        return;
+      }
 
-  this.location_.setLatLngAlt(
-      this.track_.lat[trackIdx],
-      this.track_.lon[trackIdx],
-      this.track_.elev[Math.round((this.track_.nbChartPt - 1) * position)]
+      this.logger_.info('Move to ' + position);
+
+      var kmlLine = this.ge_.getElementById('track-' + this.currentTrackIndex_),
+          kmlCoordinates = kmlLine.getCoordinates(),
+          lineMaxIndex = kmlCoordinates.getLength() - 1,
+          index = Math.round(position * lineMaxIndex),
+          location = kmlCoordinates.get(index);
+
+      this.location_.setLatLngAlt(location.getLatitude(), location.getLongitude(), location.getAltitude());
+
+      var nextIndex = Math.min(index + 1, lineMaxIndex),
+          nextLocation = kmlCoordinates.get(nextIndex),
+          heading;
+
+      heading = google.maps.geometry.spherical.computeHeading(
+            new google.maps.LatLng(location.getLatitude(), location.getLongitude()),
+            new google.maps.LatLng(nextLocation.getLatitude(), nextLocation.getLongitude())
+          );
+
+      // Apply model origin (255deg)
+      this.orientation_.setHeading(goog.math.standardAngle(heading + 255));
+
+      var lookAt = this.ge_.getView().copyAsLookAt(this.ge_.ALTITUDE_ABSOLUTE);
+
+      if (setCenter) {
+        lookAt.setLatitude(location.getLatitude());
+        lookAt.setLongitude(location.getLongitude());
+        lookAt.setAltitude(location.getAltitude());
+      }
+
+      if (zoomOffset) {
+        lookAt.setRange(Math.pow(2, zoomOffset) * lookAt.getRange());
+      }
+
+      (setCenter || zoomOffset) && this.ge_.getView().setAbstractView(lookAt);
+    },
+    this
   );
-
-  if (0 === deltaLon) {
-    angle = deltaLat > 0 ? Math.PI / 2 : 3 * Math.PI / 2;
-  } else {
-    angle = Math.atan(deltaLat / deltaLon);
-    if (deltaLon < 0) {
-      angle += Math.PI;
-    }
-  }
-  // Convert angle (radian) to heading (degree, 0deg = North)
-  angle = angle * 180 / Math.PI;
-  angle = 90 - angle;
-  // Apply model origin (255deg)
-  angle = angle + 255;
-  if (angle < 0) angle += 360;
-  if (angle > 360) angle -= 360;
-  this.orientation_.setHeading(angle);
 };
 
 
@@ -328,11 +357,12 @@ vgps3.earth.Earth.prototype.trackLoadHandler_ = function(event) {
  * @notypecheck
  */
 vgps3.earth.Earth.prototype.trackSelectHandler_ = function(event) {
-  var that = this;
-
   this.logger_.info(goog.string.format('Track[%d] selected', event.index));
 
+  this.currentTrackIndex_ = event.index;
+
   this.mapCreated_.addCallback(function() {
+      // Create the 3D model
       if (!goog.isDef(this.orientation_)) {
         this.logger_.info(goog.string.format('Creating 3D model', event.index));
         var placemark = this.ge_.createPlacemark('model');
@@ -349,6 +379,8 @@ vgps3.earth.Earth.prototype.trackSelectHandler_ = function(event) {
         model.setAltitudeMode(this.ge_.ALTITUDE_ABSOLUTE);
         this.ge_.getFeatures().appendChild(placemark);
       }
+      // Set tracks style
+      //todo
     },
     this
   );

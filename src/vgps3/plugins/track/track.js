@@ -120,11 +120,9 @@ vgps3.track.Track.prototype.load = function(url) {
 /**
  * @param {number} position [0...1].
  * @param {boolean=} setCenter Whether to center the map.
+ * @param {number=} zoomOffset
  */
-vgps3.track.Track.prototype.moveTo = function(position, setCenter) {
-  position = goog.math.clamp(position, 0, 1);
-
-  // todo position
+vgps3.track.Track.prototype.moveTo = function(position, setCenter, zoomOffset) {
   var track = this.tracks_[this.currentTrackIndex_],
       pointIndex = Math.round(position * (track.fixes.nbTrackPt - 1));
 
@@ -133,6 +131,10 @@ vgps3.track.Track.prototype.moveTo = function(position, setCenter) {
 
   if (setCenter) {
     this.gMap_.setCenter(track.points[pointIndex]);
+  }
+
+  if (zoomOffset) {
+    this.gMap_.setZoom(this.gMap_.getZoom() + zoomOffset);
   }
 };
 
