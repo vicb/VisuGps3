@@ -100,7 +100,7 @@ vgps3.Viewer.prototype.wireEvents_ = function() {
       vgps3.chart.EventType.CLICK, function(e) { track.moveTo(e.position, true); earth.moveTo(e.position, true); },
       vgps3.chart.EventType.WHEEL, function(e) { track.moveTo(e.position, true, -e.direction); earth.moveTo(e.position, true, e.direction);},
       vgps3.chart.EventType.ABOUT, function(e) { map.showAbout(); },
-      vgps3.track.EventType.CLICK, function(e) { chart.moveTo(e.position); earth.moveTo(e.position, true); }
+      vgps3.track.EventType.CLICK, function(e) { chart.moveTo(e.position); earth.moveTo(e.position); }
    );
 
   goog.object.forEach(eventMap.toObject(), function(handler, event) {
