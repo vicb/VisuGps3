@@ -311,7 +311,7 @@ vgps3.track.Track.prototype.click = function(latlng) {
   var trackIndex,
       pointIndex,
       location,
-      currentDistance, distance = Number.MAX_VALUE,
+      currentDistance, distance = 10000,
       that = this;
 
   goog.array.forEach(this.tracks_, function(track, trackIdx) {
@@ -342,15 +342,17 @@ vgps3.track.Track.prototype.click = function(latlng) {
     }
   });
 
-  this.selectCurrentTrack_(trackIndex);
-  var position = pointIndex / (this.tracks_[trackIndex].fixes.nbTrackPt - 1);
+  if (goog.isDef(location)) {
+    this.selectCurrentTrack_(trackIndex);
+    var position = pointIndex / (this.tracks_[trackIndex].fixes.nbTrackPt - 1);
 
-  this.currentTrackMarker_.setPosition(location);
-  this.updateInfoControl_(position);
-  this.vgps_.dispatchEvent(new vgps3.track.ClickEvent(
-      this.tracks_[trackIndex].fixes,
-      position
-      ));
+    this.currentTrackMarker_.setPosition(location);
+    this.updateInfoControl_(position);
+    this.vgps_.dispatchEvent(new vgps3.track.ClickEvent(
+        this.tracks_[trackIndex].fixes,
+        position
+    ));
+  }
 };
 
 
