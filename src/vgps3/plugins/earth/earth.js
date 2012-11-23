@@ -277,8 +277,9 @@ vgps3.earth.Earth.prototype.createEarth_ = function() {
           var screen = navControl.getScreenXY();
           screen.setYUnits(ge.UNITS_INSET_PIXELS);
           screen.setXUnits(ge.UNITS_PIXELS);
-          // BUG: must wait a little before using the plugin !
-          goog.Timer.callOnce(goog.bind(that.mapCreated_.callback, that.mapCreated_), 100);
+          ge.getOptions().setScaleLegendVisibility(true);
+          ge.getOptions().setTerrainExaggeration(1.2);
+          that.mapCreated_.callback();
         })
       },
       function(error) {
@@ -299,7 +300,6 @@ vgps3.earth.Earth.prototype.createEarth_ = function() {
 vgps3.earth.Earth.prototype.moveTo = function(position, setCenter, zoomOffset) {
   this.trackAdded_.addCallback(function() {
       // Return if the earth is not currently visible or if no track is currently selected
-        this.logger_.log(goog.string.format('mt %d %s', this.currentTrackIndex_, this.currentMapTypeId_));
       if (!(goog.isDef(this.currentTrackIndex_) && vgps3.earth.MapTypeId.EARTH === this.currentMapTypeId_)) {
         return;
       }
@@ -326,6 +326,7 @@ vgps3.earth.Earth.prototype.moveTo = function(position, setCenter, zoomOffset) {
         that.orientation_.setHeading(goog.math.standardAngle(heading + 255));
 
         var lookAt = that.ge_.getView().copyAsLookAt(that.ge_.ALTITUDE_ABSOLUTE);
+        that.ge_.getOptions().setFlyToSpeed(that.ge_.SPEED_TELEPORT);
 
         if (setCenter) {
           lookAt.setLatitude(location.getLatitude());

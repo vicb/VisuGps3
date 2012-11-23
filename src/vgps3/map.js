@@ -59,7 +59,8 @@ vgps3.Map = function(container, options, plugins) {
     zoom: 5,
     minZoom: 6,
     mapTypeId: google.maps.MapTypeId.TERRAIN,
-    streetViewControl: false
+    streetViewControl: false,
+    scaleControl: true
   };
 
   goog.object.extend(opt, options || {});
