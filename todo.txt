@@ -1,27 +1,11 @@
+- earth
+  - track progress: indicator + messages
+
 - track plugin
   - load kml (!earth plugin)
   - add an overlay while loading (indicator)
 
-- google earth plugin
-  - resize event
-  - multiple tracks
-  - ge should be static (single instance)
-
-- vgps3 Events
-
-- add skyways (requires a "more" control)
-
-- allow resizing (map & chart)
-
-- capture slider events
-
-- export symbols
-
-- chart plugin
-  - make it easier to extend & re-use
-
 - plugin interface:
-  - loadJsApi(config, callback) -> centralize JS api loading
   - dispose()
 
 - Dispose: check & add to avoid leaks
@@ -29,9 +13,23 @@
   - https://addons.mozilla.org/en-US/firefox/addon/leak-monitor/
   - https://code.google.com/p/leak-finder-for-javascript/
 
-- ign: request a key
-
 - scale control on map + earth
+
+- google earth plugin
+  - ge should be static (single instance)
+
+- vgps3 Events
+
+- add layers:
+ - skyways (requires a "more" control)
+ - modis
+
+- capture slider events
+
+- chart plugin
+  - make it easier to extend & re-use
+
+- ign: request a key
 
 - minify CSS
 
