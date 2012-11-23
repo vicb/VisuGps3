@@ -32,6 +32,8 @@ goog.require('vgps3.chart.MoveEvent');
 goog.require('vgps3.chart.Overlays');
 goog.require('vgps3.chart.Sliders');
 goog.require('vgps3.chart.WheelEvent');
+goog.require('goog.dom');
+goog.require('goog.debug.Trace');
 
 /**
  * @param {!Element} container
@@ -214,34 +216,57 @@ vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
  * @private
  */
 vgps3.chart.Chart.prototype.mapSelectHandler_ = function(event) {
-  var that = this;
-
   this.chartLoaded_.addCallback(function() {
-    if (!goog.isDef(that.chartData_[event.index].dataView)) {
-      that.chartData_[event.index].dataView = that.createDataView_(event.index);
-    }
+      if (!goog.isDef(this.chartData_[event.index].dataView)) {
+        this.chartData_[event.index].dataView = this.createDataView_(event.index);
+      }
 
-    if (!goog.isDef(that.charts_)) {
-      that.charts_ = {
-        elevation: new google.visualization.AreaChart(that.chartContainers_.elevation),
-        speed: new google.visualization.LineChart(that.chartContainers_.speed),
-        vario: new google.visualization.LineChart(that.chartContainers_.vario)
-      };
-    }
+      if (!goog.isDef(this.charts_)) {
+        this.charts_ = {
+          elevation: new google.visualization.AreaChart(this.chartContainers_.elevation),
+          speed: new google.visualization.LineChart(this.chartContainers_.speed),
+          vario: new google.visualization.LineChart(this.chartContainers_.vario)
+        };
+      }
 
-    var view = that.chartData_[event.index].dataView;
-
-    view.setColumns([0, 1, 2]);
-    that.charts_.elevation.draw(view, vgps3.chart.CHART_OPTIONS.elevation);
-
-    view.setColumns([0, 3]);
-    that.charts_.speed.draw(view, vgps3.chart.CHART_OPTIONS.speed);
-
-    view.setColumns([0, 4]);
-    that.charts_.vario.draw(view, vgps3.chart.CHART_OPTIONS.vario);
-  });
+      goog.debug.Trace.reset(0);
+      var tracer = goog.debug.Trace.startTracer('Rendering charts');
+      this.drawChart_('elevation', event.index, [0, 1, 2]);
+      goog.debug.Trace.startTracer('Elevation chart rendered');
+      this.drawChart_('speed', event.index, [0, 3]);
+      goog.debug.Trace.startTracer('Elevation chart rendered');
+      this.drawChart_('vario', event.index, [0, 4]);
+      goog.debug.Trace.stopTracer(tracer);
+      this.logger_.info(goog.debug.Trace.getFormattedTrace());
+    },
+    this
+  );
 };
 
+/**
+ * @param {string} type
+ * @param {number} index
+ * @param {Array.<number>} columns
+ * @private
+ */
+vgps3.chart.Chart.prototype.drawChart_ = function(type, index, columns) {
+  var view = this.chartData_[index].dataView,
+      chart = this.charts_[type],
+      container = this.chartContainers_[type],
+      nbPoints = this.chartData_[index].fixes.nbChartPt,
+      options = vgps3.chart.CHART_OPTIONS_[type];
+
+  if (goog.isDef(options.hAxis.showTextEvery)) {
+    options.hAxis.showTextEvery = Math.round(nbPoints / vgps3.chart.NB_HLABELS_);
+  }
+
+  if (goog.isDef(options.curve)) {
+    options.curve = goog.style.getSize(container).width / nbPoints >  5 ? 'function' : 'none';
+  }
+
+  view.setColumns(columns);
+  chart.draw(view, options);
+};
 
 /**
  * @param {number} index
@@ -299,11 +324,19 @@ vgps3.chart.EventType = {
   ABOUT: 'vgps3.chart.about'
 };
 
+/**
+ * @type {number}
+ * @const
+ * @private
+ */
+vgps3.chart.NB_HLABELS_ = 6;
 
 /**
  * @type {Object}
+ * @const
+ * @private
  */
-vgps3.chart.CHART_OPTIONS = {
+vgps3.chart.CHART_OPTIONS_ = {
   elevation: {
     theme: 'maximized',
     fontName: 'verdana',
