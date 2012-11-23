@@ -19,7 +19,6 @@
 goog.provide('vgps3.earth.Earth');
 
 goog.require('goog.async.Deferred');
-goog.require('goog.net.jsloader');
 goog.require('vgps3.IPlugin');
 goog.require('vgps3.Map');
 goog.require('goog.debug.Logger');
@@ -32,6 +31,7 @@ goog.require('goog.string.format');
 goog.require('goog.math');
 goog.require('goog.functions');
 goog.require('goog.array');
+goog.require('vgps3.loader');
 
 /**
  *
@@ -128,12 +128,6 @@ vgps3.earth.Earth = function() {
    * @private
    */
   this.logger_ = goog.debug.Logger.getLogger('vgps3.earth.Earth');
-
-  if (google && google.load) {
-    this.apiLoadHandler_();
-  } else {
-    goog.net.jsloader.load(vgps3.earth.LOADER_URL).addCallback(this.apiLoadHandler_, this);
-  }
 };
 
 
@@ -150,6 +144,8 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
   this.vgps_.addEventListener(vgps3.track.EventType.SELECT, goog.bind(this.trackSelectHandler_, this));
 
   this.gMap_.mapTypes.set(vgps3.earth.MapTypeId.EARTH, vgps3.earth.EarthMapType_);
+
+  vgps3.loader.load('earth', 1, this.pluginLoaded_);
 
   this.pluginLoaded_.addCallback(
       function() {
@@ -539,14 +535,6 @@ vgps3.earth.Earth.prototype.estimateElevation_ = function(factor, fixes, index) 
 };
 
 /**
- * @private
- */
-vgps3.earth.Earth.prototype.apiLoadHandler_ = function() {
-  this.logger_.info('Loading google earth JS API');
-  google.load('earth', '1', { callback: goog.bind(this.pluginLoaded_.callback, this.pluginLoaded_) });
-};
-
-/**
  * @type {string}
  * @const
  * @private
@@ -568,11 +556,6 @@ vgps3.earth.EarthMapType_ = /** @type {google.maps.MapType} */ {
     return div;
   }
 };
-
-/**
- * @define {string}
- */
-vgps3.earth.LOADER_URL = 'https://www.google.com/jsapi';
 
 /**
  * @define {string}

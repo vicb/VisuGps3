@@ -21,7 +21,6 @@ goog.require('goog.events');
 goog.require('goog.events.BrowserEvent');
 goog.require('goog.events.MouseWheelHandler');
 goog.require('goog.events.MouseWheelHandler.EventType');
-goog.require('goog.net.jsloader');
 goog.require('goog.style');
 goog.require('goog.ui.Slider');
 goog.require('vgps3.IPlugin');
@@ -34,6 +33,7 @@ goog.require('vgps3.chart.Sliders');
 goog.require('vgps3.chart.WheelEvent');
 goog.require('goog.dom');
 goog.require('goog.debug.Trace');
+goog.require('vgps3.loader');
 
 /**
  * @param {!Element} container
@@ -109,11 +109,7 @@ vgps3.chart.Chart = function(container) {
   */
   this.chartLoaded_ = new goog.async.Deferred();
 
-  if (google && google.load) {
-    this.apiLoadHandler_();
-  } else {
-    goog.net.jsloader.load(vgps3.chart.LOADER_URL).addCallback(this.apiLoadHandler_, this);
-  }
+  vgps3.loader.load('visualization', '1', this.chartLoaded_, {packages: ['corechart']});
 };
 
 
@@ -232,10 +228,11 @@ vgps3.chart.Chart.prototype.mapSelectHandler_ = function(event) {
       goog.debug.Trace.reset(0);
       var tracer = goog.debug.Trace.startTracer('Rendering charts');
       this.drawChart_('elevation', event.index, [0, 1, 2]);
-      goog.debug.Trace.startTracer('Elevation chart rendered');
+      goog.debug.Trace.addComment('Elevation chart rendered');
       this.drawChart_('speed', event.index, [0, 3]);
-      goog.debug.Trace.startTracer('Elevation chart rendered');
+      goog.debug.Trace.addComment('Speed chart rendered');
       this.drawChart_('vario', event.index, [0, 4]);
+      goog.debug.Trace.addComment('Vario chart rendered');
       goog.debug.Trace.stopTracer(tracer);
       this.logger_.info(goog.debug.Trace.getFormattedTrace());
     },
@@ -294,25 +291,6 @@ vgps3.chart.Chart.prototype.createDataView_ = function(index) {
 
   return new google.visualization.DataView(dataTable);
 };
-
-
-/**
- * @private
- */
-vgps3.chart.Chart.prototype.apiLoadHandler_ = function() {
-  var that = this;
-  google.load('visualization', '1.0', {
-    packages: ['corechart'],
-    callback: goog.bind(this.chartLoaded_.callback, this.chartLoaded_)
-  });
-};
-
-
-/**
- * @define {string}
- */
-vgps3.chart.LOADER_URL = 'https://www.google.com/jsapi';
-
 
 /**
  * @enum {string}
