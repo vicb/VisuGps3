@@ -13,10 +13,7 @@
   - https://addons.mozilla.org/en-US/firefox/addon/leak-monitor/
   - https://code.google.com/p/leak-finder-for-javascript/
 
-- scale control on map + earth
-
-- google earth plugin
-  - ge should be static (single instance)
+- ign: request a key
 
 - vgps3 Events
 
@@ -28,8 +25,6 @@
 
 - chart plugin
   - make it easier to extend & re-use
-
-- ign: request a key
 
 - minify CSS
 

@@ -90,6 +90,13 @@ vgps3.track.Track = function() {
   this.dateControl_;
 
   /**
+   * Scale the icon size according to its altitude
+   * @type {Array.<function(number): google.maps.Size>}
+   * @private
+   */
+  this.iconScalers_ = [];
+
+  /**
   * @type {!goog.debug.Logger}
   * @private
   */
@@ -130,6 +137,7 @@ vgps3.track.Track.prototype.moveTo = function(position, setCenter, zoomOffset) {
 
   this.updateInfoControl_(position);
   this.currentTrackMarker_.setPosition(track.points[pointIndex]);
+  goog.isDef(this.iconScalers_[this.currentTrackIndex_]) && this.iconScalers_[this.currentTrackIndex_](position);
 
   if (setCenter) {
     this.gMap_.setCenter(track.points[pointIndex]);
@@ -157,7 +165,7 @@ vgps3.track.Track.prototype.afterTrackLoad_ = function(url, event) {
   if (xhr.isSuccess()) {
     var track = /** @type {vgps3.track.GpsFixes} */ (xhr.getResponseJson());
     if (goog.isDef(track)) {
-      this.addTrack_(url, (track));
+      this.addTrack_(url, track);
     }
   }
 
@@ -174,17 +182,11 @@ vgps3.track.Track.prototype.afterTrackLoad_ = function(url, event) {
  * @private
  */
 vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
-  /**
-   * @type {google.maps.LatLng}
-   */
-  var point;
-
-  /**
-   * @type {google.maps.LatLngBounds}
-   */
-  var bounds = new google.maps.LatLngBounds();
-
-  var trackIndex = this.tracks_.length;
+  var point,
+      minElevation = Number.MAX_VALUE,
+      maxElevation = Number.MIN_VALUE,
+      bounds = new google.maps.LatLngBounds(),
+      trackIndex = this.tracks_.length;
 
   this.tracks_.push({
     points: [],
@@ -197,8 +199,11 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
     bounds.extend(point);
   }
 
-  for (var i = 0; i < gpsFixes['nbChartPt']; i++) {
-    gpsFixes['elev'][i] = goog.math.clamp(gpsFixes['elev'][i], 0, vgps3.track.MAX_ELEV);
+  for (var i = 0, elev; i < gpsFixes['nbChartPt']; i++) {
+    elev = goog.math.clamp(gpsFixes['elev'][i], 0, vgps3.track.MAX_ELEV);
+    gpsFixes['elev'][i] = elev;
+    maxElevation = Math.max(maxElevation, elev);
+    minElevation = Math.min(minElevation, elev);
     gpsFixes['speed'][i] = Math.min(vgps3.track.MAX_SPEED, gpsFixes['speed'][i]);
     gpsFixes['vario'][i] = Math.min(vgps3.track.MAX_VARIO, gpsFixes['vario'][i]);
   }
@@ -231,7 +236,19 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
     this.currentTrackMarker_ = new google.maps.Marker({
       position: this.tracks_[0].points[0],
       map: this.gMap_,
-      clickable: false
+      clickable: false,
+      icon: {
+        anchor: new google.maps.Point(16, 32),
+        size: new google.maps.Size(32, 32),
+        scaledSize: new google.maps.Size(32, 32),
+        url: 'img/red.png'
+      },
+      shadow: {
+        anchor: new google.maps.Point(16, 32),
+        size: new google.maps.Size(56, 32),
+        scaledSize: new google.maps.Size(56, 32),
+        url: 'img/shadow.png'
+      }
     });
 
     this.infoControl_ = new vgps3.Control(
@@ -248,6 +265,24 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
 
     this.selectCurrentTrack_(0);
   }
+
+  this.iconScalers_[trackIndex] = (function(marker, minElevation, maxElevation, fixes) {
+    var range = maxElevation - minElevation,
+        icon = marker.getIcon(),
+        shadow = marker.getShadow();
+    return function(position) {
+      var elevation = fixes[Math.round(fixes.length * position)],
+        scale = (elevation - minElevation) / range + 0.5,
+        scaled32 = Math.round(32 * scale),
+        scaled56 = Math.round(56 * scale);
+      icon.anchor.y = shadow.anchor.y =
+      icon.size.width = icon.size.height =
+      icon.scaledSize.width = icon.scaledSize.height =
+      shadow.size.height = shadow.scaledSize.height = scaled32;
+      shadow.anchor.x = icon.anchor.x = scaled32 / 2;
+      shadow.size.width = shadow.scaledSize.width = scaled56;
+    };
+  })(this.currentTrackMarker_, minElevation, maxElevation, gpsFixes['elev']);
 
   this.vgps_.dispatchEvent(new vgps3.track.LoadEvent(trackIndex, gpsFixes, this.tracks_[trackIndex].color));
 };
