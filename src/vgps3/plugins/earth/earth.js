@@ -89,12 +89,6 @@ vgps3.earth.Earth = function() {
   this.currentTrackIndex_;
 
   /**
-  * @type {goog.async.Deferred} Triggered when the plugin is loaded
-  * @private
-  */
-  this.pluginLoaded_ = new goog.async.Deferred();
-
-  /**
    * @type {goog.async.Deferred} Triggered when the earth is first displayed
    * @private
    */
@@ -145,9 +139,9 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
 
   this.gMap_.mapTypes.set(vgps3.earth.MapTypeId.EARTH, vgps3.earth.EarthMapType_);
 
-  vgps3.loader.load('earth', 1, this.pluginLoaded_);
+  vgps3.loader.load('earth', 1, vgps3.earth.geApiLoaded_);
 
-  this.pluginLoaded_.addCallback(
+  vgps3.earth.geApiLoaded_.addCallback(
       function() {
         this.logger_.info('Google Earth API loaded');
         if (google.earth.isSupported()) {
@@ -560,7 +554,6 @@ vgps3.earth.EarthMapType_ = /** @type {google.maps.MapType} */ {
 /**
  * @define {string}
  */
-// todo
 vgps3.earth.MODEL_URL = 'http://victorb.fr/visugps/img/paraglider.dae';
 
 
@@ -570,6 +563,12 @@ vgps3.earth.MODEL_URL = 'http://victorb.fr/visugps/img/paraglider.dae';
  * @type {number}
  */
 vgps3.earth.MAX_EARTH_ZOOM_ = 27;
+
+/**
+ * @type {goog.async.Deferred} Triggered when the plugin is loaded
+ * @private
+ */
+vgps3.earth.geApiLoaded_ = new goog.async.Deferred();
 
 /**
  * @enum {string}

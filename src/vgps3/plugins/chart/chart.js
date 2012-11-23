@@ -106,18 +106,12 @@ vgps3.chart.Chart = function(container) {
   this.logger_ = goog.debug.Logger.getLogger('vgps3.chart.Chart');
 
   /**
-  * @type {goog.async.Deferred}
-  * @private
-  */
-  this.chartLoaded_ = new goog.async.Deferred();
-
-  /**
    * @type {!Element}
    * @private
    */
   this.container_ = container;
 
-  vgps3.loader.load('visualization', '1', this.chartLoaded_, {packages: ['corechart']});
+  vgps3.loader.load('visualization', '1', vgps3.chart.chartApiLoaded_, {packages: ['corechart']});
 };
 
 
@@ -241,7 +235,7 @@ vgps3.chart.Chart.prototype.resizeHandler_ = function() {
  * @private
  */
 vgps3.chart.Chart.prototype.drawCharts_ = function(index) {
-  this.chartLoaded_.addCallback(function() {
+  vgps3.chart.chartApiLoaded_.addCallback(function() {
       if (!goog.isDef(this.chartData_[index].dataView)) {
         this.chartData_[index].dataView = this.createDataView_(index);
       }
@@ -320,6 +314,12 @@ vgps3.chart.Chart.prototype.createDataView_ = function(index) {
 
   return new google.visualization.DataView(dataTable);
 };
+
+/**
+ * @type {goog.async.Deferred}
+ * @private
+ */
+vgps3.chart.chartApiLoaded_ = new goog.async.Deferred();
 
 /**
  * @enum {string}
