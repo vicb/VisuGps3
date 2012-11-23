@@ -33,7 +33,7 @@ vgps3.ign.Map = function() {
  */
 vgps3.ign.Map.prototype.init = function(vgps) {
   var gMap = vgps.getGoogleMap();
-  gMap.mapTypes.set(vgps3.ign.MapTypeId.TERRAIN, this.getIgnMapType_());
+  gMap.mapTypes.set(vgps3.ign.MapTypeId.TERRAIN, /** @type {?} */ (this.getIgnMapType_()));
 };
 
 
