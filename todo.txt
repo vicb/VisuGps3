@@ -1,9 +1,9 @@
-- earth
-  - track progress: indicator + messages
-
 - track plugin
   - load kml (!earth plugin)
-  - add an overlay while loading (indicator)
+
+- magic values
+
+- turn everything into components
 
 - plugin interface:
   - dispose()
@@ -25,7 +25,10 @@
 
 - chart plugin
   - make it easier to extend & re-use
+  - vs distance (in addition to vs time)
 
 - minify CSS
+
+- what if the GE plugin is not installed ?
 
 - i18n

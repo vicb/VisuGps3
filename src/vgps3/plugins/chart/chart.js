@@ -36,6 +36,7 @@ goog.require('goog.debug.Trace');
 goog.require('vgps3.loader');
 goog.require('goog.async.Throttle');
 goog.require('goog.dom.ViewportSizeMonitor');
+goog.require('goog.string.format');
 
 /**
  * @param {!Element} container
@@ -166,6 +167,7 @@ vgps3.chart.Chart.prototype.handleMouseWheel_ = function(event) {
  * @private
  */
 vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
+  this.logger_.info(goog.string.format('Adding track[%d]', event.index));
   if (!goog.isDef(this.chartContainers_)) {
     this.overlays_.render(goog.dom.getElement('charts'));
     this.sliders_.render(goog.dom.getElement('sliders'));
@@ -249,7 +251,7 @@ vgps3.chart.Chart.prototype.drawCharts_ = function(index) {
       }
 
       goog.debug.Trace.reset(0);
-      var tracer = goog.debug.Trace.startTracer('Rendering charts');
+      var tracer = goog.debug.Trace.startTracer(goog.string.format('Rendering charts[%d]', index));
       this.drawChart_('elevation', index, [0, 1, 2]);
       goog.debug.Trace.addComment('Elevation chart rendered');
       this.drawChart_('speed', index, [0, 3]);

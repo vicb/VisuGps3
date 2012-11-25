@@ -29,8 +29,7 @@ goog.require('vgps3.track.LoadEvent');
 goog.require('vgps3.track.TrackSelectEvent');
 goog.require('vgps3.track.templates');
 goog.require('goog.string.format');
-
-
+goog.require('vgps3.loadMask');
 
 
 /**
@@ -97,10 +96,19 @@ vgps3.track.Track = function() {
   this.iconScalers_ = [];
 
   /**
+   * Mask used while loading
+   * @type {goog.ui.ModalPopup}
+   * @private
+   */
+  this.loadMask_;
+
+  /**
   * @type {!goog.debug.Logger}
   * @private
   */
   this.logger_ = goog.debug.Logger.getLogger('vgps3.track.Track');
+
+  vgps3.loadMask.setMessage('Chargement de la trace');
 };
 
 
@@ -110,7 +118,6 @@ vgps3.track.Track = function() {
 vgps3.track.Track.prototype.init = function(vgps) {
   this.vgps_ = vgps;
   this.gMap_ = vgps.getGoogleMap();
-
   google.maps.event.addListener(this.gMap_, 'click', goog.bind(this.clickHandler_, this));
 };
 
@@ -119,10 +126,7 @@ vgps3.track.Track.prototype.init = function(vgps) {
  * @param {string} url The track url.
  */
 vgps3.track.Track.prototype.load = function(url) {
-  goog.net.XhrIo.send(
-      vgps3.track.PROXY_URL + url,
-      goog.bind(this.afterTrackLoad_, this, url)
-  );
+  goog.net.XhrIo.send(vgps3.track.PROXY_URL + url, goog.bind(this.afterTrackLoad_, this, url));
 };
 
 
@@ -133,7 +137,7 @@ vgps3.track.Track.prototype.load = function(url) {
  */
 vgps3.track.Track.prototype.moveTo = function(position, setCenter, zoomOffset) {
   var track = this.tracks_[this.currentTrackIndex_],
-      pointIndex = Math.round(position * (track.fixes['nbTrackPt'] - 1));
+      pointIndex = Math.ceil(position * (track.fixes['nbTrackPt'] - 1));
 
   this.updateInfoControl_(position);
   this.currentTrackMarker_.setPosition(track.points[pointIndex]);
@@ -166,8 +170,10 @@ vgps3.track.Track.prototype.afterTrackLoad_ = function(url, event) {
     var track = /** @type {vgps3.track.GpsFixes} */ (xhr.getResponseJson());
     if (goog.isDef(track)) {
       this.addTrack_(url, track);
+      return;
     }
   }
+
 
   // TODO: unsupported track format
 };
@@ -239,15 +245,9 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
       clickable: false,
       icon: {
         anchor: new google.maps.Point(16, 32),
-        size: new google.maps.Size(32, 32),
-        scaledSize: new google.maps.Size(32, 32),
-        url: 'img/red.png'
-      },
-      shadow: {
-        anchor: new google.maps.Point(16, 32),
-        size: new google.maps.Size(56, 32),
-        scaledSize: new google.maps.Size(56, 32),
-        url: 'img/shadow.png'
+        size: new google.maps.Size(59, 32),
+        scaledSize: new google.maps.Size(59, 32),
+        url: 'img/red-shadow.png'
       }
     });
 
@@ -264,23 +264,20 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
         );
 
     this.selectCurrentTrack_(0);
+    vgps3.loadMask.close();
   }
 
   this.iconScalers_[trackIndex] = (function(marker, minElevation, maxElevation, fixes) {
     var range = maxElevation - minElevation,
-        icon = marker.getIcon(),
-        shadow = marker.getShadow();
+        icon = marker.getIcon();
     return function(position) {
       var elevation = fixes[Math.round(fixes.length * position)],
         scale = (elevation - minElevation) / range + 0.5,
         scaled32 = Math.round(32 * scale),
-        scaled56 = Math.round(56 * scale);
-      icon.anchor.y = shadow.anchor.y =
-      icon.size.width = icon.size.height =
-      icon.scaledSize.width = icon.scaledSize.height =
-      shadow.size.height = shadow.scaledSize.height = scaled32;
-      shadow.anchor.x = icon.anchor.x = scaled32 / 2;
-      shadow.size.width = shadow.scaledSize.width = scaled56;
+        scaled59 = Math.round(59 * scale);
+      icon.anchor.y = icon.size.height = icon.scaledSize.height = scaled32;
+      icon.anchor.x = scaled32 / 2;
+      icon.size.width = icon.scaledSize.width = scaled59;
     };
   })(this.currentTrackMarker_, minElevation, maxElevation, gpsFixes['elev']);
 

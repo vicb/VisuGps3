@@ -82,9 +82,9 @@ body {
 
 .modal-dialog-bg {
   background: #666;
-  left: 0;
   position: absolute;
   top: 0;
+  left: 0;
 }
 
 .modal-dialog-title {
@@ -114,4 +114,35 @@ body {
 
 #about-social {
     margin-left: -1.34em;
+}
+
+.goog-modalpopup-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    background-color: black;
+    color: black;
+}
+
+.goog-modalpopup {
+    position: absolute;
+    z-index: 1000;
+    outline: none;
+}
+
+.vgps3-progress {
+    margin-top: -50%;
+    margin-left: -50%;
+    overflow: hidden;
+    text-align: center;
+}
+
+.vgps3-progress p {
+     font-size: 1.5em;
+     color: white;
+}
+
+.vgps3-progress p.error {
+    color: red;
 }

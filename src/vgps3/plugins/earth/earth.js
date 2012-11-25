@@ -111,11 +111,19 @@ vgps3.earth.Earth = function() {
    * @private
    */
   this.shim_;
+
   /**
    * Mouse down event used to discriminate click vs drag
    * @private
    */
   this.downEvent_;
+
+  /**
+   * Wether the earth is visible
+   * @type {boolean}
+   * @private
+   */
+  this.visible_;
 
   /**
    * @type {goog.debug.Logger} The logger
@@ -164,16 +172,21 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
 vgps3.earth.Earth.prototype.mapTypeChanged_ = function() {
   if (this.gMap_.getMapTypeId() === vgps3.earth.MapTypeId.EARTH) {
     if (!goog.isDef(this.ge_)) {
+      vgps3.loadMask.setMessage('Chargement de Google Earth');
+      this.mapCreated_.addCallback(goog.partial(vgps3.loadMask.setMessage, 'Chargement de la trace'));
+      this.trackAdded_.addCallback(vgps3.loadMask.close);
       this.createEarth_();
     }
     this.mapCreated_.addCallback(function() {
           this.currentMapTypeId_ = this.gMap_.getMapTypeId();
+          this.visible_ = true;
         },
         this
     );
     goog.style.showElement(this.earthDom_, true);
     this.showControls_(true);
   } else {
+    this.visible_ = false;
     this.showControls_(false);
     goog.style.showElement(this.earthDom_, false);
     this.currentMapTypeId_ = this.gMap_.getMapTypeId();
@@ -260,6 +273,7 @@ vgps3.earth.Earth.prototype.createEarth_ = function() {
   });
 
   this.logger_.info('Starting the GE Plugin');
+
   google.earth.createInstance(
       earthDiv,
       /**
@@ -277,14 +291,21 @@ vgps3.earth.Earth.prototype.createEarth_ = function() {
           var screen = navControl.getScreenXY();
           screen.setYUnits(ge.UNITS_INSET_PIXELS);
           screen.setXUnits(ge.UNITS_PIXELS);
-          ge.getOptions().setScaleLegendVisibility(true);
-          ge.getOptions().setTerrainExaggeration(1.2);
-          that.mapCreated_.callback();
+          // BUG: wait before using the ge plugin
+          // Note: Trust me, do not play too much with this init code !
+          goog.Timer.callOnce(that.mapCreated_.callback(), 100, that.mapCreated_);
         })
       },
+      /**
+       * @param {string} error
+       * @notypecheck
+       */
       function(error) {
-        that.logger_.severe('GE Plugin failed to start: ' + error);
-        that.gMap_.setMapTypeId(that.currentMapTypeId_);
+        vgps3.loadMask.close();
+        if (google.earth.isInstalled()) {
+          that.logger_.severe('GE Plugin failed to start: ' + error);
+          that.gMap_.setMapTypeId(that.currentMapTypeId_);
+        }
       }
   );
 }
@@ -298,12 +319,17 @@ vgps3.earth.Earth.prototype.createEarth_ = function() {
  * @notypecheck
  */
 vgps3.earth.Earth.prototype.moveTo = function(position, setCenter, zoomOffset) {
+  if (!this.visible_) {
+    return;
+  }
+
   this.trackAdded_.addCallback(function() {
       // Return if the earth is not currently visible or if no track is currently selected
       if (!(goog.isDef(this.currentTrackIndex_) && vgps3.earth.MapTypeId.EARTH === this.currentMapTypeId_)) {
         return;
       }
       var that = this;
+
       google.earth.executeBatch(this.ge_, function() {
         var kmlLine = that.ge_.getElementById('track-' + that.currentTrackIndex_),
             kmlCoordinates = kmlLine.getCoordinates(),
@@ -325,20 +351,19 @@ vgps3.earth.Earth.prototype.moveTo = function(position, setCenter, zoomOffset) {
         // Apply model origin (255deg)
         that.orientation_.setHeading(goog.math.standardAngle(heading + 255));
 
-        var lookAt = that.ge_.getView().copyAsLookAt(that.ge_.ALTITUDE_ABSOLUTE);
-        that.ge_.getOptions().setFlyToSpeed(that.ge_.SPEED_TELEPORT);
-
         if (setCenter) {
+          var lookAt = that.ge_.getView().copyAsLookAt(that.ge_.ALTITUDE_ABSOLUTE);
           lookAt.setLatitude(location.getLatitude());
           lookAt.setLongitude(location.getLongitude());
           lookAt.setAltitude(location.getAltitude());
+          that.ge_.getView().setAbstractView(lookAt);
         }
 
         if (zoomOffset) {
+          var lookAt = that.ge_.getView().copyAsLookAt(that.ge_.ALTITUDE_ABSOLUTE);
           lookAt.setRange(Math.pow(2, zoomOffset) * lookAt.getRange());
+          that.ge_.getView().setAbstractView(lookAt);
         }
-
-        (setCenter || zoomOffset) && that.ge_.getView().setAbstractView(lookAt);
       });
     },
     this
@@ -376,7 +401,6 @@ vgps3.earth.Earth.prototype.installClickHandler_ = function() {
  * @notypecheck
  */
 vgps3.earth.Earth.prototype.clickHandler_ = function(event) {
-  this.logger_.info(goog.string.format('Click %.5f %.5f', event.getLatitude(), event.getLongitude()));
   var mdEvent = {
     latLng: new google.maps.LatLng(event.getLatitude(), event.getLongitude()),
     stop: goog.functions.NULL
@@ -416,18 +440,19 @@ vgps3.earth.Earth.prototype.trackSelectHandler_ = function(event) {
       var that = this;
       // Create the 3D model
       if (!goog.isDef(this.orientation_)) {
-        this.logger_.info(goog.string.format('Creating 3D model', event.index));
+        this.logger_.info('Creating 3D model');
         google.earth.executeBatch(this.ge_, function() {
-          var placemark = that.ge_.createPlacemark('model');
-          var model = that.ge_.createModel('');
+          var placemark = that.ge_.createPlacemark('modelPm');
+          var model = that.ge_.createModel('model');
           placemark.setGeometry(model);
-          var link = that.ge_.createLink('');
+          var link = that.ge_.createLink('link');
           link.setHref(vgps3.earth.MODEL_URL)
           model.setLink(link);
           model.setLocation(that.location_);
-          model.setOrientation(that.orientation_ = that.ge_.createOrientation(''));
+          that.orientation_ = that.ge_.createOrientation('orient')
+          model.setOrientation(that.orientation_);
           var scale = that.ge_.createScale('');
-          scale.set(50, 50, 50);
+          scale.set(5, 5, 5);
           model.setScale(scale);
           model.setAltitudeMode(that.ge_.ALTITUDE_ABSOLUTE);
           that.ge_.getFeatures().appendChild(placemark);
@@ -465,18 +490,23 @@ vgps3.earth.Earth.prototype.trackSelectHandler_ = function(event) {
 vgps3.earth.Earth.prototype.displayTrack_ = function(index, fixes, color) {
   var that = this,
       lineString = that.ge_.createLineString('track-' + index),
-      lineStringPm = that.ge_.createPlacemark('trackPm-' + index);
+      lineStringPm = that.ge_.createPlacemark('trackPm-' + index),
+      getElevation = goog.bind(that.estimateElevation_, that, (fixes['nbChartPt'] - 1) / (fixes['nbTrackPt'] - 1)),
+      elev = [];
 
   this.logger_.info(goog.string.format('Displaying track[%d]', index));
 
   lineStringPm.setGeometry(lineString);
-  lineString.setTessellate(false);
+  lineString.setTessellate(true);
+
+  for (var i = 0; i < fixes['nbTrackPt']; i++) {
+    elev[i] = getElevation(fixes, i);
+  }
 
   google.earth.executeBatch(this.ge_, function() {
     var points = lineString.getCoordinates();
-    var getElevation = goog.bind(that.estimateElevation_, that, (fixes['nbChartPt'] - 1) / (fixes['nbTrackPt'] - 1));
     for (var i = 0; i < fixes['nbTrackPt']; i++) {
-      points.pushLatLngAlt(fixes['lat'][i], fixes['lon'][i], getElevation(fixes, i));
+      points.pushLatLngAlt(fixes['lat'][i], fixes['lon'][i], elev[i]);
     }
   });
 
@@ -491,26 +521,29 @@ vgps3.earth.Earth.prototype.displayTrack_ = function(index, fixes, color) {
     lineStyle.getColor().set(goog.color.parse(color).hex.replace(/#(..)(..)(..)/, '7f$3$2$1'));
   });
 
+  this.logger_.info(goog.string.format('Track[%d] added', index));
+
   if (!goog.isDef(that.location_)) {
     that.location_ = null;
     google.earth.executeBatch(this.ge_, function() {
       // Location where to first display the 3D model
+      that.ge_.getOptions().setFlyToSpeed(that.ge_.SPEED_TELEPORT);
+      that.ge_.getOptions().setScaleLegendVisibility(true);
       that.location_ = that.ge_.createLocation('');
       that.location_.setLatitude(fixes['lat'][0]);
       that.location_.setLongitude(fixes['lon'][0]);
       that.location_.setAltitude(fixes['elev'][0]);
       // fly to that location
       var lookAt = that.ge_.getView().copyAsLookAt(that.ge_.ALTITUDE_ABSOLUTE);
-      var range = Math.pow(2, vgps3.earth.MAX_EARTH_ZOOM_ - 12);
-      lookAt.setRange(range);
+      lookAt.setRange(Math.pow(2, vgps3.earth.MAX_EARTH_ZOOM_ - 14));
       lookAt.setLatitude(fixes['lat'][0]);
       lookAt.setLongitude(fixes['lon'][0]);
       lookAt.setHeading(0);
       lookAt.setAltitude(fixes['elev'][0]);
-      lookAt.setTilt(60);
+      lookAt.setTilt(80);
       that.ge_.getView().setAbstractView(lookAt);
     });
-    that.trackAdded_.callback();
+    goog.Timer.callOnce(that.trackAdded_.callback, 10, that.trackAdded_);
   }
 };
 
