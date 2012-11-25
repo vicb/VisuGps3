@@ -33,6 +33,8 @@ goog.require('goog.functions');
 goog.require('goog.array');
 goog.require('vgps3.loader');
 
+
+
 /**
  *
  * @constructor
@@ -424,6 +426,7 @@ vgps3.earth.Earth.prototype.trackLoadHandler_ = function(event) {
   this.mapCreated_.addCallback(goog.partial(this.displayTrack_, index, fixes, color), this);
 
 };
+
 
 /**
  * @param {vgps3.track.TrackSelectEvent} event

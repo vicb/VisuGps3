@@ -15,5 +15,5 @@ fixjs:
 serve:
 	java -jar $(PLOVR_JAR) serve make.dev.js
 
-PLOVR_JAR:
+$(PLOVR_JAR):
 	curl https://plovr.googlecode.com/files/$(notdir $@) >$@

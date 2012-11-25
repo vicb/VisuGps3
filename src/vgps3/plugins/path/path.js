@@ -22,7 +22,7 @@ goog.require('goog.style');
 goog.require('vgps3.Control');
 goog.require('vgps3.path.templates');
 goog.require('goog.net.Cookies');
-
+goog.require('goog.Timer');
 
 
 

@@ -29,6 +29,4 @@
 
 - minify CSS
 
-- what if the GE plugin is not installed ?
-
 - i18n
