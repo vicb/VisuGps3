@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview VisuGps3.
+ * @fileoverview VisuGps3 map.
  * @author Victor Berchet <victor@suumit.com>
  */
 
@@ -89,6 +89,8 @@ vgps3.Map.prototype.getGoogleMap = function() {
 
 
 /**
+ * Displays the about dialog.
+ *
  * @return {undefined}
  */
 vgps3.Map.prototype.showAbout = function() {
@@ -99,6 +101,7 @@ vgps3.Map.prototype.showAbout = function() {
     this.aboutDialog_.setButtonSet(goog.ui.Dialog.ButtonSet.createOk());
     this.aboutDialog_.setEscapeToCancel(true);
     this.aboutDialog_.getDialogElement();
+    // Do not allow drawing as the iframe shim would not follow the dialog
     this.aboutDialog_.setDraggable(false);
     var mask = new goog.ui.IframeMask();
     mask.setOpacity(1);
@@ -114,20 +117,15 @@ vgps3.Map.prototype.showAbout = function() {
 
 
 /**
+ * Calls the plugins initialization function.
+ *
  * @param {(Array.<vgps3.IPlugin>|vgps3.IPlugin)=} plugins A list of plugins.
  * @private
  */
 vgps3.Map.prototype.initPlugins_ = function(plugins) {
   if (goog.isDef(plugins)) {
     plugins = goog.isArray(plugins) ? plugins : [plugins];
-
-    goog.array.forEach(
-        plugins,
-        function(plugin) {
-          plugin.init(this);
-        },
-        this
-    );
+    goog.array.forEach(plugins, function(plugin) {plugin.init(this);}, this);
   }
 };
 

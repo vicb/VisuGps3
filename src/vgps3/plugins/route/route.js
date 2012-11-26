@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview
+ * @fileoverview Displays a route.
  * @author Victor Berchet <victor@suumit.com>
  */
 
@@ -27,7 +27,7 @@ goog.require('vgps3.Map');
  */
 vgps3.route.Route = function() {
   /**
-  * @type {google.maps.Map}
+  * @type {google.maps.Map} The google map.
   * @private
   */
   this.gMap_;
@@ -44,7 +44,7 @@ vgps3.route.Route.prototype.init = function(vgps) {
 
 /**
  *
- * @param {string} type
+ * @param {string} type End with "c" to display a closed route
  * @param {Array.<google.maps.LatLng>} turnpoints
  * @param {google.maps.LatLng=} opt_start
  * @param {google.maps.LatLng=} opt_end
@@ -53,16 +53,16 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end
   var startIcon = new google.maps.MarkerImage(vgps3.route.START_ICON_URL, new google.maps.Size(12, 20)),
       endIcon = new google.maps.MarkerImage(vgps3.route.END_ICON_URL, new google.maps.Size(12, 20)),
       icon = new google.maps.MarkerImage(vgps3.route.ICON_URL, new google.maps.Size(12, 20)),
-      closed = type.substr(-1) === 'c',
-      route = new google.maps.Polyline({
-            clickable: false,
-            map: this.gMap_,
-            path: turnpoints,
-            strokeColor: '#00f',
-            strokeOpacity: 0.8,
-            strokeWeight: 1
+      closed = type.length && type.substr(-1) === 'c';
 
-      });
+  new google.maps.Polyline({
+        clickable: false,
+        map: this.gMap_,
+        path: turnpoints,
+        strokeColor: '#00f',
+        strokeOpacity: 0.8,
+        strokeWeight: 1
+  });
 
   if (closed && goog.isDef(opt_start)) {
     new google.maps.Polyline({
@@ -104,12 +104,7 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end
   goog.array.forEach(
       closed ? turnpoints : goog.array.slice(turnpoints, 1, -1),
       function(tp) {
-        new google.maps.Marker({
-          clickable: false,
-          position: tp,
-          map: this.gMap_,
-          icon: icon
-        });
+        new google.maps.Marker({clickable: false, position: tp, map: this.gMap_, icon: icon});
       },
       this
   );
@@ -117,19 +112,19 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end
 
 
 /**
- * @define {string}
+ * @define {string} The start icon url
  */
 vgps3.route.START_ICON_URL = 'http://labs.google.com/ridefinder/images/mm_20_green.png';
 
 
 /**
- * @define {string}
+ * @define {string} The end icon url
  */
 vgps3.route.END_ICON_URL = 'http://labs.google.com/ridefinder/images/mm_20_red.png';
 
 
 /**
- * @define {string}
+ * @define {string} The route icon url
  */
 vgps3.route.ICON_URL = 'http://labs.google.com/ridefinder/images/mm_20_orange.png';
 

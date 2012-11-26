@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview
+ * @fileoverview Charts for elevation, speed, vario.
  * @author Victor Berchet <victor@suumit.com>
  */
 
@@ -46,25 +46,25 @@ goog.require('goog.string.format');
  */
 vgps3.chart.Chart = function(container) {
   /**
-  * @type {vgps3.Map}
+  * @type {vgps3.Map} The vgps3 map
   * @private
   */
   this.vgps_;
 
   /**
-  * @type {goog.events.MouseWheelHandler}
+  * @type {goog.events.MouseWheelHandler} The mouse wheel event handler
   * @private
   */
   this.mouseWheelHandler_;
 
   /**
-  * @type {vgps3.chart.Overlays}
+  * @type {vgps3.chart.Overlays} Chart overlays
   * @private
   */
   this.overlays_ = new vgps3.chart.Overlays();
 
   /**
-  * @type {vgps3.chart.Sliders}
+  * @type {vgps3.chart.Sliders} Set of sliders to adjust opacity
   * @private
   */
   this.sliders_ = new vgps3.chart.Sliders();
@@ -95,7 +95,7 @@ vgps3.chart.Chart = function(container) {
   this.charts_;
 
   /**
-   * @type {number}
+   * @type {number} The index of the current track.
    * @private
    */
   this.currentTrackIndex_;
@@ -128,6 +128,8 @@ vgps3.chart.Chart.prototype.init = function(vgps) {
 
 
 /**
+ * Moves the cursor to the specified position.
+ *
  * @param {number} position [0...1].
  */
 vgps3.chart.Chart.prototype.moveTo = function(position) {
@@ -136,6 +138,8 @@ vgps3.chart.Chart.prototype.moveTo = function(position) {
 
 
 /**
+ * Dispatches events on mouse down and move.
+ *
  * @param {goog.events.BrowserEvent} event
  * @private
  */
@@ -152,6 +156,8 @@ vgps3.chart.Chart.prototype.handleMouseEvents_ = function(event)
 
 
 /**
+ * Dispatches events on mouse wheel.
+ *
  * @param {goog.events.MouseWheelEvent} event
  * @private
  */
@@ -163,11 +169,13 @@ vgps3.chart.Chart.prototype.handleMouseWheel_ = function(event) {
 
 
 /**
+ * Creates the charts when a track has been loaded.
+ *
  * @param {vgps3.track.LoadEvent} event
  * @private
  */
 vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
-  this.logger_.info(goog.string.format('Adding track[%d]', event.index));
+  this.logger_.info(goog.string.format('Adding track[%d]', event.trackIndex));
   if (!goog.isDef(this.chartContainers_)) {
     this.overlays_.render(goog.dom.getElement('charts'));
     this.sliders_.render(goog.dom.getElement('sliders'));
@@ -202,26 +210,32 @@ vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
         goog.bind(this.vgps_.dispatchEvent, this.vgps_, new vgps3.chart.AboutEvent())
     );
 
-    var resizeThrottler = new goog.async.Throttle(this.resizeHandler_, 200, this);
-    goog.events.listen(new goog.dom.ViewportSizeMonitor(), goog.events.EventType.RESIZE, goog.bind(resizeThrottler.fire, resizeThrottler));
+    var resizeThrottler = new goog.async.Throttle(this.resizeHandler_, 100, this);
+    goog.events.listen(
+      new goog.dom.ViewportSizeMonitor(),
+      goog.events.EventType.RESIZE,
+      goog.bind(resizeThrottler.fire, resizeThrottler)
+    );
   }
 
-  this.chartData_[event.index] = {fixes: event.track};
+  this.chartData_[event.trackIndex] = {fixes: event.fixes};
 };
 
 
 /**
- * Redraw the charts when a new track is selected.
+ * Redraws the charts when a new track is selected.
+ *
  * @param {vgps3.track.TrackSelectEvent} event
  * @private
  */
 vgps3.chart.Chart.prototype.mapSelectHandler_ = function(event) {
-  this.currentTrackIndex_ = event.index;
-  this.drawCharts_(event.index);
+  this.currentTrackIndex_ = event.trackIndex;
+  this.drawCharts_(event.trackIndex);
 };
 
 /**
- * Redraw the charts when the container is resized.
+ * Redraws the charts when the container is resized.
+ *
  * @private
  */
 vgps3.chart.Chart.prototype.resizeHandler_ = function() {
@@ -233,6 +247,7 @@ vgps3.chart.Chart.prototype.resizeHandler_ = function() {
 
 /**
  * Draw all the charts.
+ *
  * @param {number} index
  * @private
  */
@@ -266,6 +281,8 @@ vgps3.chart.Chart.prototype.drawCharts_ = function(index) {
 }
 
 /**
+ * Draws a single chart.
+ *
  * @param {string} type
  * @param {number} index
  * @param {Array.<number>} columns
@@ -291,6 +308,8 @@ vgps3.chart.Chart.prototype.drawChart_ = function(type, index, columns) {
 };
 
 /**
+ * Creates chart underlying data as a DataView.
+ *
  * @param {number} index
  * @private
  */
@@ -318,13 +337,13 @@ vgps3.chart.Chart.prototype.createDataView_ = function(index) {
 };
 
 /**
- * @type {goog.async.Deferred}
+ * @type {goog.async.Deferred} Trigerred when the Chart API has been loaded.
  * @private
  */
 vgps3.chart.chartApiLoaded_ = new goog.async.Deferred();
 
 /**
- * @enum {string}
+ * @enum {string} The events that can be dispacthed
  */
 vgps3.chart.EventType = {
   CLICK: 'vgps3.chart.click',
@@ -334,14 +353,13 @@ vgps3.chart.EventType = {
 };
 
 /**
- * @type {number}
- * @const
+ * @defined {number} Number of horizontal labels
  * @private
  */
 vgps3.chart.NB_HLABELS_ = 6;
 
 /**
- * @type {Object}
+ * @type {Object} Default options for charts
  * @const
  * @private
  */

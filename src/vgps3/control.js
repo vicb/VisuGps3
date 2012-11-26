@@ -35,7 +35,7 @@ vgps3.Control = function(map, template, position) {
   this.dom_ = goog.dom.createDom('div', 'map-ctrl');
 
   /**
-   * @type {!Function}
+   * @type {!Function} The template to render in the control
    * @private
    */
   this.template_ = template;
@@ -45,19 +45,17 @@ vgps3.Control = function(map, template, position) {
 
 
 /**
+ * Updates the control by rendering the template.
+ *
  * @param {Object=} opt_templateData
  */
 vgps3.Control.prototype.update = function(opt_templateData) {
-  goog.soy.renderElement(
-      this.dom_,
-      this.template_,
-      opt_templateData
-  );
+  goog.soy.renderElement(this.dom_, this.template_, opt_templateData);
 };
 
 
 /**
- * @return {!Element}
+ * @return {!Element} The control division
  */
 vgps3.Control.prototype.getElement = function() {
   return this.dom_;

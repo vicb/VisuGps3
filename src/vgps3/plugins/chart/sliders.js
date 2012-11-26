@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview
+ * @fileoverview A set of sliders.
  * @author Victor Berchet <victor@suumit.com>
  */
 
@@ -30,7 +30,7 @@ goog.require('goog.ui.Slider');
  */
 vgps3.chart.Sliders = function(opt_domHelper) {
   /**
-  * @type {Element}
+  * @type {Element} The title div.
   * @private
   */
   this.title_;
@@ -41,9 +41,11 @@ goog.inherits(vgps3.chart.Sliders, goog.ui.Component);
 
 
 /**
- * @param {string} label
- * @param {Element} element
- * @param {string} color
+ * Adds a slider to the set.
+ *
+ * @param {string} label The label of the slider
+ * @param {Element} element The element whose opacity will be linked to this slider position
+ * @param {string} color The color of the thumb
  */
 vgps3.chart.Sliders.prototype.addSlider = function(label, element, color) {
   var slider = new goog.ui.Slider(),
@@ -51,12 +53,12 @@ vgps3.chart.Sliders.prototype.addSlider = function(label, element, color) {
 
   this.addChild(slider, true);
 
-  // BUG: The thumb would move down on each click (css top keep increasing)
   slider.setMoveToPointEnabled(true);
   slider.setValue(goog.style.getOpacity(element) * 100);
   thumb = goog.dom.getElementsByTagNameAndClass(null, goog.ui.Slider.THUMB_CSS_CLASS, slider.getElement())[0];
   goog.style.setStyle(thumb, 'background-color', color);
   goog.style.setOpacity(thumb, goog.style.getOpacity(element));
+  thumb.title = label;
 
   this.getHandler().listen(
       slider,
@@ -71,13 +73,12 @@ vgps3.chart.Sliders.prototype.addSlider = function(label, element, color) {
 
 
 /**
- * @return {Element}
+ * @return {Element} The title div
  */
 vgps3.chart.Sliders.prototype.getTitleElement = function() {
   if (!this.isInDocument()) {
     throw Error(goog.ui.Component.Error.NOT_IN_DOCUMENT);
   }
-
   return this.title_;
 };
 
@@ -93,10 +94,7 @@ vgps3.chart.Sliders.prototype.createDom = function() {
       'vgps3-sliders-title',
       goog.dom.htmlToDocumentFragment('<h1>VisuGps?</h1>')
       ));
-  goog.style.setStyle(this.element_, {
-    width: '100%',
-    height: '100%'
-  });
+  goog.style.setStyle(this.element_, {width: '100%', height: '100%'});
 };
 
 
@@ -108,5 +106,6 @@ vgps3.chart.Sliders.prototype.canDecorate = function(element) {
 
 /** @override */
 vgps3.chart.Sliders.prototype.disposeInternal = function() {
+  goog.base(this, 'disposeInternal');
   delete this.title_;
 };

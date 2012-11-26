@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview
+ * @fileoverview Click event.
  * @author Victor Berchet <victor@suumit.com>
  */
 
@@ -29,7 +29,7 @@ vgps3.earth.ClickEvent = function(position) {
   goog.base(this, vgps3.earth.EventType.CLICK);
 
   /**
-  * @type {number}
+  * @type {number} [0...1]
   */
   this.position = position;
 };

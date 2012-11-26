@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview
+ * @fileoverview Track select event
  * @author Victor Berchet <victor@suumit.com>
  */
 
@@ -20,24 +20,24 @@ goog.require('goog.events.Event');
 
 
 /**
- * @param {number} index
- * @param {?number} previousIndex
+ * @param {number} trackIndex
+ * @param {?number} previousTrackIndex
  *
  * @constructor
  * @extends {goog.events.Event}
  */
-vgps3.track.TrackSelectEvent = function(index, previousIndex) {
+vgps3.track.TrackSelectEvent = function(trackIndex, previousTrackIndex) {
   goog.base(this, vgps3.track.EventType.SELECT);
 
   /**
-  * @type {number}
+  * @type {number} The index of the selected track
   */
-  this.index = index;
+  this.trackIndex = trackIndex;
 
   /**
-  * @type {?number}
+  * @type {?number} The index of the previously selected track (null when none)
   */
-  this.previousIndex = previousIndex;
+  this.previousTrackIndex = previousTrackIndex;
 };
 goog.inherits(vgps3.track.TrackSelectEvent, goog.events.Event);
 

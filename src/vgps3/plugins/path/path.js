@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview
+ * @fileoverview Measure paths.
  * @author Victor Berchet <victor@suumit.com>
  */
 
@@ -32,31 +32,31 @@ goog.require('goog.Timer');
  */
 vgps3.path.Path = function() {
   /**
-  * @type {vgps3.Map}
+  * @type {vgps3.Map} The VisuGps map.
   * @private
   */
   this.vgps_;
 
   /**
-  * @type {google.maps.Map}
+  * @type {google.maps.Map} The google map.
   * @private
   */
   this.gMap_;
 
   /**
-   * @type {google.maps.Polyline}
+   * @type {google.maps.Polyline} The current path
    * @private
    */
   this.line_;
 
   /**
-   * @type {vgps3.Control}
+   * @type {vgps3.Control} The google map control
    * @private
    */
   this.control_;
 
   /**
-   * @type {Element}
+   * @type {Element} The span where to display the distance
    * @private
    */
   this.element_;
@@ -89,6 +89,7 @@ vgps3.path.Path.prototype.init = function(vgps) {
 
 
 /**
+ * Toggles distance visibility when the control is clicked.
  *
  * @param {goog.events.Event} event
  */
@@ -106,17 +107,13 @@ vgps3.path.Path.prototype.clickHandler_ = function(event) {
 
     if (!goog.isDef(this.line_)) {
       var cookies = new goog.net.Cookies(document);
-
       this.createLine_();
-
-      if ('hide' !== cookies.get(vgps3.path.HELP, 'show')) {
-        var help = new google.maps.InfoWindow({
-          content: vgps3.path.templates.help(),
-          position: center
-        });
+      // Some help when the control is used for the first time
+      if ('hide' !== cookies.get(vgps3.path.COOKIE_NAME, 'show')) {
+        var help = new google.maps.InfoWindow({content: vgps3.path.templates.help(), position: center});
         help.open(this.gMap_);
         goog.Timer.callOnce(help.close, 8000, help);
-        cookies.set(vgps3.path.HELP, 'hide');
+        cookies.set(vgps3.path.COOKIE_NAME, 'hide');
       }
     }
 
@@ -139,19 +136,9 @@ vgps3.path.Path.prototype.clickHandler_ = function(event) {
 vgps3.path.Path.prototype.createLine_ = function() {
   var that = this;
 
-  this.line_ = new google.maps.Polyline({
-    editable: true,
-    map: this.gMap_,
-    strokeColor: 'black',
-    strokeWeight: 4,
-    zIndex: 100
-  });
+  this.line_ = new google.maps.Polyline({editable: true, map: this.gMap_, strokeColor: 'black', strokeWeight: 4, zIndex: 100});
 
-  google.maps.event.addListener(
-      this.line_,
-      'mousemove',
-      goog.bind(function() { that.updateControl_(); }, that)
-  );
+  google.maps.event.addListener(this.line_, 'mousemove', goog.bind(that.updateControl_, that));
 
   google.maps.event.addListener(
       this.line_,
@@ -163,23 +150,23 @@ vgps3.path.Path.prototype.createLine_ = function() {
         }
       }
   );
-}
+};
 
 
 /**
+ * Updates the control with the current distance.
+ *
  * @private
  */
 vgps3.path.Path.prototype.updateControl_ = function() {
   this.element_.innerHTML =
-      Math.round(google.maps.geometry.spherical.computeLength(this.line_.getPath()) / 10) / 100
-    + ' km';
-
+      Math.round(google.maps.geometry.spherical.computeLength(this.line_.getPath()) / 10) / 100 + ' km';
 };
 
 /**
  * @const
  */
-vgps3.path.HELP = 'vgps3.path.help';
+vgps3.path.COOKIE_NAME = 'vgps3.path.help';
 
 goog.exportSymbol('vgps3.path.Path', vgps3.path.Path);
 goog.exportSymbol('vgps3.path.Path.init', vgps3.path.Path.prototype.init);

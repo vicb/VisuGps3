@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview VisuGps3.
+ * @fileoverview VisuGps3 viewer.
  * @author Victor Berchet <victor@suumit.com>
  */
 
@@ -32,6 +32,8 @@ goog.require('vgps3.track.Track');
 
 
 /**
+ * Creates a VisuGps3 viewer with all the plugins.
+ *
  * @param {!Element} mapContainer
  * @param {!Element} chartContainer
  * @constructor
@@ -87,6 +89,8 @@ vgps3.Viewer = function(mapContainer, chartContainer) {
 
 
 /**
+ * Wires all the events.
+ *
  * @private
  */
 vgps3.Viewer.prototype.wireEvents_ = function() {
@@ -110,6 +114,13 @@ vgps3.Viewer.prototype.wireEvents_ = function() {
 
 
 /**
+ * Parse the URL to display tracks and turnpoints.
+ * Supported parameters:
+ *   - track: URL to a track (could appear multiple times)
+ *   - turnpoints: Array of turnpoints, json encoded (Array<latitude, longitude>)
+ *   - start: Start of the track (Array<latitude, longitude>, json encoded)
+ *   - end: End of the track (Array<latitude, longitude>, json encoded)
+ *
  * @param {string} url
  *
  * @private
@@ -120,7 +131,6 @@ vgps3.Viewer.prototype.parseUrl_ = function(url) {
       turnpoints = uri.getParameterValues('turnpoints'),
       start = uri.getParameterValue('start'),
       end = uri.getParameterValue('end');
-
 
   goog.array.forEach(
     uri.getParameterValues('track') || [],
@@ -144,14 +154,15 @@ vgps3.Viewer.prototype.parseUrl_ = function(url) {
 
 
 /**
+ * Converts an Array.<latitude, longitude> to a Google maps LatLng.
  *
- * @param {Array.<number>|number} latlng
+ * @param {(Array.<number>|number)=} opt_latlng
  *
  * @return {google.maps.LatLng}
  * @private
  */
-vgps3.Viewer.prototype.array2LatLng_ = function(latlng) {
-  return latlng && goog.isArray(latlng) ? new google.maps.LatLng(latlng[0], latlng[1]) : null;
+vgps3.Viewer.prototype.array2LatLng_ = function(opt_latlng) {
+  return opt_latlng && goog.isArray(opt_latlng) ? new google.maps.LatLng(opt_latlng[0], opt_latlng[1]) : null;
 };
 
 

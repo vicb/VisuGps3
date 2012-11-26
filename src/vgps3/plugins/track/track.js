@@ -38,13 +38,13 @@ goog.require('vgps3.loadMask');
  */
 vgps3.track.Track = function() {
   /**
-  * @type {vgps3.Map}
+  * @type {vgps3.Map} The visugps map
   * @private
   */
   this.vgps_;
 
   /**
-  * @type {google.maps.Map}
+  * @type {google.maps.Map} The google map
   * @private
   */
   this.gMap_;
@@ -56,48 +56,39 @@ vgps3.track.Track = function() {
   *   points: google.maps.Point,
   *   bounds: google.maps.Bounds,
   *   polyline: google.maps.Polyline,
-  *   color: string
+  *   color: string,
+  *   iconScaler: function(number)
   * }>}
   * @private
   */
   this.tracks_ = [];
 
   /**
-  * @type {number|undefined}
+  * @type {number} The index of the current track
   * @private
   */
   this.currentTrackIndex_;
 
   /**
-   * @type {google.maps.Marker}
+   * @type {google.maps.Marker} The marker for the current position (on any track)
    * @private
    */
   this.currentTrackMarker_;
 
   /**
-  * Info control
-  * @type {vgps3.Control}
+  * @type {vgps3.Control} The control where current location info is displayed
   * @private
   */
   this.infoControl_;
 
   /**
-  * Info control
-  * @type {vgps3.Control}
+  * @type {vgps3.Control} The control where current track info is displayed
   * @private
   */
-  this.dateControl_;
+  this.trackControl_;
 
   /**
-   * Scale the icon size according to its altitude
-   * @type {Array.<function(number): google.maps.Size>}
-   * @private
-   */
-  this.iconScalers_ = [];
-
-  /**
-   * Mask used while loading
-   * @type {goog.ui.ModalPopup}
+   * @type {goog.ui.ModalPopup} Mask used while loading
    * @private
    */
   this.loadMask_;
@@ -123,32 +114,36 @@ vgps3.track.Track.prototype.init = function(vgps) {
 
 
 /**
+ * Loads track on the map.
+ *
  * @param {string} url The track url.
  */
 vgps3.track.Track.prototype.load = function(url) {
-  goog.net.XhrIo.send(vgps3.track.PROXY_URL + url, goog.bind(this.afterTrackLoad_, this, url));
+  goog.net.XhrIo.send(vgps3.track.PROXY_URL + url, goog.bind(this.trackLoadHandler_, this, url));
 };
 
 
 /**
+ * Moves to the specified position on the current track.
+ *
  * @param {number} position [0...1].
- * @param {boolean=} setCenter Whether to center the map.
- * @param {number=} zoomOffset
+ * @param {boolean=} opt_setCenter Whether to center the map.
+ * @param {number=} opt_zoomOffset
  */
-vgps3.track.Track.prototype.moveTo = function(position, setCenter, zoomOffset) {
+vgps3.track.Track.prototype.moveTo = function(position, opt_setCenter, opt_zoomOffset) {
   var track = this.tracks_[this.currentTrackIndex_],
-      pointIndex = Math.ceil(position * (track.fixes['nbTrackPt'] - 1));
+      pointIndex = Math.round(position * (track.fixes['nbTrackPt'] - 1));
 
   this.updateInfoControl_(position);
   this.currentTrackMarker_.setPosition(track.points[pointIndex]);
-  goog.isDef(this.iconScalers_[this.currentTrackIndex_]) && this.iconScalers_[this.currentTrackIndex_](position);
+  goog.isDef(track.IconScaler) && track.IconScaler(position);
 
-  if (setCenter) {
+  if (opt_setCenter) {
     this.gMap_.setCenter(track.points[pointIndex]);
   }
 
-  if (zoomOffset) {
-    this.gMap_.setZoom(this.gMap_.getZoom() + zoomOffset);
+  if (opt_zoomOffset) {
+    this.gMap_.setZoom(this.gMap_.getZoom() + opt_zoomOffset);
   }
 };
 
@@ -156,26 +151,27 @@ vgps3.track.Track.prototype.moveTo = function(position, setCenter, zoomOffset) {
 /**
  * Callback executed after the track has been loaded.
  *
- * @see load
- *
  * @param {goog.events.Event} event
  * @param {string} url The url of the track.
  *
  * @private
+ * @see load
  */
-vgps3.track.Track.prototype.afterTrackLoad_ = function(url, event) {
+vgps3.track.Track.prototype.trackLoadHandler_ = function(url, event) {
   var xhr = /** @type {goog.net.XhrIo} */ (event.target);
 
   if (xhr.isSuccess()) {
     var track = /** @type {vgps3.track.GpsFixes} */ (xhr.getResponseJson());
+    //goog.dispose(xhr);
     if (goog.isDef(track)) {
       this.addTrack_(url, track);
       return;
     }
+  } else {
+    goog.dispose(xhr);
   }
 
-
-  // TODO: unsupported track format
+  vgps3.loadMask.setMessage('Erreur de chargement de la trace', vgps3.loadMask.Style.ERROR);
 };
 
 
@@ -194,10 +190,9 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
       bounds = new google.maps.LatLngBounds(),
       trackIndex = this.tracks_.length;
 
-  this.tracks_.push({
-    points: [],
-    fixes: gpsFixes
-  });
+  this.logger_.info(goog.string.format('Adding track[%d]', this.tracks_.length));
+
+  this.tracks_.push({points: [], fixes: gpsFixes});
 
   for (var i = 0; i < gpsFixes['nbTrackPt']; i++) {
     point = new google.maps.LatLng(gpsFixes['lat'][i], gpsFixes['lon'][i]);
@@ -215,12 +210,8 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
   }
 
   this.tracks_[trackIndex].bounds = bounds;
-
   this.tracks_[trackIndex].color = this.getTrackColor_(trackIndex);
-
-  this.tracks_[trackIndex].polyline = new google.maps.Polyline(
-      this.getPolylineOptions_(trackIndex)
-      );
+  this.tracks_[trackIndex].polyline = new google.maps.Polyline(this.getPolylineOptions_(trackIndex));
 
   // todo compute maxDelta server side
   var maxDelta = 0;
@@ -244,10 +235,10 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
       map: this.gMap_,
       clickable: false,
       icon: {
-        anchor: new google.maps.Point(16, 32),
-        size: new google.maps.Size(59, 32),
-        scaledSize: new google.maps.Size(59, 32),
-        url: 'img/red-shadow.png'
+        anchor: new google.maps.Point(vgps3.track.ICON_ANCHOR_X, vgps3.track.ICON_ANCHOR_Y),
+        size: new google.maps.Size(vgps3.track.ICON_WIDTH, vgps3.track.ICON_HEIGHT),
+        scaledSize: new google.maps.Size(vgps3.track.ICON_WIDTH, vgps3.track.ICON_HEIGHT),
+        url: vgps3.track.ICON_URL
       }
     });
 
@@ -257,7 +248,7 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
         google.maps.ControlPosition.RIGHT_BOTTOM
         );
 
-    this.dateControl_ = new vgps3.Control(
+    this.trackControl_ = new vgps3.Control(
         this.gMap_,
         vgps3.track.templates.dateControl,
         google.maps.ControlPosition.RIGHT_TOP
@@ -267,39 +258,49 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
     vgps3.loadMask.close();
   }
 
-  this.iconScalers_[trackIndex] = (function(marker, minElevation, maxElevation, fixes) {
-    var range = maxElevation - minElevation,
-        icon = marker.getIcon();
-    return function(position) {
-      var elevation = fixes[Math.round(fixes.length * position)],
-        scale = (elevation - minElevation) / range + 0.5,
-        scaled32 = Math.round(32 * scale),
-        scaled59 = Math.round(59 * scale);
-      icon.anchor.y = icon.size.height = icon.scaledSize.height = scaled32;
-      icon.anchor.x = scaled32 / 2;
-      icon.size.width = icon.scaledSize.width = scaled59;
-    };
-  })(this.currentTrackMarker_, minElevation, maxElevation, gpsFixes['elev']);
+  this.tracks_[trackIndex].iconScaler = this.getIconScaler_(minElevation, maxElevation, gpsFixes['elev']);
 
   this.vgps_.dispatchEvent(new vgps3.track.LoadEvent(trackIndex, gpsFixes, this.tracks_[trackIndex].color));
 };
 
-
 /**
- * @param {number} index
+ * Returns a function that scales the current marker.
+ *
+ * @param {number} minElevation Minimum elevation along the track
+ * @param {number} maxElevation Maximum elevation along the track
+ * @param {Array.<number>} fixes The GPS fixes
+ * @return {function(number)}
+ *
  * @private
  */
-vgps3.track.Track.prototype.getPolylineOptions_ = function(index) {
-  /**
-   * @type {boolean}
-   */
-  var current = !goog.isDef(this.currentTrackIndex_) || index === this.currentTrackIndex_;
+vgps3.track.Track.prototype.getIconScaler_ = function(minElevation, maxElevation, fixes) {
+  var range = maxElevation - minElevation,
+      icon = this.currentTrackMarker_.getIcon();
+  return function(position) {
+    var elevation = fixes[Math.round(fixes.length * position)],
+      scale = (elevation - minElevation) / range + 0.5;
+    icon.anchor.y = Math.round(scale * vgps3.track.ICON_ANCHOR_Y);
+    icon.anchor.x = Math.round(scale * vgps3.track.ICON_ANCHOR_X);
+    icon.size.height = icon.scaledSize.height = Math.round(scale * vgps3.track.ICON_HEIGHT);
+    icon.size.width = icon.scaledSize.width = Math.round(scale * vgps3.track.ICON_WIDTH);
+  };
+};
+
+
+/**
+ * Returns the polyline options for the given track.
+ *
+ * @param {number} trackIndex
+ * @private
+ */
+vgps3.track.Track.prototype.getPolylineOptions_ = function(trackIndex) {
+  var current = !goog.isDef(this.currentTrackIndex_) || trackIndex === this.currentTrackIndex_;
 
   return {
     clickable: false,
     map: this.gMap_,
-    path: this.tracks_[index].points,
-    strokeColor: this.tracks_[index].color,
+    path: this.tracks_[trackIndex].points,
+    strokeColor: this.tracks_[trackIndex].color,
     strokeWeight: 2,
     strokeOpacity: current ? 1 : 0.5
   };
@@ -307,56 +308,55 @@ vgps3.track.Track.prototype.getPolylineOptions_ = function(index) {
 
 
 /**
- * @param {number} index
+ * Returns the color of the given track.
+ * 
+ * @param {number} trackIndex
  * @return {string}
  * @private
  */
-vgps3.track.Track.prototype.getTrackColor_ = function(index) {
+vgps3.track.Track.prototype.getTrackColor_ = function(trackIndex) {
   var colors = ['#ff0000', '#5e008c', '#002b40', '#f2f200', '#00e64d', '#00ffff', '#e60099', '#ffffff', '#0088cc'];
 
-  return colors[index % colors.length];
+  return colors[trackIndex % colors.length];
 };
 
 
 /**
- * Computes the bounding box include all loaded tracks
+ * Computes the bounding box for all loaded tracks.
  *
  * @return {google.maps.LatLngBounds}
  * @private
  */
 vgps3.track.Track.prototype.getTracksBounds_ = function() {
-  /**
-   * @type {google.maps.LatLngBounds}
-   */
-  var bounds = new google.maps.LatLngBounds();
-
-  goog.array.forEach(this.tracks_, function(track) {
-    bounds.union(track.bounds);
-  });
-
-  return bounds;
+  return /** @type {google.maps.LatLngBounds} */ (goog.array.reduce(
+    this.tracks_,
+    function(bounds, track) {return bounds.union(track.bounds);},
+    new google.maps.LatLngBounds()
+  ));
 };
 
 /**
- * @param {number} trackIdx
+ * Selects a track.
+ *
+ * @param {number} trackIndex
  * @param {number=} previousTrackIndex
  * @private
  */
-vgps3.track.Track.prototype.selectCurrentTrack_ = function(trackIdx, previousTrackIndex) {
-  if (trackIdx !== previousTrackIndex) {
-    this.currentTrackIndex_ = trackIdx;
-    this.updateDateControl_(trackIdx);
+vgps3.track.Track.prototype.selectCurrentTrack_ = function(trackIndex, previousTrackIndex) {
+  if (trackIndex !== previousTrackIndex) {
+    this.currentTrackIndex_ = trackIndex;
+    this.updateTrackControl_(trackIndex);
     goog.style.setStyle(
-      this.dateControl_.getElement(),
+      this.trackControl_.getElement(),
       'background-color',
-      goog.color.rgbArrayToHex(goog.color.lighten(goog.color.hexToRgb(this.tracks_[trackIdx].color), .6))
+      goog.color.rgbArrayToHex(goog.color.lighten(goog.color.hexToRgb(this.tracks_[trackIndex].color), .6))
     );
     this.updateInfoControl_(0);
     this.moveTo(0);
-    this.tracks_[trackIdx].polyline.setOptions(this.getPolylineOptions_(trackIdx));
+    this.tracks_[trackIndex].polyline.setOptions(this.getPolylineOptions_(trackIndex));
     goog.isDef(previousTrackIndex) && this.tracks_[previousTrackIndex].polyline.setOptions(this.getPolylineOptions_(previousTrackIndex));
     this.vgps_.dispatchEvent(new vgps3.track.TrackSelectEvent(
-        trackIdx,
+        trackIndex,
         goog.isDef(previousTrackIndex) ? previousTrackIndex: null
     ));
   }
@@ -364,27 +364,24 @@ vgps3.track.Track.prototype.selectCurrentTrack_ = function(trackIdx, previousTra
 
 
 /**
+ * Moves to the closest point of any of the loaded track.
+ *
  * @param {google.maps.MouseEvent} event
  * @private
  */
 vgps3.track.Track.prototype.clickHandler_ = function(event) {
-  this.logger_.info(goog.string.format('Click %.5f %.5f', event.latLng.lat(), event.latLng.lng()));
-
   var trackIndex,
       pointIndex,
       location,
-      currentDistance, distance = 10000,
+      currentDistance,
+      distance = 10000,
       latlng = event.latLng,
       that = this;
 
   goog.array.forEach(this.tracks_, function(track, trackIdx) {
-    if (goog.DEBUG) {
-      var trials = 0;
-    }
+    if (goog.DEBUG) {var trials = 0;}
     for (var pointIdx = 0, nbPoints = track.points.length; pointIdx < nbPoints; ) {
-      if (goog.DEBUG) {
-        trials++;
-      }
+      if (goog.DEBUG) {trials++;}
       currentDistance = google.maps.geometry.spherical.computeDistanceBetween(latlng, track.points[pointIdx]);
       if (currentDistance < distance) {
         distance = currentDistance;
@@ -408,44 +405,34 @@ vgps3.track.Track.prototype.clickHandler_ = function(event) {
   if (goog.isDef(location)) {
     this.selectCurrentTrack_(trackIndex, this.currentTrackIndex_);
     var position = pointIndex / (this.tracks_[trackIndex].fixes['nbTrackPt'] - 1);
-
     this.currentTrackMarker_.setPosition(location);
     this.updateInfoControl_(position);
-    this.vgps_.dispatchEvent(new vgps3.track.ClickEvent(
-        this.tracks_[trackIndex].fixes,
-        position
-    ));
+    this.vgps_.dispatchEvent(new vgps3.track.ClickEvent(this.tracks_[trackIndex].fixes, position));
   }
-
 };
 
 
 /**
+ * Updates the info control according to the current location.
+ *
  * @param {number} position [0...1].
  * @private
  */
 vgps3.track.Track.prototype.updateInfoControl_ = function(position) {
   var fixes = this.tracks_[this.currentTrackIndex_].fixes,
       chartIndex = Math.round(position * (fixes['nbChartPt'] - 1));
-
-  this.infoControl_.update({
-    fixes: fixes,
-    index: chartIndex
-  });
+  this.infoControl_.update({fixes: fixes, index: chartIndex});
 };
 
 
 /**
+ * Updates the track control according to the current track.
  * @param {number} trackIndex
  * @private
  */
-vgps3.track.Track.prototype.updateDateControl_ = function(trackIndex) {
+vgps3.track.Track.prototype.updateTrackControl_ = function(trackIndex) {
   var fixes = this.tracks_[trackIndex].fixes;
-
-  this.dateControl_.update({
-    date: fixes['date'],
-    pilot: fixes['pilot']
-  });
+  this.trackControl_.update({date: fixes['date'], pilot: fixes['pilot']});
 };
 
 
@@ -460,27 +447,52 @@ vgps3.track.EventType = {
 
 
 /**
- * @define {string}
+ * @define {string} The proxy URL used to load track (AJAX does not support XDomain)
  */
 vgps3.track.PROXY_URL = 'php/vg_proxy.php?track=';
 
 
 /**
- * @define {number}
+ * @define {number} The maximum speed (km/h)
  */
 vgps3.track.MAX_SPEED = 100;
 
 
 /**
- * @define {number}
+ * @define {number} The maximum vertical speed (m/s)
  */
 vgps3.track.MAX_VARIO = 15;
 
 
 /**
- * @define {number}
+ * @define {number} The maximum elevation (m)
  */
 vgps3.track.MAX_ELEV = 9000;
+
+/**
+ * @define {string} The icon URL
+ */
+vgps3.track.ICON_URL = 'img/red-shadow.png';
+
+/**
+ * @define {number} The icon X-anchor
+ */
+vgps3.track.ICON_ANCHOR_X = 16;
+
+/**
+ * @define {number} The icon Y-anchor
+ */
+vgps3.track.ICON_ANCHOR_Y = 32;
+
+/**
+ * @define {number} The icon width
+ */
+vgps3.track.ICON_WIDTH = 59;
+
+/**
+ * @define {number} The icon height
+ */
+vgps3.track.ICON_HEIGHT = 32;
 
 
 /**
@@ -512,8 +524,6 @@ vgps3.track.Date;
  *   }}
  */
 vgps3.track.GpsFixes;
-
-// todo dispose
 
 goog.exportSymbol('vgps3.track.Track', vgps3.track.Track);
 goog.exportSymbol('vgps3.track.Track.init', vgps3.track.Track.prototype.init);

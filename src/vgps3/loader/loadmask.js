@@ -26,7 +26,8 @@ goog.require('goog.soy');
 vgps3.loadMask.popup_;
 
 /**
- * Set the message (and show the popup when currently hidden)
+ * Set the message (and show the popup when currently hidden).
+ *
  * @param {string} message
  * @param {vgps3.loadMask.Style=} opt_style
  */
@@ -50,7 +51,7 @@ vgps3.loadMask.setMessage = function(message, opt_style) {
 };
 
 /**
- * Closes the popup
+ * Closes the popup.
  */
 vgps3.loadMask.close = function() {
   if (vgps3.loadMask.popup_ && vgps3.loadMask.popup_.isInDocument()) {
@@ -59,6 +60,7 @@ vgps3.loadMask.close = function() {
 }
 
 /**
+ * CSS classes of the message.
  * @enum {string}
  */
 vgps3.loadMask.Style = {
@@ -66,6 +68,20 @@ vgps3.loadMask.Style = {
   ERROR: 'error'
 };
 
+/**
+ * @define {string} The src of the image
+ */
+vgps3.loadMask.IMG_SRC = 'img/wait.gif';
+
+/**
+ * @define {number} The width of the image
+ */
+  vgps3.loadMask.IMG_WIDTH = 300;
+
+/**
+ * @define {number} The height of the image
+ */
+  vgps3.loadMask.IMG_HEIGHT = 219;
 
 
 

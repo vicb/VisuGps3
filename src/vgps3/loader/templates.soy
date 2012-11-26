@@ -11,12 +11,12 @@
 {namespace vgps3.loadMask.templates}
 
 /**
- * @param message
- * @param class
+ * @param message The message to display
+ * @param class A CSS class for to add to the message
  */
 {template .wait}
 <div class="vgps3-progress">
-  <img src="img/wait.gif" width="300px" height="219px" alt="chargement" />
+  <img src="{vgps3.loadMask.IMG_SRC}" width="{vgps3.loadMask.IMG_WIDTH}px" height="{vgps3.loadMask.IMG_HEIGHT}px" alt="chargement" />
   <p class="{$class}">{$message}</p>
 </div>
 {/template}

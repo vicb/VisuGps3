@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview
+ * @fileoverview Mouse wheel event
  * @author Victor Berchet <victor@suumit.com>
  */
 
@@ -20,8 +20,8 @@ goog.require('goog.events.Event');
 
 
 /**
- * @param {number} position
- * @param {number} direction
+ * @param {number} position [0...1]
+ * @param {number} direction one of {-1, 1}
  *
  * @constructor
  * @extends {goog.events.Event}
@@ -30,12 +30,12 @@ vgps3.chart.WheelEvent = function(position, direction) {
   goog.base(this, vgps3.chart.EventType.WHEEL);
 
   /**
-  * @type {number}
+  * @type {number} [0...1]
   */
   this.position = position;
 
   /**
-  * @type {number}
+  * @type {number} -1 or 1
   */
   this.direction = direction;
 };

@@ -20,14 +20,15 @@ goog.require('vgps3.Map');
 
 
 /**
- * @constructor
+ * @constructor French IGN map type for google maps.
  * @implements {vgps3.IPlugin}
  */
-vgps3.ign.Map = function() {
-};
+vgps3.ign.Map = function() {};
 
 
 /**
+ * Registers this map type in google maps.
+ *
  * @override
  */
 vgps3.ign.Map.prototype.init = function(vgps) {
@@ -37,7 +38,7 @@ vgps3.ign.Map.prototype.init = function(vgps) {
 
 
 /**
- * @return {google.maps.ImageMapType}
+ * @return {google.maps.ImageMapType} The IGN map type
  * @private
  */
 vgps3.ign.Map.prototype.getIgnMapType_ = function() {
@@ -64,18 +65,18 @@ vgps3.ign.Map.prototype.getIgnMapType_ = function() {
 
 
 /**
- * @define {string}
+ * @define {string} The API key
  */
 vgps3.ign.API_KEY = 'tyujsdxmzox31ituc2uw0qwl';
 
 
 /**
- * @define {string}
+ * @define {string} The url for tiles
  */
 vgps3.ign.TILES_URL = 'http://gpp3-wxs.ign.fr/' + vgps3.ign.API_KEY + '/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER={layer}&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={zoom}&TILEROW={y}&TILECOL={x};';
 
 /**
- * @enum {string}
+ * @enum {string} The supported map types
  */
 vgps3.ign.MapTypeId = {
   TERRAIN: 'vgps3-ign-terrain'

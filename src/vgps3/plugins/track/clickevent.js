@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview
+ * @fileoverview Click event
  * @author Victor Berchet <victor@suumit.com>
  */
 
@@ -20,22 +20,22 @@ goog.require('goog.events.Event');
 
 
 /**
- * @param {Object} track
+ * @param {vgps3.track.GpsFixes} fixes
  * @param {number} position [0...1].
  *
  * @constructor
  * @extends {goog.events.Event}
  */
-vgps3.track.ClickEvent = function(track, position) {
+vgps3.track.ClickEvent = function(fixes, position) {
   goog.base(this, vgps3.track.EventType.CLICK);
 
   /**
-  * @type {Object}
+  * @type {vgps3.track.GpsFixes} The fixes
   */
-  this.track = track;
+  this.fixes = fixes;
 
   /**
-  * @type {number}
+  * @type {number} [0...1]
   */
   this.position = position;
 };

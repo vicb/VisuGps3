@@ -1,9 +1,10 @@
-- track plugin
-  - load kml (!earth plugin)
+- vgps3 Events
 
 - magic values
 
-- turn everything into components
+- chart plugin
+  - make it easier to extend & re-use
+  - vs distance (in addition to vs time)
 
 - plugin interface:
   - dispose()
@@ -13,19 +14,21 @@
   - https://addons.mozilla.org/en-US/firefox/addon/leak-monitor/
   - https://code.google.com/p/leak-finder-for-javascript/
 
-- ign: request a key
 
-- vgps3 Events
+- turn everything into components
+  - remove a track
+  - delete a track
+
+- track plugin
+  - load kml (!earth plugin)
+
+- ign: request a key
 
 - add layers:
  - skyways (requires a "more" control)
  - modis
 
 - capture slider events
-
-- chart plugin
-  - make it easier to extend & re-use
-  - vs distance (in addition to vs time)
 
 - minify CSS
 

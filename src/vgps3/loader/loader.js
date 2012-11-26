@@ -23,7 +23,7 @@ goog.require('goog.structs.Map');
 goog.require('goog.string.format');
 
 /**
- * @type {goog.async.Deferred}
+ * @type {goog.async.Deferred} Triggered when the Google Loader has been loaded
  * @private
  */
 vgps3.loader.loaderLoaded_;
@@ -35,7 +35,8 @@ vgps3.loader.loaderLoaded_;
 vgps3.loader.logger_ = goog.debug.Logger.getLogger('vgps3.loader');
 
 /**
- * Loads an API
+ * Loads an API.
+ *
  * @param {string} module The name of the module
  * @param {string|number} version The version of the module
  * @param {Function|goog.async.Deferred} callback Called when the API has been loaded
@@ -99,6 +100,7 @@ vgps3.loader.load = function(module, version, callback, options) {
 
 /**
  * Fires the callbacks when a module has been loaded.
+ *
  * @param {string} module The name of the module
  * @param {string} version The version of the module
  * @param {goog.structs.Map} optionsMap Extra options
@@ -116,7 +118,7 @@ vgps3.loader.loadHandler_ = function(module, version, optionsMap) {
 };
 
 /**
- * The modules that have already been loaded
+ * The modules that have already been loaded.
  * @type {Array.<Array.<goog.structs.Map.<goog.structs.Map, {loaded: boolean, callbacks: Array.<Function>}>>>}
  */
 vgps3.loader.modules_ = [];
