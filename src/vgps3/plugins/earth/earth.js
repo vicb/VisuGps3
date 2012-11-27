@@ -43,7 +43,7 @@ goog.require('vgps3.loader');
 vgps3.earth.Earth = function() {
 
   /**
-  * @type {google.earth.GEPlugin} The GE plugin
+  * @type {GEPlugin} The GE plugin
   * @private
   */
   this.ge_;
@@ -115,7 +115,7 @@ vgps3.earth.Earth = function() {
   this.shim_;
 
   /**
-   * @type {goog.events.Event} Mouse down event used to discriminate click vs drag
+   * @type {KmlEvent} Mouse down event used to discriminate click vs drag
    * @private
    */
   this.downEvent_;
@@ -253,12 +253,11 @@ vgps3.earth.Earth.prototype.createEarth_ = function() {
   google.earth.createInstance(
       earthDiv,
       /**
-       * @param {google.earth.GEPlugin} ge
-       * @notypecheck
+       * @param {GEPlugin} ge
        */
       function(ge) {
         that.logger_.info('GE Plugin started');
-        that.ge_ = /** @type {google.earth.GEPlugin} */(ge);
+        that.ge_ = /** @type {GEPlugin} */(ge);
         that.installClickHandler_();
         google.earth.executeBatch(ge, function() {
           ge.getWindow().setVisibility(true);
@@ -269,12 +268,11 @@ vgps3.earth.Earth.prototype.createEarth_ = function() {
           screen.setXUnits(ge.UNITS_PIXELS);
           // BUG: wait before using the ge plugin
           // Note: Trust me, do not play too much with this init code !
-          goog.Timer.callOnce(that.mapCreated_.callback(), 100, that.mapCreated_);
+          goog.Timer.callOnce(that.mapCreated_.callback, 100, that.mapCreated_);
         })
       },
       /**
        * @param {string} error
-       * @notypecheck
        */
       function(error) {
         vgps3.loadMask.close();
@@ -292,7 +290,6 @@ vgps3.earth.Earth.prototype.createEarth_ = function() {
  * @param {number} position [0...1].
  * @param {boolean=} opt_setCenter Whether to center the view
  * @param {number=} opt_zoomOffset Zoom direction
- * @notypecheck
  */
 vgps3.earth.Earth.prototype.moveTo = function(position, opt_setCenter, opt_zoomOffset) {
   if (!this.visible_) {
@@ -351,7 +348,6 @@ vgps3.earth.Earth.prototype.moveTo = function(position, opt_setCenter, opt_zoomO
  * The click handle is able to discriminate click and drag events.
  *
  * @private
- * @notypecheck
  */
 vgps3.earth.Earth.prototype.installClickHandler_ = function() {
   var that = this;
@@ -379,7 +375,6 @@ vgps3.earth.Earth.prototype.installClickHandler_ = function() {
  * @param {Object} event
  *
  * @private
- * @notypecheck
  */
 vgps3.earth.Earth.prototype.clickHandler_ = function(event) {
   var mdEvent = {
@@ -396,7 +391,6 @@ vgps3.earth.Earth.prototype.clickHandler_ = function(event) {
  * @param {vgps3.track.LoadEvent} event
  *
  * @private
- * @notypecheck
  */
 vgps3.earth.Earth.prototype.trackLoadHandler_ = function(event) {
   var fixes = event.fixes,
@@ -415,7 +409,6 @@ vgps3.earth.Earth.prototype.trackLoadHandler_ = function(event) {
  * @param {vgps3.track.TrackSelectEvent} event
  *
  * @private
- * @notypecheck
  */
 vgps3.earth.Earth.prototype.trackSelectHandler_ = function(event) {
   this.logger_.info(goog.string.format('Track[%d] selected', event.trackIndex));
@@ -471,7 +464,6 @@ vgps3.earth.Earth.prototype.trackSelectHandler_ = function(event) {
  * @param {vgps3.track.GpsFixes} fixes
  * @param {string} trackColor
  * @private
- * @notypecheck
  */
 vgps3.earth.Earth.prototype.displayTrack_ = function(trackIndex, fixes, trackColor) {
   var that = this,
