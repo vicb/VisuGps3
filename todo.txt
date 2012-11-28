@@ -14,6 +14,9 @@
   - https://addons.mozilla.org/en-US/firefox/addon/leak-monitor/
   - https://code.google.com/p/leak-finder-for-javascript/
 
+- Restrict topo map to their boundaries
+
+- TransverseMercator should implement IProj
 
 - turn everything into components
   - remove a track

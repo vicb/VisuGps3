@@ -18,7 +18,7 @@
   "level": "VERBOSE",
   "define": {
     "vgps3.track.PROXY_URL": "tests/fixtures/tracks/json/",
-    "vgps3.ign.API_KEY": "",
+    "vgps3.topo.fr.API_KEY": "",
     "vgps3.VERSION": "3.0-DEV",
     "goog.DEBUG": true
   },

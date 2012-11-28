@@ -30,9 +30,9 @@ vgps3.IPlugin = function() {};
 /**
  * Plugin initialization.
  *
- * @param {vgps3.Map} The map.
+ * @param {vgps3.Map} map The map.
  *
- * @return {void} Nothing.
+ * @return {undefined}
  *
  */
-vgps3.IPlugin.prototype.init;
+vgps3.IPlugin.prototype.init = function(map) {};

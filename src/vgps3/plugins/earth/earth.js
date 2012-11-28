@@ -154,7 +154,7 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
         if (google.earth.isSupported()) {
           this.logger_.info('GE Plugin supported');
           this.gMap_.mapTypes.set(vgps3.earth.MapTypeId.EARTH, vgps3.earth.EarthMapType_);
-          google.maps.event.addListener(this.gMap_, 'maptypeid_changed', goog.bind(this.mapTypeChanged_, this));
+          google.maps.event.addListener(this.gMap_, 'maptypeid_changed', goog.bind(this.mapTypeChangeHandler_, this));
         }
       },
       this
@@ -166,7 +166,7 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
  *
  * @private
  */
-vgps3.earth.Earth.prototype.mapTypeChanged_ = function() {
+vgps3.earth.Earth.prototype.mapTypeChangeHandler_ = function() {
   if (this.gMap_.getMapTypeId() === vgps3.earth.MapTypeId.EARTH) {
     if (!goog.isDef(this.ge_)) {
       vgps3.loadMask.setMessage('Chargement de Google Earth');
