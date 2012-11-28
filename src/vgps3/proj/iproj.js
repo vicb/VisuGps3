@@ -47,7 +47,7 @@ vgps3.proj.IProj.prototype.inverse = function(x, y) {};
 /**
  * Projection origin
  *
- * @return {{lat: number, lng: number}}
+ * @return {{x: number, y: number}}
  */
 vgps3.proj.IProj.prototype.getOrigin = function() {};
 

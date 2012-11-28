@@ -34,7 +34,7 @@ vgps3.topo.fr.Map = function() {};
  */
 vgps3.topo.fr.Map.prototype.init = function(vgps) {
   var gMap = vgps.getGoogleMap();
-  gMap.mapTypes.set(vgps3.topo.fr.MapTypeId.TERRAIN, /** @type {?} */ (this.getTopoFrMapType_()));
+  gMap.mapTypes.set(vgps3.topo.fr.MapTypeId.TERRAIN, /** @type {?} */ (this.getMapType_()));
 };
 
 
@@ -42,7 +42,7 @@ vgps3.topo.fr.Map.prototype.init = function(vgps) {
  * @return {google.maps.ImageMapType} The map type
  * @private
  */
-vgps3.topo.fr.Map.prototype.getTopoFrMapType_ = function() {
+vgps3.topo.fr.Map.prototype.getMapType_ = function() {
   return new google.maps.ImageMapType({
     getTileUrl: goog.bind(this.getTileUrl_, this),
     tileSize: new google.maps.Size(256, 256),

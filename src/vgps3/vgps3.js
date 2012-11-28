@@ -26,6 +26,7 @@ goog.require('vgps3.chart.Chart');
 goog.require('vgps3.earth.Earth');
 goog.require('vgps3.topo.fr.Map');
 goog.require('vgps3.topo.es.Map');
+goog.require('vgps3.topo.ch.Map');
 goog.require('vgps3.path.Path');
 goog.require('vgps3.route.Route');
 goog.require('vgps3.track.Track');
@@ -53,6 +54,7 @@ vgps3.Viewer = function(mapContainer, chartContainer) {
     chart: new vgps3.chart.Chart(chartContainer),
     topofr: new vgps3.topo.fr.Map(),
     topoes: new vgps3.topo.es.Map(),
+    topoch: new vgps3.topo.ch.Map(),
     route: new vgps3.route.Route(),
     earth: new vgps3.earth.Earth(),
     path: new vgps3.path.Path()
@@ -74,6 +76,7 @@ vgps3.Viewer = function(mapContainer, chartContainer) {
             google.maps.MapTypeId.SATELLITE,
             google.maps.MapTypeId.TERRAIN,
             vgps3.topo.fr.MapTypeId.TERRAIN,
+            vgps3.topo.ch.MapTypeId.TERRAIN,
             vgps3.topo.es.MapTypeId.TERRAIN,
             vgps3.earth.MapTypeId.EARTH
           ]

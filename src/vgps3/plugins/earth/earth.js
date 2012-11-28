@@ -154,7 +154,11 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
         if (google.earth.isSupported()) {
           this.logger_.info('GE Plugin supported');
           this.gMap_.mapTypes.set(vgps3.earth.MapTypeId.EARTH, vgps3.earth.EarthMapType_);
-          google.maps.event.addListener(this.gMap_, 'maptypeid_changed', goog.bind(this.mapTypeChangeHandler_, this));
+          google.maps.event.addListener(
+            this.gMap_,
+            'maptypeid_changed',
+            goog.bind(this.mapTypeChangeHandler_, this)
+          );
         }
       },
       this

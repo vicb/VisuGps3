@@ -67,8 +67,12 @@ vgps3.topo.es.Map = function() {
  */
 vgps3.topo.es.Map.prototype.init = function(vgps) {
   this.gMap_ = vgps.getGoogleMap();
-  this.gMap_.mapTypes.set(vgps3.topo.es.MapTypeId.TERRAIN, /** @type {?} */ (this.getTopoEsMapType_()));
-  google.maps.event.addListener(this.gMap_, 'maptypeid_changed', goog.bind(this.mapTypeChangeHandler_, this));
+  this.gMap_.mapTypes.set(vgps3.topo.es.MapTypeId.TERRAIN, /** @type {?} */ (this.getMapType_()));
+  google.maps.event.addListener(
+    this.gMap_,
+    'maptypeid_changed',
+    goog.bind(this.mapTypeChangeHandler_, this)
+  );
 };
 
 /**
@@ -149,7 +153,7 @@ vgps3.topo.es.Map.prototype.updateProjection_ = function(opt_force) {
  * @return {google.maps.ImageMapType} The map type
  * @private
  */
-vgps3.topo.es.Map.prototype.getTopoEsMapType_ = function() {
+vgps3.topo.es.Map.prototype.getMapType_ = function() {
   var mapType = new google.maps.ImageMapType({
     getTileUrl: goog.bind(this.getTileUrl_, this),
     tileSize: new google.maps.Size(256, 256),

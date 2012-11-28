@@ -20,10 +20,10 @@ goog.require('vgps3.proj.IProj');
 
 /**
  * @param {vgps3.proj.IProj} projection
- * @param {number} scale0 The resolution at zoom level 0 (ie a single tile)
+ * @param {number=} opt_scale0 The resolution at zoom level 0 (ie a single tile)
  * @constructor
  */
-vgps3.proj.GProj = function(projection, scale0) {
+vgps3.proj.GProj = function(projection, opt_scale0) {
   /**
    * @type {vgps3.proj.IProj}
    * @private
@@ -34,7 +34,7 @@ vgps3.proj.GProj = function(projection, scale0) {
    * @type {number}
    * @private
    */
-  this.scale0_ = scale0;
+  this.scale0_ = goog.isDef(opt_scale0) ? opt_scale0 : 1;
 
   /**
    * @type {number}
@@ -79,3 +79,10 @@ vgps3.proj.GProj.prototype.fromPointToLatLng = function(point, opt_nowrap) {
     );
     return new google.maps.LatLng(coord.lat, coord.lng, opt_nowrap);
 };
+
+/**
+ * @param {number} scale0
+ */
+vgps3.proj.GProj.prototype.setScale0 = function(scale0) {
+  this.scale0_ = scale0;
+}
