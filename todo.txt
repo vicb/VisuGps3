@@ -16,8 +16,6 @@
 
 - Restrict topo map to their boundaries
 
-- TransverseMercator should implement IProj
-
 - turn everything into components
   - remove a track
   - delete a track

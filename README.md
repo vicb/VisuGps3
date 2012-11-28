@@ -16,12 +16,12 @@ as the maps API v2 will be deprecated in 2013.
 
 ## Supported features
 
-- Display a single or multiple track on top of the map,
-- Display charts for elevation, horizontal & vertical speeds,
+- Display a single or multiple tracks on top of the map,
+- Display charts for elevation, horizontal & vertical speed,
 - The track can be viewed in 3D on platforms where the [GE plugin is supported](http://www.google.com/earth/explore/products/plugin.html),
 - Display markers for routes,
 - Measure distances with the path plugin,
-- Display IGN maps for France.
+- Display topographic maps for France, Spain & Switzerland.
 
 ## Roadmap
 
@@ -44,3 +44,6 @@ as the maps API v2 will be deprecated in 2013.
 
 - [Josh Livni](https://github.com/jlivni): Parts of the earth plugin have been inspired by his
   [Earth API library for Maps v3](http://code.google.com/p/google-maps-utility-library-v3/source/browse/trunk/googleearth/src/googleearth.js)
+- Shama [explains](http://www.developpez.net/forums/d999116/applications/sig-systeme-dinformation-geographique/ign-api-geoportail/affichage-couches-ign-sous-googlemap/) how to integrate geoportal tiles within Google maps API.
+- Marcin Grysko [explains](http://grysz.com/2011/04/12/how-ign-tile-servers-work/) how the spain ign tile server works.
+- Nianwei Liu for some [Transverse Mercator projection code](http://code.google.com/p/google-maps-utility-library-v3/source/browse/trunk/arcgislink/src/arcgislink.js).
