@@ -146,8 +146,6 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
   this.vgps_.addEventListener(vgps3.track.EventType.LOAD, goog.bind(this.trackLoadHandler_, this));
   this.vgps_.addEventListener(vgps3.track.EventType.SELECT, goog.bind(this.trackSelectHandler_, this));
 
-  this.gMap_.mapTypes.set(vgps3.earth.MapTypeId.EARTH, vgps3.earth.EarthMapType_);
-
   vgps3.loader.load('earth', 1, vgps3.earth.geApiLoaded_);
 
   vgps3.earth.geApiLoaded_.addCallback(
