@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview interface for projection
+ * @fileoverview Iberpix projection
  * @author Victor Berchet <victor@suumit.com>
  */
 

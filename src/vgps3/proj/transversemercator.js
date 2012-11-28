@@ -120,7 +120,7 @@ vgps3.proj.TransverseMercator.prototype.inverse = function(x, y) {
   var D = (x - this.FE_) / (N1 * this.k0_);
   var phi = phi1 - (N1 * Math.tan(phi1) / R1) * (D * D / 2 - (5 + 3 * T1 + 10 * C1 - 4 * C1 * C1 - 9 * this.eas_) * Math.pow(D, 4) / 24 + (61 + 90 * T1 + 28 * C1 + 45 * T1 * T1 - 252 * this.eas_ - 3 * C1 * C1) * Math.pow(D, 6) / 720);
   var lamda = this.lamda0_ + (D - (1 + 2 * T1 + C1) * Math.pow(D, 3) / 6 + (5 - 2 * C1 + 28 * T1 - 3 * C1 * C1 + 8 * this.eas_ + 24 * T1 * T1) * Math.pow(D, 5) / 120) / Math.cos(phi1);
-  return {lat: goog.math.toDegrees(lamda), lng: goog.math.toDegrees(phi)};
+  return {lng: goog.math.toDegrees(lamda), lat: goog.math.toDegrees(phi)};
 };
 
 /**
