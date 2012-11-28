@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview
+ * @fileoverview Spain topo map
  * @see http://grysz.com/2011/04/12/how-ign-tile-servers-work/
  * @author Victor Berchet <victor@suumit.com>
  */
