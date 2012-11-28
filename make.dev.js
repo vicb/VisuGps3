@@ -22,5 +22,6 @@
     "vgps3.VERSION": "3.0-DEV",
     "goog.DEBUG": true
   },
-  "output-file": "dist/vgps3.js"
+  "output-file": "dist/vgps3.js",
+  "jsdoc-html-output-path": "doc/"
 }
