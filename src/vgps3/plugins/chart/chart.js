@@ -16,11 +16,16 @@
 goog.provide('vgps3.chart.Chart');
 
 goog.require('goog.async.Deferred');
+goog.require('goog.async.Throttle');
 goog.require('goog.debug.Logger');
+goog.require('goog.debug.Trace');
+goog.require('goog.dom');
+goog.require('goog.dom.ViewportSizeMonitor');
 goog.require('goog.events');
 goog.require('goog.events.BrowserEvent');
 goog.require('goog.events.MouseWheelHandler');
 goog.require('goog.events.MouseWheelHandler.EventType');
+goog.require('goog.string.format');
 goog.require('goog.style');
 goog.require('goog.ui.Slider');
 goog.require('vgps3.IPlugin');
@@ -31,12 +36,9 @@ goog.require('vgps3.chart.MoveEvent');
 goog.require('vgps3.chart.Overlays');
 goog.require('vgps3.chart.Sliders');
 goog.require('vgps3.chart.WheelEvent');
-goog.require('goog.dom');
-goog.require('goog.debug.Trace');
 goog.require('vgps3.loader');
-goog.require('goog.async.Throttle');
-goog.require('goog.dom.ViewportSizeMonitor');
-goog.require('goog.string.format');
+
+
 
 /**
  * @param {!Element} container
@@ -212,9 +214,9 @@ vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
 
     var resizeThrottler = new goog.async.Throttle(this.resizeHandler_, 100, this);
     goog.events.listen(
-      new goog.dom.ViewportSizeMonitor(),
-      goog.events.EventType.RESIZE,
-      goog.bind(resizeThrottler.fire, resizeThrottler)
+        new goog.dom.ViewportSizeMonitor(),
+        goog.events.EventType.RESIZE,
+        goog.bind(resizeThrottler.fire, resizeThrottler)
     );
   }
 
@@ -233,6 +235,7 @@ vgps3.chart.Chart.prototype.mapSelectHandler_ = function(event) {
   this.drawCharts_(event.trackIndex);
 };
 
+
 /**
  * Redraws the charts when the container is resized.
  *
@@ -245,6 +248,7 @@ vgps3.chart.Chart.prototype.resizeHandler_ = function() {
   }
 };
 
+
 /**
  * Draw all the charts.
  *
@@ -253,32 +257,33 @@ vgps3.chart.Chart.prototype.resizeHandler_ = function() {
  */
 vgps3.chart.Chart.prototype.drawCharts_ = function(index) {
   vgps3.chart.chartApiLoaded_.addCallback(function() {
-      if (!goog.isDef(this.chartData_[index].dataView)) {
-        this.chartData_[index].dataView = this.createDataView_(index);
-      }
+    if (!goog.isDef(this.chartData_[index].dataView)) {
+      this.chartData_[index].dataView = this.createDataView_(index);
+    }
 
-      if (!goog.isDef(this.charts_)) {
-        this.charts_ = {
-          elevation: new google.visualization.AreaChart(this.chartContainers_.elevation),
-          speed: new google.visualization.LineChart(this.chartContainers_.speed),
-          vario: new google.visualization.LineChart(this.chartContainers_.vario)
-        };
-      }
+    if (!goog.isDef(this.charts_)) {
+      this.charts_ = {
+        elevation: new google.visualization.AreaChart(this.chartContainers_.elevation),
+        speed: new google.visualization.LineChart(this.chartContainers_.speed),
+        vario: new google.visualization.LineChart(this.chartContainers_.vario)
+      };
+    }
 
-      goog.debug.Trace.reset(0);
-      var tracer = goog.debug.Trace.startTracer(goog.string.format('Rendering charts[%d]', index));
-      this.drawChart_('elevation', index, [0, 1, 2]);
-      goog.debug.Trace.addComment('Elevation chart rendered');
-      this.drawChart_('speed', index, [0, 3]);
-      goog.debug.Trace.addComment('Speed chart rendered');
-      this.drawChart_('vario', index, [0, 4]);
-      goog.debug.Trace.addComment('Vario chart rendered');
-      goog.debug.Trace.stopTracer(tracer);
-      this.logger_.info(goog.debug.Trace.getFormattedTrace());
-    },
-    this
+    goog.debug.Trace.reset(0);
+    var tracer = goog.debug.Trace.startTracer(goog.string.format('Rendering charts[%d]', index));
+    this.drawChart_('elevation', index, [0, 1, 2]);
+    goog.debug.Trace.addComment('Elevation chart rendered');
+    this.drawChart_('speed', index, [0, 3]);
+    goog.debug.Trace.addComment('Speed chart rendered');
+    this.drawChart_('vario', index, [0, 4]);
+    goog.debug.Trace.addComment('Vario chart rendered');
+    goog.debug.Trace.stopTracer(tracer);
+    this.logger_.info(goog.debug.Trace.getFormattedTrace());
+  },
+  this
   );
-}
+};
+
 
 /**
  * Draws a single chart.
@@ -300,12 +305,13 @@ vgps3.chart.Chart.prototype.drawChart_ = function(type, index, columns) {
   }
 
   if (goog.isDef(options.curve)) {
-    options.curve = goog.style.getSize(container).width / nbPoints >  5 ? 'function' : 'none';
+    options.curve = goog.style.getSize(container).width / nbPoints > 5 ? 'function' : 'none';
   }
 
   view.setColumns(columns);
   chart.draw(view, options);
 };
+
 
 /**
  * Creates chart underlying data as a DataView.
@@ -336,11 +342,13 @@ vgps3.chart.Chart.prototype.createDataView_ = function(index) {
   return new google.visualization.DataView(dataTable);
 };
 
+
 /**
  * @type {goog.async.Deferred} Trigerred when the Chart API has been loaded.
  * @private
  */
 vgps3.chart.chartApiLoaded_ = new goog.async.Deferred();
+
 
 /**
  * @enum {string} The events that can be dispacthed
@@ -352,11 +360,13 @@ vgps3.chart.EventType = {
   ABOUT: 'vgps3.chart.about'
 };
 
+
 /**
  * @defined {number} Number of horizontal labels
  * @private
  */
 vgps3.chart.NB_HLABELS_ = 6;
+
 
 /**
  * @type {Object} Default options for charts

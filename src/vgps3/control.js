@@ -55,7 +55,7 @@ vgps3.Control.prototype.update = function(opt_templateData) {
 
 
 /**
- * @return {!Element} The control division
+ * @return {!Element} The control division.
  */
 vgps3.Control.prototype.getElement = function() {
   return this.dom_;

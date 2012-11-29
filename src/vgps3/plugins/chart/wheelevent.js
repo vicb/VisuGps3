@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview Mouse wheel event
+ * @fileoverview Mouse wheel event.
  * @author Victor Berchet <victor@suumit.com>
  */
 
@@ -20,8 +20,8 @@ goog.require('goog.events.Event');
 
 
 /**
- * @param {number} position [0...1]
- * @param {number} direction one of {-1, 1}
+ * @param {number} position [0...1].
+ * @param {number} direction one of {-1, 1}.
  *
  * @constructor
  * @extends {goog.events.Event}

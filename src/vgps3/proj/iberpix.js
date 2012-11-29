@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview Iberpix projection
+ * @fileoverview Iberpix projection.
  * @author Victor Berchet <victor@suumit.com>
  */
 
@@ -17,10 +17,12 @@ goog.provide('vgps3.proj.Iberpix');
 
 goog.require('vgps3.proj.TransverseMercator');
 
+
+
 /**
  * Iberpix projection
  *
- * @param {number} zone The tm projection zone
+ * @param {number} zone The tm projection zone.
  *
  * @constructor
  * @extends {vgps3.proj.TransverseMercator}
@@ -30,12 +32,14 @@ vgps3.proj.Iberpix = function(zone) {
 };
 goog.inherits(vgps3.proj.Iberpix, vgps3.proj.TransverseMercator);
 
+
 /**
- * @param {number} zone The tm zone
+ * @param {number} zone The tm zone.
  */
 vgps3.proj.Iberpix.prototype.setZone = function(zone) {
   this.setParameters(this.getTmParameters_(zone));
 };
+
 
 /**
  *  Returns the rm parameters for the given zone.
@@ -55,4 +59,4 @@ vgps3.proj.Iberpix.prototype.getTmParameters_ = function(zone) {
     false_northing: 0,
     central_meridian: zone * 6 - 183
   };
-}
+};

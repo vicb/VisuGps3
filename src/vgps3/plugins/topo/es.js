@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview Spain topo map
+ * @fileoverview Spain topo map.
  * @see http://grysz.com/2011/04/12/how-ign-tile-servers-work/
  * @author Victor Berchet <victor@suumit.com>
  */
@@ -18,8 +18,9 @@ goog.provide('vgps3.topo.es.Map');
 
 goog.require('vgps3.IPlugin');
 goog.require('vgps3.Map');
-goog.require('vgps3.proj.Iberpix');
 goog.require('vgps3.proj.GProj');
+goog.require('vgps3.proj.Iberpix');
+
 
 
 /**
@@ -69,11 +70,12 @@ vgps3.topo.es.Map.prototype.init = function(vgps) {
   this.gMap_ = vgps.getGoogleMap();
   this.gMap_.mapTypes.set(vgps3.topo.es.MapTypeId.TERRAIN, /** @type {?} */ (this.getMapType_()));
   google.maps.event.addListener(
-    this.gMap_,
-    'maptypeid_changed',
-    goog.bind(this.mapTypeChangeHandler_, this)
+      this.gMap_,
+      'maptypeid_changed',
+      goog.bind(this.mapTypeChangeHandler_, this)
   );
 };
+
 
 /**
  * Handling map show / hide
@@ -96,17 +98,18 @@ vgps3.topo.es.Map.prototype.enable_ = function() {
   this.updateProjection_(true);
 
   this.zoomListener_ = google.maps.event.addListener(
-    this.gMap_,
-    'zoom_changed',
-    goog.bind(this.updateProjection_, this)
-  );
+      this.gMap_,
+      'zoom_changed',
+      goog.bind(this.updateProjection_, this)
+      );
 
   this.moveListener_ = google.maps.event.addListener(
-    this.gMap_,
-    'center_changed',
-    goog.bind(this.updateProjection_, this)
-  );
+      this.gMap_,
+      'center_changed',
+      goog.bind(this.updateProjection_, this)
+      );
 };
+
 
 /**
  * Should be called when the map gets hidden
@@ -118,10 +121,11 @@ vgps3.topo.es.Map.prototype.disable_ = function() {
   google.maps.event.removeListener(this.moveListener_);
 };
 
+
 /**
  * Updates the projection when the map moves.
  *
- * @param {boolean} opt_force Whether to force the update
+ * @param {boolean=} opt_force Whether to force the update.
  *
  * @private
  */
@@ -149,8 +153,9 @@ vgps3.topo.es.Map.prototype.updateProjection_ = function(opt_force) {
   }
 };
 
+
 /**
- * @return {google.maps.ImageMapType} The map type
+ * @return {google.maps.ImageMapType} The map type.
  * @private
  */
 vgps3.topo.es.Map.prototype.getMapType_ = function() {
@@ -168,12 +173,13 @@ vgps3.topo.es.Map.prototype.getMapType_ = function() {
   return mapType;
 };
 
+
 /**
  * Returns the URL of a tile.
  *
  * @param {google.maps.Point} coord
  * @param {number} zoom
- * @return {string|null}
+ * @return {?string}
  *
  * @private
  */
@@ -193,13 +199,14 @@ vgps3.topo.es.Map.prototype.getTileUrl_ = function(coord, zoom) {
 
 };
 
+
 /**
  * Returns the layer name according to the zoom level.
  *
  * @param {number} zoomLevel
  * @return {string}
  */
-vgps3.topo.es.Map.prototype.getLayerName_ = function (zoomLevel) {
+vgps3.topo.es.Map.prototype.getLayerName_ = function(zoomLevel) {
   if (zoomLevel < 11) {
     return vgps3.topo.es.LAYER_NAMES_[0];
   }
@@ -212,10 +219,12 @@ vgps3.topo.es.Map.prototype.getLayerName_ = function (zoomLevel) {
   return vgps3.topo.es.LAYER_NAMES_[3];
 };
 
+
 /**
- * @define {string} The url for tiles
+ * @define {string} The url for tiles.
  */
 vgps3.topo.es.TILES_URL = 'http://ts{server}.iberpix.ign.es/tileserver/n={layer};z={zone};r={scale};i={x};j={y}.jpg';
+
 
 /**
  * @enum {string} The supported map types
@@ -223,6 +232,7 @@ vgps3.topo.es.TILES_URL = 'http://ts{server}.iberpix.ign.es/tileserver/n={layer}
 vgps3.topo.es.MapTypeId = {
   TERRAIN: 'vgps3-topo-es-terrain'
 };
+
 
 /**
  * The layer names according to zoom level [<11, <13, <15, >=15]
@@ -232,12 +242,14 @@ vgps3.topo.es.MapTypeId = {
  */
 vgps3.topo.es.LAYER_NAMES_ = ['mapa_millon', 'mapa_mtn200', 'mapa_mtn50', 'mapa_mtn25'];
 
+
 /**
  * @const
  * @type {number}
  * @private
  */
 vgps3.topo.es.ZOOM_OFFSET_ = Math.round(Math.log(2 * Math.PI * 6378137 / (2048 * 256)) / Math.LN2);
+
 
 /**
  * @type {number}

@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview Click event
+ * @fileoverview Click event.
  * @author Victor Berchet <victor@suumit.com>
  */
 

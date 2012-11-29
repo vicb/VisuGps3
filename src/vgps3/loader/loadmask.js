@@ -15,15 +15,17 @@
 
 goog.provide('vgps3.loadMask');
 
+goog.require('goog.soy');
 goog.require('goog.ui.ModalPopup');
 goog.require('vgps3.loadMask.templates');
-goog.require('goog.soy');
+
 
 /**
  * @type {goog.ui.ModalPopup}
  * @private
  */
 vgps3.loadMask.popup_;
+
 
 /**
  * @type {number} Count the number of nested calls
@@ -46,9 +48,9 @@ vgps3.loadMask.setMessage = function(message, opt_style) {
     vgps3.loadMask.popup_.render();
   }
   goog.soy.renderElement(
-    vgps3.loadMask.popup_.getElement(),
-    vgps3.loadMask.templates.wait,
-    {message: message, "class": opt_style}
+      vgps3.loadMask.popup_.getElement(),
+      vgps3.loadMask.templates.wait,
+      {message: message, 'class': opt_style}
   );
   if (!vgps3.loadMask.popup_.isVisible()) {
     vgps3.loadMask.popup_.setVisible(true);
@@ -58,15 +60,17 @@ vgps3.loadMask.setMessage = function(message, opt_style) {
   vgps3.loadMask.opened_++;
 };
 
+
 /**
  * Closes the popup.
  */
 vgps3.loadMask.close = function() {
-  if (vgps3.loadMask.popup_ && vgps3.loadMask.popup_.isInDocument()& --vgps3.loadMask.opened_ === 0) {
+  if (vgps3.loadMask.popup_ && vgps3.loadMask.popup_.isInDocument() & --vgps3.loadMask.opened_ === 0) {
     vgps3.loadMask.popup_.setVisible(false);
     goog.dispose(vgps3.loadMask.popup_);
   }
-}
+};
+
 
 /**
  * CSS classes of the message.
@@ -77,20 +81,23 @@ vgps3.loadMask.Style = {
   ERROR: 'error'
 };
 
+
 /**
- * @define {string} The src of the image
+ * @define {string} The src of the image.
  */
 vgps3.loadMask.IMG_SRC = 'img/wait.gif';
 
-/**
- * @define {number} The width of the image
- */
-  vgps3.loadMask.IMG_WIDTH = 300;
 
 /**
- * @define {number} The height of the image
+ * @define {number} The width of the image.
  */
-  vgps3.loadMask.IMG_HEIGHT = 219;
+vgps3.loadMask.IMG_WIDTH = 300;
+
+
+/**
+ * @define {number} The height of the image.
+ */
+vgps3.loadMask.IMG_HEIGHT = 219;
 
 
 

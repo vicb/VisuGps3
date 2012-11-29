@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview Topo maps for France
+ * @fileoverview Topo maps for France.
  * @see http://api.ign.fr
  * @author Victor Berchet <victor@suumit.com>
  */
@@ -18,6 +18,7 @@ goog.provide('vgps3.topo.fr.Map');
 
 goog.require('vgps3.IPlugin');
 goog.require('vgps3.Map');
+
 
 
 /**
@@ -39,7 +40,7 @@ vgps3.topo.fr.Map.prototype.init = function(vgps) {
 
 
 /**
- * @return {google.maps.ImageMapType} The map type
+ * @return {google.maps.ImageMapType} The map type.
  * @private
  */
 vgps3.topo.fr.Map.prototype.getMapType_ = function() {
@@ -53,12 +54,13 @@ vgps3.topo.fr.Map.prototype.getMapType_ = function() {
   });
 };
 
+
 /**
  * Returns the URL of a tile.
  *
  * @param {google.maps.Point} coord
  * @param {number} zoom
- * @return {string|null}
+ * @return {?string}
  *
  * @private
  */
@@ -75,16 +77,18 @@ vgps3.topo.fr.Map.prototype.getTileUrl_ = function(coord, zoom) {
 
 };
 
+
 /**
- * @define {string} The API key
+ * @define {string} The API key.
  */
 vgps3.topo.fr.API_KEY = 'riolw3ajmfyga5yi0xas644q';
 
 
 /**
- * @define {string} The url for tiles
+ * @define {string} The url for tiles.
  */
 vgps3.topo.fr.TILES_URL = 'http://gpp3-wxs.topo.fr.fr/' + vgps3.topo.fr.API_KEY + '/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER={layer}&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={zoom}&TILEROW={y}&TILECOL={x};';
+
 
 /**
  * @enum {string} The supported map types

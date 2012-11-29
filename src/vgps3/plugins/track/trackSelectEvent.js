@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview Track select event
+ * @fileoverview Track select event.
  * @author Victor Berchet <victor@suumit.com>
  */
 

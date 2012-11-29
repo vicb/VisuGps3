@@ -20,7 +20,7 @@ goog.require('goog.events.Event');
 
 
 /**
- * @param {number} position [0...1]
+ * @param {number} position [0...1].
  *
  * @constructor
  * @extends {goog.events.Event}

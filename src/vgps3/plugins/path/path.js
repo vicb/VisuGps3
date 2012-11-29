@@ -18,10 +18,10 @@ goog.provide('vgps3.path.Path');
 goog.require('goog.Timer');
 goog.require('goog.dom');
 goog.require('goog.events.EventHandler');
+goog.require('goog.net.Cookies');
 goog.require('goog.style');
 goog.require('vgps3.Control');
 goog.require('vgps3.path.templates');
-goog.require('goog.net.Cookies');
 goog.require('goog.Timer');
 
 
@@ -130,6 +130,7 @@ vgps3.path.Path.prototype.clickHandler_ = function(event) {
   goog.style.showElement(this.element_, !visible);
 };
 
+
 /**
  * @private
  */
@@ -162,6 +163,7 @@ vgps3.path.Path.prototype.updateControl_ = function() {
   this.element_.innerHTML =
       Math.round(google.maps.geometry.spherical.computeLength(this.line_.getPath()) / 10) / 100 + ' km';
 };
+
 
 /**
  * @const

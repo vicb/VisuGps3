@@ -9,17 +9,18 @@
  */
 
 /**
- * @fileoverview Switzerland topo map
+ * @fileoverview Switzerland topo map.
  * @author Victor Berchet <victor@suumit.com>
  */
 
 goog.provide('vgps3.topo.ch.Map');
 
+goog.require('goog.math');
 goog.require('vgps3.IPlugin');
 goog.require('vgps3.Map');
-goog.require('vgps3.proj.Swisstopo');
 goog.require('vgps3.proj.GProj');
-goog.require('goog.math');
+goog.require('vgps3.proj.Swisstopo');
+
 
 
 /**
@@ -40,7 +41,7 @@ vgps3.topo.ch.Map = function() {
    */
   this.zoomListener_;
 
-   /**
+  /**
    * @type {number} Previous zoom level
    * @private
    */
@@ -73,20 +74,21 @@ vgps3.topo.ch.Map.prototype.init = function(vgps) {
   this.center_ = this.gMap_.getCenter();
   this.previousZoom_ = this.gMap_.getZoom();
   google.maps.event.addListener(
-    this.gMap_,
-    'maptypeid_changed',
-    goog.bind(this.mapTypeChangeHandler_, this)
+      this.gMap_,
+      'maptypeid_changed',
+      goog.bind(this.mapTypeChangeHandler_, this)
   );
 
   // Capture the center value when the map becomes idle
   // This is required to apply this value when the zoom level changes as consecutive zoom
   // resolution ratio is not 2 as expected by the google maps API
   google.maps.event.addListener(
-    this.gMap_,
-    'idle',
-    function() {that.center_ = that.gMap_.getCenter();}
+      this.gMap_,
+      'idle',
+      function() {that.center_ = that.gMap_.getCenter();}
   );
 };
+
 
 /**
  * Handling map show / hide
@@ -109,11 +111,12 @@ vgps3.topo.ch.Map.prototype.enable_ = function() {
   this.updateProjection_();
 
   this.zoomListener_ = google.maps.event.addListener(
-    this.gMap_,
-    'zoom_changed',
-    goog.bind(this.updateProjection_, this)
+      this.gMap_,
+      'zoom_changed',
+      goog.bind(this.updateProjection_, this)
   );
 };
+
 
 /**
  * Should be called when the map gets hidden
@@ -123,6 +126,7 @@ vgps3.topo.ch.Map.prototype.enable_ = function() {
 vgps3.topo.ch.Map.prototype.disable_ = function() {
   google.maps.event.removeListener(this.zoomListener_);
 };
+
 
 /**
  * Updates the projection when the zoom changes.
@@ -139,13 +143,14 @@ vgps3.topo.ch.Map.prototype.updateProjection_ = function() {
   this.previousZoom_ = zoom;
 
   this.projection_.setScale0(
-    vgps3.topo.ch.PARAMETERS_[zoom].scale * Math.pow(2, zoom)
+      vgps3.topo.ch.PARAMETERS_[zoom].scale * Math.pow(2, zoom)
   );
   this.gMap_.setCenter(this.center_);
 };
 
+
 /**
- * @return {google.maps.ImageMapType} The map type
+ * @return {google.maps.ImageMapType} The map type.
  * @private
  */
 vgps3.topo.ch.Map.prototype.getMapType_ = function() {
@@ -164,21 +169,22 @@ vgps3.topo.ch.Map.prototype.getMapType_ = function() {
   return mapType;
 };
 
+
 /**
  * Returns the URL of a tile.
  *
  * @param {google.maps.Point} coord
  * @param {number} zoom
- * @return {string|null}
+ * @return {?string}
  *
  * @private
  */
 vgps3.topo.ch.Map.prototype.getTileUrl_ = function(coord, zoom) {
   var numTiles = 1 << zoom;
 
-//  if (coord.y < 0 || coord.y >= numTiles) {
-//    return null;
-//  }
+  if (coord.y < 0 || coord.y >= numTiles) {
+    return null;
+  }
   return vgps3.topo.ch.TILES_URL
       .replace('{server}', (vgps3.topo.ch.serverIndex_++ % 4).toString(10))
       .replace('{y}', coord.y.toString(10))
@@ -189,10 +195,12 @@ vgps3.topo.ch.Map.prototype.getTileUrl_ = function(coord, zoom) {
       .replace('{layer}', 'ch.swisstopo.pixelkarte-farbe');
 };
 
+
 /**
- * @define {string} The url for tiles
+ * @define {string} The url for tiles.
  */
 vgps3.topo.ch.TILES_URL = 'http://wmts{server}.geo.admin.ch/1.0.0/{layer}/default/{date}/{proj}/{zoom}/{y}/{x}.jpeg';
+
 
 /**
  * @enum {string} The supported map types
@@ -200,6 +208,7 @@ vgps3.topo.ch.TILES_URL = 'http://wmts{server}.geo.admin.ch/1.0.0/{layer}/defaul
 vgps3.topo.ch.MapTypeId = {
   TERRAIN: 'vgps3-topo-ch-terrain'
 };
+
 
 /**
  * The scales and zoom levels map for swisstopo
@@ -224,6 +233,7 @@ vgps3.topo.ch.PARAMETERS_ = {
   17: {scale: 1.5, zoom: 24},
   18: {scale: 0.5, zoom: 26}
 };
+
 
 /**
  * @type {number}

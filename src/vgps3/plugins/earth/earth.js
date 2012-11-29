@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview Google Earth integration on top of google Maps
+ * @fileoverview Google Earth integration on top of google Maps.
  * @author Victor Berchet <victor@suumit.com>
  *
  * Some code is inspired by the Earth API library for Maps v3 authored by Josh Livni:
@@ -18,19 +18,19 @@
 
 goog.provide('vgps3.earth.Earth');
 
+goog.require('goog.Timer');
+goog.require('goog.array');
 goog.require('goog.async.Deferred');
-goog.require('vgps3.IPlugin');
-goog.require('vgps3.Map');
+goog.require('goog.color');
 goog.require('goog.debug.Logger');
 goog.require('goog.debug.Trace');
 goog.require('goog.dom');
-goog.require('goog.style');
-goog.require('goog.color');
-goog.require('goog.Timer');
-goog.require('goog.string.format');
-goog.require('goog.math');
 goog.require('goog.functions');
-goog.require('goog.array');
+goog.require('goog.math');
+goog.require('goog.string.format');
+goog.require('goog.style');
+goog.require('vgps3.IPlugin');
+goog.require('vgps3.Map');
 goog.require('vgps3.loader');
 
 
@@ -155,15 +155,16 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
           this.logger_.info('GE Plugin supported');
           this.gMap_.mapTypes.set(vgps3.earth.MapTypeId.EARTH, vgps3.earth.EarthMapType_);
           google.maps.event.addListener(
-            this.gMap_,
-            'maptypeid_changed',
-            goog.bind(this.mapTypeChangeHandler_, this)
+              this.gMap_,
+              'maptypeid_changed',
+              goog.bind(this.mapTypeChangeHandler_, this)
           );
         }
       },
       this
   );
 };
+
 
 /**
  * Shows the plugin when the earth map type is selected.
@@ -191,6 +192,7 @@ vgps3.earth.Earth.prototype.mapTypeChangeHandler_ = function() {
     this.currentMapTypeId_ = this.gMap_.getMapTypeId();
   }
 };
+
 
 /**
  * Makes the map type controls available when the GE plugin is in use.
@@ -223,6 +225,7 @@ vgps3.earth.Earth.prototype.showControls_ = function(show) {
     });
   }
 };
+
 
 /**
  * Adds a google maps control to host the earth view and start the plugin on supported platforms.
@@ -271,7 +274,7 @@ vgps3.earth.Earth.prototype.createEarth_ = function() {
           // BUG: wait before using the ge plugin
           // Note: Trust me, do not play too much with this init code !
           goog.Timer.callOnce(that.mapCreated_.callback, 100, that.mapCreated_);
-        })
+        });
       },
       /**
        * @param {string} error
@@ -284,14 +287,15 @@ vgps3.earth.Earth.prototype.createEarth_ = function() {
         }
       }
   );
-}
+};
+
 
 /**
  * Moves the pilot to the given location.
  *
  * @param {number} position [0...1].
- * @param {boolean=} opt_setCenter Whether to center the view
- * @param {number=} opt_zoomOffset Zoom direction
+ * @param {boolean=} opt_setCenter Whether to center the view.
+ * @param {number=} opt_zoomOffset Zoom direction.
  */
 vgps3.earth.Earth.prototype.moveTo = function(position, opt_setCenter, opt_zoomOffset) {
   if (!this.visible_) {
@@ -299,50 +303,51 @@ vgps3.earth.Earth.prototype.moveTo = function(position, opt_setCenter, opt_zoomO
   }
 
   this.trackAdded_.addCallback(function() {
-      // Return if the earth is not currently visible or if no track is currently selected
-      if (!goog.isDef(this.currentTrackIndex_) || vgps3.earth.MapTypeId.EARTH !== this.currentMapTypeId_) {
-        return;
-      }
-      var that = this;
+    // Return if the earth is not currently visible or if no track is currently selected
+    if (!goog.isDef(this.currentTrackIndex_) || vgps3.earth.MapTypeId.EARTH !== this.currentMapTypeId_) {
+      return;
+    }
+    var that = this;
 
-      google.earth.executeBatch(this.ge_, function() {
-        var kmlLine = that.ge_.getElementById('track-' + that.currentTrackIndex_),
-            kmlCoordinates = kmlLine.getCoordinates(),
-            lineMaxIndex = kmlCoordinates.getLength() - 1,
-            index = Math.round(position * lineMaxIndex),
-            location = kmlCoordinates.get(index);
+    google.earth.executeBatch(this.ge_, function() {
+      var kmlLine = that.ge_.getElementById('track-' + that.currentTrackIndex_),
+          kmlCoordinates = kmlLine.getCoordinates(),
+          lineMaxIndex = kmlCoordinates.getLength() - 1,
+          index = Math.round(position * lineMaxIndex),
+          location = kmlCoordinates.get(index);
 
-        that.location_.setLatLngAlt(location.getLatitude(), location.getLongitude(), location.getAltitude());
+      that.location_.setLatLngAlt(location.getLatitude(), location.getLongitude(), location.getAltitude());
 
-        var nextIndex = Math.min(index + 1, lineMaxIndex),
-            nextLocation = kmlCoordinates.get(nextIndex),
-            heading;
+      var nextIndex = Math.min(index + 1, lineMaxIndex),
+          nextLocation = kmlCoordinates.get(nextIndex),
+          heading;
 
-        heading = google.maps.geometry.spherical.computeHeading(
+      heading = google.maps.geometry.spherical.computeHeading(
           new google.maps.LatLng(location.getLatitude(), location.getLongitude()),
           new google.maps.LatLng(nextLocation.getLatitude(), nextLocation.getLongitude())
-        );
+          );
 
-        // Apply model origin (255deg)
-        that.orientation_.setHeading(goog.math.standardAngle(heading + vgps3.earth.MODEL_ORIGIN_ANGLE));
+      // Apply model origin (255deg)
+      that.orientation_.setHeading(goog.math.standardAngle(heading + vgps3.earth.MODEL_ORIGIN_ANGLE));
 
-        if (opt_setCenter) {
-          var lookAt = that.ge_.getView().copyAsLookAt(that.ge_.ALTITUDE_ABSOLUTE);
-          lookAt.setLatitude(location.getLatitude());
-          lookAt.setLongitude(location.getLongitude());
-          lookAt.setAltitude(location.getAltitude());
-          that.ge_.getView().setAbstractView(lookAt);
-        }
+      if (opt_setCenter) {
+        var lookAt = that.ge_.getView().copyAsLookAt(that.ge_.ALTITUDE_ABSOLUTE);
+        lookAt.setLatitude(location.getLatitude());
+        lookAt.setLongitude(location.getLongitude());
+        lookAt.setAltitude(location.getAltitude());
+        that.ge_.getView().setAbstractView(lookAt);
+      }
 
-        if (opt_zoomOffset) {
-          var lookAt = that.ge_.getView().copyAsLookAt(that.ge_.ALTITUDE_ABSOLUTE);
-          lookAt.setRange(Math.pow(2, opt_zoomOffset) * lookAt.getRange());
-          that.ge_.getView().setAbstractView(lookAt);
-        }
-      });
-    }
+      if (opt_zoomOffset) {
+        var lookAt = that.ge_.getView().copyAsLookAt(that.ge_.ALTITUDE_ABSOLUTE);
+        lookAt.setRange(Math.pow(2, opt_zoomOffset) * lookAt.getRange());
+        that.ge_.getView().setAbstractView(lookAt);
+      }
+    });
+  }
   );
 };
+
 
 /**
  * Installs the click handler.
@@ -369,7 +374,8 @@ vgps3.earth.Earth.prototype.installClickHandler_ = function() {
       }
     }
   });
-}
+};
+
 
 /**
  * Triggers a click on the google map when the earth gets clicked.
@@ -418,51 +424,52 @@ vgps3.earth.Earth.prototype.trackSelectHandler_ = function(event) {
   this.currentTrackIndex_ = event.trackIndex;
 
   this.trackAdded_.addCallback(function() {
-      var that = this;
-      // Create the 3D model
-      if (!goog.isDef(this.orientation_)) {
-        this.logger_.info('Creating 3D model');
-        google.earth.executeBatch(this.ge_, function() {
-          var placemark = that.ge_.createPlacemark('modelPm');
-          var model = that.ge_.createModel('model');
-          placemark.setGeometry(model);
-          var link = that.ge_.createLink('link');
-          link.setHref(vgps3.earth.MODEL_URL)
-          model.setLink(link);
-          model.setLocation(that.location_);
-          that.orientation_ = that.ge_.createOrientation('orient')
-          model.setOrientation(that.orientation_);
-          var scale = that.ge_.createScale('');
-          scale.set(5, 5, 5);
-          model.setScale(scale);
-          model.setAltitudeMode(that.ge_.ALTITUDE_ABSOLUTE);
-          that.ge_.getFeatures().appendChild(placemark);
-        });
-      }
-      // Set tracks style
+    var that = this;
+    // Create the 3D model
+    if (!goog.isDef(this.orientation_)) {
+      this.logger_.info('Creating 3D model');
       google.earth.executeBatch(this.ge_, function() {
-        var trackIdx = event.trackIndex,
-            previousTrackIndex = event.previousTrackIndex,
-            lineStyle;
-        lineStyle = that.ge_.getElementById('trackStyle-' + trackIdx).getLineStyle();
-        lineStyle.getColor().setA(256);
-        lineStyle.setWidth(3);
-        if (!goog.isNull(previousTrackIndex)) {
-          lineStyle = that.ge_.getElementById('trackStyle-' + previousTrackIndex).getLineStyle();
-          lineStyle.getColor().setA(128);
-          lineStyle.setWidth(2);
-        }
+        var placemark = that.ge_.createPlacemark('modelPm');
+        var model = that.ge_.createModel('model');
+        placemark.setGeometry(model);
+        var link = that.ge_.createLink('link');
+        link.setHref(vgps3.earth.MODEL_URL);
+        model.setLink(link);
+        model.setLocation(that.location_);
+        that.orientation_ = that.ge_.createOrientation('orient');
+        model.setOrientation(that.orientation_);
+        var scale = that.ge_.createScale('');
+        scale.set(5, 5, 5);
+        model.setScale(scale);
+        model.setAltitudeMode(that.ge_.ALTITUDE_ABSOLUTE);
+        that.ge_.getFeatures().appendChild(placemark);
       });
     }
+    // Set tracks style
+    google.earth.executeBatch(this.ge_, function() {
+      var trackIdx = event.trackIndex,
+          previousTrackIndex = event.previousTrackIndex,
+          lineStyle;
+      lineStyle = that.ge_.getElementById('trackStyle-' + trackIdx).getLineStyle();
+      lineStyle.getColor().setA(256);
+      lineStyle.setWidth(3);
+      if (!goog.isNull(previousTrackIndex)) {
+        lineStyle = that.ge_.getElementById('trackStyle-' + previousTrackIndex).getLineStyle();
+        lineStyle.getColor().setA(128);
+        lineStyle.setWidth(2);
+      }
+    });
+  }
   );
 };
+
 
 /**
  * Displays a track on the earth map.
  *
  * Note: Using several batches as a single big one would not work.
  *
- * @param {number} trackIndex The track index
+ * @param {number} trackIndex The track index.
  * @param {vgps3.track.GpsFixes} fixes
  * @param {string} trackColor
  * @private
@@ -527,28 +534,31 @@ vgps3.earth.Earth.prototype.displayTrack_ = function(trackIndex, fixes, trackCol
   }
 };
 
+
 /**
  * Interpolates the elevation for the given position.
  *
- * @param {number} factor The ratio (elevation samples - 1) / (track samples -1)
+ * @param {number} factor The ratio (elevation samples - 1) / (track samples -1).
  * @param {vgps3.track.GpsFixes} fixes
- * @param {number} index [0...fixes['nbTrackPt']]
- * @return {number} The elevation
+ * @param {number} index [0...fixes['nbTrackPt']].
+ * @return {number} The elevation.
  * @private
  */
 vgps3.earth.Earth.prototype.estimateElevation_ = function(factor, fixes, index) {
-  index *=  factor;
+  index *= factor;
   var chartIndex = Math.round(index),
       nextChartIndex = chartIndex + 1 < fixes['nbTrackPt'] ? chartIndex + 1 : chartIndex;
   return fixes['elev'][chartIndex] + (index - chartIndex) * (fixes['elev'][nextChartIndex] - fixes['elev'][chartIndex]);
 };
+
 
 /**
  * @type {string}
  * @const
  * @private
  */
-vgps3.earth.TITLE_ = "Earth3D";
+vgps3.earth.TITLE_ = 'Earth3D';
+
 
 /**
  * @type {google.maps.MapType}
@@ -566,15 +576,18 @@ vgps3.earth.EarthMapType_ = /** @type {google.maps.MapType} */ {
   }
 };
 
+
 /**
  * @define {string}
  */
 vgps3.earth.MODEL_URL = 'http://victorb.fr/visugps/img/paraglider.dae';
 
+
 /**
  * @define {number}
  */
 vgps3.earth.MODEL_ORIGIN_ANGLE = 255;
+
 
 /**
  * @const
@@ -583,11 +596,13 @@ vgps3.earth.MODEL_ORIGIN_ANGLE = 255;
  */
 vgps3.earth.MAX_EARTH_ZOOM_ = 27;
 
+
 /**
  * @type {goog.async.Deferred} Triggered when the plugin is loaded
  * @private
  */
 vgps3.earth.geApiLoaded_ = new goog.async.Deferred();
+
 
 /**
  * @enum {string}

@@ -43,9 +43,9 @@ goog.inherits(vgps3.chart.Sliders, goog.ui.Component);
 /**
  * Adds a slider to the set.
  *
- * @param {string} label The label of the slider
- * @param {Element} element The element whose opacity will be linked to this slider position
- * @param {string} color The color of the thumb
+ * @param {string} label The label of the slider.
+ * @param {Element} element The element whose opacity will be linked to this slider position.
+ * @param {string} color The color of the thumb.
  */
 vgps3.chart.Sliders.prototype.addSlider = function(label, element, color) {
   var slider = new goog.ui.Slider(),
@@ -73,7 +73,7 @@ vgps3.chart.Sliders.prototype.addSlider = function(label, element, color) {
 
 
 /**
- * @return {Element} The title div
+ * @return {Element} The title div.
  */
 vgps3.chart.Sliders.prototype.getTitleElement = function() {
   if (!this.isInDocument()) {

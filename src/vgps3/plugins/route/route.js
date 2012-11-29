@@ -44,7 +44,7 @@ vgps3.route.Route.prototype.init = function(vgps) {
 
 /**
  *
- * @param {string} type End with "c" to display a closed route
+ * @param {string} type End with "c" to display a closed route.
  * @param {Array.<google.maps.LatLng>} turnpoints
  * @param {google.maps.LatLng=} opt_start
  * @param {google.maps.LatLng=} opt_end
@@ -56,12 +56,12 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end
       closed = type.length && type.substr(-1) === 'c';
 
   new google.maps.Polyline({
-        clickable: false,
-        map: this.gMap_,
-        path: turnpoints,
-        strokeColor: '#00f',
-        strokeOpacity: 0.8,
-        strokeWeight: 1
+    clickable: false,
+    map: this.gMap_,
+    path: turnpoints,
+    strokeColor: '#00f',
+    strokeOpacity: 0.8,
+    strokeWeight: 1
   });
 
   if (closed && goog.isDef(opt_start)) {
@@ -112,19 +112,19 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end
 
 
 /**
- * @define {string} The start icon url
+ * @define {string} The start icon url.
  */
 vgps3.route.START_ICON_URL = 'http://labs.google.com/ridefinder/images/mm_20_green.png';
 
 
 /**
- * @define {string} The end icon url
+ * @define {string} The end icon url.
  */
 vgps3.route.END_ICON_URL = 'http://labs.google.com/ridefinder/images/mm_20_red.png';
 
 
 /**
- * @define {string} The route icon url
+ * @define {string} The route icon url.
  */
 vgps3.route.ICON_URL = 'http://labs.google.com/ridefinder/images/mm_20_orange.png';
 

@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview Transverse Mercator projection
+ * @fileoverview Transverse Mercator projection.
  *
  * Original code by Nianwei Liu:
  * @see http://code.google.com/p/google-maps-utility-library-v3/source/browse/trunk/arcgislink/src/arcgislink.js
@@ -21,6 +21,8 @@
 goog.provide('vgps3.proj.TransverseMercator');
 
 goog.require('goog.math');
+
+
 
 /**
  * Create a Transverse Mercator Projection. The <code>params</code> passed in constructor should contain the
@@ -48,6 +50,7 @@ vgps3.proj.TransverseMercator = function(parameters) {
   this.setParameters(parameters);
 };
 
+
 /**
  * Sets the projection parameters.
  *
@@ -72,7 +75,8 @@ vgps3.proj.TransverseMercator.prototype.setParameters = function(parameters) {
   /* e'  second eccentricity where e'^2  =  e^2 / (1-e^2) */
   this.eas_ = this.es_ / (1 - this.es_);
   this.M0_ = this.calc_m_(phi0, this.a_, this.es_, this.ep4_, this.ep6_);
-}
+};
+
 
 /**
  * calc_m_
@@ -85,9 +89,10 @@ vgps3.proj.TransverseMercator.prototype.setParameters = function(parameters) {
  *
  * @private
  */
-vgps3.proj.TransverseMercator.prototype.calc_m_ = function (phi, a, es, ep4, ep6) {
+vgps3.proj.TransverseMercator.prototype.calc_m_ = function(phi, a, es, ep4, ep6) {
   return a * ((1 - es / 4 - 3 * ep4 / 64 - 5 * ep6 / 256) * phi - (3 * es / 8 + 3 * ep4 / 32 + 45 * ep6 / 1024) * Math.sin(2 * phi) + (15 * ep4 / 256 + 45 * ep6 / 1024) * Math.sin(4 * phi) - (35 * ep6 / 3072) * Math.sin(6 * phi));
 };
+
 
 /**
  * @override
@@ -104,6 +109,7 @@ vgps3.proj.TransverseMercator.prototype.forward = function(lat, lng) {
   var y = this.FN_ + this.k0_ * (M - this.M0_) + nu * Math.tan(phi) * (A * A / 2 + (5 - T + 9 * C + 4 * C * C) * Math.pow(A, 4) / 120 + (61 - 58 * T + T * T + 600 * C - 330 * this.eas_) * Math.pow(A, 6) / 720);
   return {x: x, y: y};
 };
+
 
 /**
  * @override
@@ -123,9 +129,10 @@ vgps3.proj.TransverseMercator.prototype.inverse = function(x, y) {
   return {lng: goog.math.toDegrees(lamda), lat: goog.math.toDegrees(phi)};
 };
 
+
 /**
  * @override
  */
 vgps3.proj.TransverseMercator.prototype.getOrigin = function() {
   return {x: 0, y: 0};
-}
+};

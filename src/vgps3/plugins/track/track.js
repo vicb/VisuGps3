@@ -24,12 +24,13 @@ goog.require('goog.style');
 goog.require('vgps3.Control');
 goog.require('vgps3.IPlugin');
 goog.require('vgps3.Map');
+goog.require('vgps3.loadMask');
 goog.require('vgps3.track.ClickEvent');
 goog.require('vgps3.track.LoadEvent');
 goog.require('vgps3.track.TrackSelectEvent');
 goog.require('vgps3.track.templates');
 goog.require('goog.string.format');
-goog.require('vgps3.loadMask');
+
 
 
 /**
@@ -263,12 +264,13 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
   this.vgps_.dispatchEvent(new vgps3.track.LoadEvent(trackIndex, gpsFixes, this.tracks_[trackIndex].color));
 };
 
+
 /**
  * Returns a function that scales the current marker.
  *
- * @param {number} minElevation Minimum elevation along the track
- * @param {number} maxElevation Maximum elevation along the track
- * @param {Array.<number>} fixes The GPS fixes
+ * @param {number} minElevation Minimum elevation along the track.
+ * @param {number} maxElevation Maximum elevation along the track.
+ * @param {Array.<number>} fixes The GPS fixes.
  * @return {function(number)}
  *
  * @private
@@ -278,7 +280,7 @@ vgps3.track.Track.prototype.getIconScaler_ = function(minElevation, maxElevation
       icon = this.currentTrackMarker_.getIcon();
   return function(position) {
     var elevation = fixes[Math.round(fixes.length * position)],
-      scale = (elevation - minElevation) / range + 0.5;
+        scale = (elevation - minElevation) / range + 0.5;
     icon.anchor.y = Math.round(scale * vgps3.track.ICON_ANCHOR_Y);
     icon.anchor.x = Math.round(scale * vgps3.track.ICON_ANCHOR_X);
     icon.size.height = icon.scaledSize.height = Math.round(scale * vgps3.track.ICON_HEIGHT);
@@ -309,7 +311,7 @@ vgps3.track.Track.prototype.getPolylineOptions_ = function(trackIndex) {
 
 /**
  * Returns the color of the given track.
- * 
+ *
  * @param {number} trackIndex
  * @return {string}
  * @private
@@ -329,11 +331,12 @@ vgps3.track.Track.prototype.getTrackColor_ = function(trackIndex) {
  */
 vgps3.track.Track.prototype.getTracksBounds_ = function() {
   return /** @type {google.maps.LatLngBounds} */ (goog.array.reduce(
-    this.tracks_,
-    function(bounds, track) {return bounds.union(track.bounds);},
-    new google.maps.LatLngBounds()
-  ));
+      this.tracks_,
+      function(bounds, track) {return bounds.union(track.bounds);},
+      new google.maps.LatLngBounds()
+      ));
 };
+
 
 /**
  * Selects a track.
@@ -347,9 +350,9 @@ vgps3.track.Track.prototype.selectCurrentTrack_ = function(trackIndex, previousT
     this.currentTrackIndex_ = trackIndex;
     this.updateTrackControl_(trackIndex);
     goog.style.setStyle(
-      this.trackControl_.getElement(),
-      'background-color',
-      goog.color.rgbArrayToHex(goog.color.lighten(goog.color.hexToRgb(this.tracks_[trackIndex].color), .6))
+        this.trackControl_.getElement(),
+        'background-color',
+        goog.color.rgbArrayToHex(goog.color.lighten(goog.color.hexToRgb(this.tracks_[trackIndex].color), .6))
     );
     this.updateInfoControl_(0);
     this.moveTo(0);
@@ -357,8 +360,8 @@ vgps3.track.Track.prototype.selectCurrentTrack_ = function(trackIndex, previousT
     goog.isDef(previousTrackIndex) && this.tracks_[previousTrackIndex].polyline.setOptions(this.getPolylineOptions_(previousTrackIndex));
     this.vgps_.dispatchEvent(new vgps3.track.TrackSelectEvent(
         trackIndex,
-        goog.isDef(previousTrackIndex) ? previousTrackIndex: null
-    ));
+        goog.isDef(previousTrackIndex) ? previousTrackIndex : null
+        ));
   }
 };
 
@@ -398,7 +401,7 @@ vgps3.track.Track.prototype.clickHandler_ = function(event) {
           'Click location search: %d trials for %d points',
           trials,
           nbPoints
-      ));
+          ));
     }
   });
 
@@ -447,50 +450,55 @@ vgps3.track.EventType = {
 
 
 /**
- * @define {string} The proxy URL used to load track (AJAX does not support XDomain)
+ * @define {string} The proxy URL used to load track (AJAX does not support XDomain).
  */
 vgps3.track.PROXY_URL = 'php/vg_proxy.php?track=';
 
 
 /**
- * @define {number} The maximum speed (km/h)
+ * @define {number} The maximum speed (km/h).
  */
 vgps3.track.MAX_SPEED = 100;
 
 
 /**
- * @define {number} The maximum vertical speed (m/s)
+ * @define {number} The maximum vertical speed (m/s).
  */
 vgps3.track.MAX_VARIO = 15;
 
 
 /**
- * @define {number} The maximum elevation (m)
+ * @define {number} The maximum elevation (m).
  */
 vgps3.track.MAX_ELEV = 9000;
 
+
 /**
- * @define {string} The icon URL
+ * @define {string} The icon URL.
  */
 vgps3.track.ICON_URL = 'img/red-shadow.png';
 
+
 /**
- * @define {number} The icon X-anchor
+ * @define {number} The icon X-anchor.
  */
 vgps3.track.ICON_ANCHOR_X = 16;
 
+
 /**
- * @define {number} The icon Y-anchor
+ * @define {number} The icon Y-anchor.
  */
 vgps3.track.ICON_ANCHOR_Y = 32;
 
+
 /**
- * @define {number} The icon width
+ * @define {number} The icon width.
  */
 vgps3.track.ICON_WIDTH = 59;
 
+
 /**
- * @define {number} The icon height
+ * @define {number} The icon height.
  */
 vgps3.track.ICON_HEIGHT = 32;
 

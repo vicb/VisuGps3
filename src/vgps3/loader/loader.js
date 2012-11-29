@@ -15,12 +15,13 @@
 
 goog.provide('vgps3.loader');
 
-goog.require('goog.async.Deferred');
-goog.require('goog.net.jsloader');
 goog.require('goog.array');
+goog.require('goog.async.Deferred');
 goog.require('goog.iter');
-goog.require('goog.structs.Map');
+goog.require('goog.net.jsloader');
 goog.require('goog.string.format');
+goog.require('goog.structs.Map');
+
 
 /**
  * @type {goog.async.Deferred} Triggered when the Google Loader has been loaded
@@ -28,19 +29,21 @@ goog.require('goog.string.format');
  */
 vgps3.loader.loaderLoaded_;
 
+
 /**
  * @type {goog.debug.Logger}
  * @private
  */
 vgps3.loader.logger_ = goog.debug.Logger.getLogger('vgps3.loader');
 
+
 /**
  * Loads an API.
  *
- * @param {string} module The name of the module
- * @param {string|number} version The version of the module
- * @param {Function|goog.async.Deferred} callback Called when the API has been loaded
- * @param {Object=} options Extra options
+ * @param {string} module The name of the module.
+ * @param {string|number} version The version of the module.
+ * @param {Function|goog.async.Deferred} callback Called when the API has been loaded.
+ * @param {Object=} options Extra options.
  */
 vgps3.loader.load = function(module, version, callback, options) {
   options = options || {};
@@ -96,14 +99,15 @@ vgps3.loader.load = function(module, version, callback, options) {
   vgps3.loader.loaderLoaded_.addCallback(function() {
     google.load(module, /** @type {string} */ (version), options);
   });
-}
+};
+
 
 /**
  * Fires the callbacks when a module has been loaded.
  *
- * @param {string} module The name of the module
- * @param {string} version The version of the module
- * @param {goog.structs.Map} optionsMap Extra options
+ * @param {string} module The name of the module.
+ * @param {string} version The version of the module.
+ * @param {goog.structs.Map} optionsMap Extra options.
  * @private
  */
 vgps3.loader.loadHandler_ = function(module, version, optionsMap) {
@@ -117,11 +121,13 @@ vgps3.loader.loadHandler_ = function(module, version, optionsMap) {
   vgps3.loader.modules_[module][version].set(optionsMap, module);
 };
 
+
 /**
  * The modules that have already been loaded.
  * @type {Array.<Array.<goog.structs.Map.<goog.structs.Map, {loaded: boolean, callbacks: Array.<Function>}>>>}
  */
 vgps3.loader.modules_ = [];
+
 
 /**
  * Url of the google AJAX API loader

@@ -51,7 +51,7 @@ goog.inherits(vgps3.chart.Overlays, goog.ui.Component);
  * The first layer has an opacity set to 0.9 and subsequent ones to 0.3.
  * The layers are added with a decreasing z-index (starting from 100).
  *
- * @return {Element} The layer div
+ * @return {Element} The layer div.
  */
 vgps3.chart.Overlays.prototype.addLayer = function() {
   if (!this.isInDocument()) {
@@ -110,9 +110,9 @@ vgps3.chart.Overlays.prototype.enterDocument = function() {
   this.getElement().appendChild(this.cursor_);
 
   this.getHandler().listen(
-    this.getElement(),
-    [goog.events.EventType.MOUSEDOWN, goog.events.EventType.MOUSEMOVE],
-    this.handleMouseEvents_
+      this.getElement(),
+      [goog.events.EventType.MOUSEDOWN, goog.events.EventType.MOUSEMOVE],
+      this.handleMouseEvents_
   );
 };
 
