@@ -68,6 +68,7 @@ vgps3.loadMask.close = function() {
   if (vgps3.loadMask.popup_ && vgps3.loadMask.popup_.isInDocument() & --vgps3.loadMask.opened_ === 0) {
     vgps3.loadMask.popup_.setVisible(false);
     goog.dispose(vgps3.loadMask.popup_);
+    vgps3.loadMask.popup_ = null;
   }
 };
 
