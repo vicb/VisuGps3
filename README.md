@@ -25,7 +25,7 @@ as the maps API v2 will be deprecated in 2013.
 
 ## Roadmap
 
-### v3.0
+### v3.0 ... soon (12/12)
 
 - Multiple tracks support
 
@@ -35,9 +35,8 @@ as the maps API v2 will be deprecated in 2013.
 - Rewritten track parsers (PHP)
 - use GeoJSON ?
 
-## Authors
+## Contributors
 
-- [Victor Berchet](https://github.com/vicb)
 - [Tom Payne](https://github.com/twpayne)
 
 ## Credits

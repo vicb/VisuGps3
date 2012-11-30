@@ -463,7 +463,7 @@ vgps3.track.COLORS = ['#ff0000', '#5e008c', '#002b40', '#f2f200', '#00e64d', '#0
 /**
  * @define {string} The proxy URL used to load track (AJAX does not support XDomain).
  */
-vgps3.track.PROXY_URL = 'tests/fixtures/tracks/json/';
+vgps3.track.PROXY_URL = 'php/vg_proxy.php?track=';
 
 
 /**

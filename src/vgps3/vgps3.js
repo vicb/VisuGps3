@@ -165,3 +165,6 @@ vgps3.Map.prototype.init_ = function(container, userOptions, callback) {
  */
 vgps3.VERSION = '3.0.0-beta1';
 
+goog.exportSymbol('vgps3.Map', vgps3.Map);
+goog.exportSymbol('vgps3.Map.showAbout', vgps3.Map.prototype.showAbout);
+goog.exportSymbol('vgps3.Map.getGoogleMap', vgps3.Map.prototype.getGoogleMap);

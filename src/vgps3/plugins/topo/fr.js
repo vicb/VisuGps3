@@ -83,8 +83,9 @@ vgps3.topo.fr.Map.prototype.getTileUrl_ = function(coord, zoom) {
 
 /**
  * @define {string} The API key.
+ * @see http://api.ign.fr/accueil
  */
-vgps3.topo.fr.API_KEY = 'riolw3ajmfyga5yi0xas644q';
+vgps3.topo.fr.API_KEY = '';
 
 
 /**
