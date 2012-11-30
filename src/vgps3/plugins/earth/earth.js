@@ -116,7 +116,7 @@ vgps3.earth.Earth = function() {
   this.visible_ = false;
 
   /**
-   * @type {Object.<string, Function>} Listeners to ge events
+   * @type {Object} Listeners to ge events
    * @private
    */
   this.geListeners_ = {};
