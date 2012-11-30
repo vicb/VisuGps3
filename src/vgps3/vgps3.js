@@ -19,6 +19,7 @@ goog.require('goog.Uri');
 goog.require('goog.array');
 goog.require('goog.debug.Console');
 goog.require('goog.debug.Logger');
+goog.require('goog.events');
 goog.require('goog.json');
 goog.require('goog.object');
 goog.require('goog.structs.Map');
@@ -42,12 +43,13 @@ goog.require('vgps3.track.Track');
  */
 vgps3.Viewer = function(mapContainer, chartContainer) {
   /**
-  * @type {vgps3.Map}
-  */
-  this.map;
+   * @type {vgps3.Map}
+   * @private
+   */
+  this.vgps_;
 
   /**
-  * @type {Object.<string, vgps3.IPlugin>}
+  * @type {Object.<string, vgps3.PluginBase>}
   */
   this.plugins = {
     track: new vgps3.track.Track(),
@@ -66,20 +68,11 @@ vgps3.Viewer = function(mapContainer, chartContainer) {
   */
   this.logger_ = goog.debug.Logger.getLogger('vgps3.Viewer');
 
-  this.map = new vgps3.Map(
+  this.vgps_ = new vgps3.Map(
       mapContainer,
       {
         mapTypeControlOptions: {
-          mapTypeIds: [
-            google.maps.MapTypeId.HYBRID,
-            google.maps.MapTypeId.ROADMAP,
-            google.maps.MapTypeId.SATELLITE,
-            google.maps.MapTypeId.TERRAIN,
-            vgps3.topo.fr.MapTypeId.TERRAIN,
-            vgps3.topo.ch.MapTypeId.TERRAIN,
-            vgps3.topo.es.MapTypeId.TERRAIN,
-            vgps3.earth.MapTypeId.EARTH
-          ]
+          mapTypeIds: vgps3.Viewer.MAP_TYPES
         }
       },
       goog.object.getValues(this.plugins)
@@ -101,20 +94,20 @@ vgps3.Viewer = function(mapContainer, chartContainer) {
  */
 vgps3.Viewer.prototype.wireEvents_ = function() {
 
-  var map = this.map,
+  var vgps = this.vgps_,
       track = this.plugins.track,
       chart = this.plugins.chart,
       earth = this.plugins.earth,
       eventMap = new goog.structs.Map(
-      vgps3.chart.EventType.MOVE, function(e) { track.moveTo(e.position); earth.moveTo(e.position); },
-      vgps3.chart.EventType.CLICK, function(e) { track.moveTo(e.position, true); earth.moveTo(e.position, true); },
-      vgps3.chart.EventType.WHEEL, function(e) { track.moveTo(e.position, true, -e.direction); earth.moveTo(e.position, true, e.direction);},
-      vgps3.chart.EventType.ABOUT, function(e) { map.showAbout(); },
-      vgps3.track.EventType.CLICK, function(e) { chart.moveTo(e.position); earth.moveTo(e.position); }
+      vgps3.chart.EventType.MOVE, function(e) {track.moveTo(e.position); earth.moveTo(e.position);},
+      vgps3.chart.EventType.CLICK, function(e) {track.moveTo(e.position, true); earth.moveTo(e.position, true);},
+      vgps3.chart.EventType.WHEEL, function(e) {track.moveTo(e.position, true, -e.direction); earth.moveTo(e.position, true, e.direction);},
+      vgps3.chart.EventType.ABOUT, function(e) {vgps.showAbout();},
+      vgps3.track.EventType.CLICK, function(e) {chart.moveTo(e.position); earth.moveTo(e.position);}
       );
 
-  goog.object.forEach(eventMap.toObject(), function(handler, event) {
-    map.addEventListener(event, handler);
+  goog.object.forEach(eventMap.toObject(), function(listener, event) {
+    goog.events.listen(vgps, event, listener);
   });
 };
 
@@ -173,8 +166,18 @@ vgps3.Viewer.prototype.array2LatLng_ = function(opt_latlng) {
 
 
 /**
- * @define {string}
+ * @const {!Array} The map types to display
  */
-vgps3.VERSION = '3.0';
+vgps3.Viewer.MAP_TYPES = [
+  google.maps.MapTypeId.HYBRID,
+  google.maps.MapTypeId.ROADMAP,
+  google.maps.MapTypeId.SATELLITE,
+  google.maps.MapTypeId.TERRAIN,
+  vgps3.topo.fr.MapTypeId.TERRAIN,
+  vgps3.topo.ch.MapTypeId.TERRAIN,
+  vgps3.topo.es.MapTypeId.TERRAIN,
+  vgps3.earth.MapTypeId.EARTH
+];
+
 
 goog.exportSymbol('vgps3.Viewer', vgps3.Viewer);

@@ -51,6 +51,10 @@ vgps3.chart.Sliders.prototype.addSlider = function(label, element, color) {
   var slider = new goog.ui.Slider(),
       thumb;
 
+  if (!this.isInDocument()) {
+    throw Error(goog.ui.Component.Error.NOT_IN_DOCUMENT);
+  }
+
   this.addChild(slider, true);
 
   slider.setMoveToPointEnabled(true);
@@ -85,16 +89,14 @@ vgps3.chart.Sliders.prototype.getTitleElement = function() {
 
 /** @override */
 vgps3.chart.Sliders.prototype.createDom = function() {
-  this.element_ = this.dom_.createElement('div');
-
-  goog.dom.appendChild(
-      this.element_,
-      this.title_ = goog.dom.createDom(
+  goog.base(this, 'createDom');
+  this.title_ = goog.dom.createDom(
       'div',
       'vgps3-sliders-title',
-      goog.dom.htmlToDocumentFragment('<h1>VisuGps?</h1>')
-      ));
-  goog.style.setStyle(this.element_, {width: '100%', height: '100%'});
+      goog.dom.htmlToDocumentFragment(vgps3.chart.Sliders.title_)
+      );
+  goog.dom.appendChild(this.getElement(), this.title_);
+  goog.style.setStyle(this.getElement(), {width: '100%', height: '100%'});
 };
 
 
@@ -107,5 +109,12 @@ vgps3.chart.Sliders.prototype.canDecorate = function(element) {
 /** @override */
 vgps3.chart.Sliders.prototype.disposeInternal = function() {
   goog.base(this, 'disposeInternal');
+  goog.dom.removeNode(this.title_);
   delete this.title_;
 };
+
+
+/**
+ * @defined {string}
+ */
+vgps3.chart.Sliders.title_ = '<h1>VisuGps?</h1>';

@@ -21,28 +21,16 @@ goog.require('goog.events.EventHandler');
 goog.require('goog.net.Cookies');
 goog.require('goog.style');
 goog.require('vgps3.Control');
+goog.require('vgps3.PluginBase');
 goog.require('vgps3.path.templates');
-goog.require('goog.Timer');
 
 
 
 /**
  * @constructor
- * @implements {vgps3.IPlugin}
+ * @extends {vgps3.PluginBase}
  */
 vgps3.path.Path = function() {
-  /**
-  * @type {vgps3.Map} The VisuGps map.
-  * @private
-  */
-  this.vgps_;
-
-  /**
-  * @type {google.maps.Map} The google map.
-  * @private
-  */
-  this.gMap_;
-
   /**
    * @type {google.maps.Polyline} The current path
    * @private
@@ -62,19 +50,22 @@ vgps3.path.Path = function() {
   this.element_;
 
   /**
-   * @type {goog.events.EventHandler}
+   * @type {google.maps.InfoWindow} Help message
    * @private
    */
-  this.events_ = new goog.events.EventHandler(this);
+  this.infoWindow_;
+
+  goog.base(this);
+
 };
+goog.inherits(vgps3.path.Path, vgps3.PluginBase);
 
 
 /**
  * @override
  */
 vgps3.path.Path.prototype.init = function(vgps) {
-  this.vgps_ = vgps;
-  this.gMap_ = vgps.getGoogleMap();
+  goog.base(this, 'init', vgps);
   this.control_ = new vgps3.Control(
       this.gMap_,
       vgps3.path.templates.pathControl,
@@ -83,8 +74,22 @@ vgps3.path.Path.prototype.init = function(vgps) {
   this.control_.update();
   this.element_ = goog.dom.getFirstElementChild(this.control_.getElement());
   goog.style.showElement(this.element_, false);
-  this.events_.listen(this.control_.getElement(), 'mousedown', this.clickHandler_);
+  this.getHandler().listen(this.control_.getElement(), 'mousedown', this.clickHandler_);
   goog.style.setStyle(this.control_.getElement(), 'cursor', 'pointer');
+};
+
+
+/**
+ * @override
+ */
+vgps3.path.Path.prototype.disposeInternal = function() {
+  goog.base(this, 'disposeInternal');
+  this.line_.setMap(null);
+  delete this.line_;
+  goog.dom.removeNode(this.element_);
+  delete this.element_;
+  delete this.infoWindow_;
+  goog.dispose(this.control_);
 };
 
 
@@ -110,9 +115,9 @@ vgps3.path.Path.prototype.clickHandler_ = function(event) {
       this.createLine_();
       // Some help when the control is used for the first time
       if ('hide' !== cookies.get(vgps3.path.COOKIE_NAME, 'show')) {
-        var help = new google.maps.InfoWindow({content: vgps3.path.templates.help(), position: center});
-        help.open(this.gMap_);
-        goog.Timer.callOnce(help.close, 8000, help);
+        this.infoWindow_ = new google.maps.InfoWindow({content: vgps3.path.templates.help(), position: center});
+        this.infoWindow_.open(this.gMap_);
+        goog.Timer.callOnce(this.infoWindow_.close, 8000, this.infoWindow_);
         cookies.set(vgps3.path.COOKIE_NAME, 'hide');
       }
     }
@@ -167,6 +172,7 @@ vgps3.path.Path.prototype.updateControl_ = function() {
 
 /**
  * @const
+ * @type {string}
  */
 vgps3.path.COOKIE_NAME = 'vgps3.path.help';
 

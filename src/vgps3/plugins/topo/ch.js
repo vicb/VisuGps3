@@ -16,8 +16,8 @@
 goog.provide('vgps3.topo.ch.Map');
 
 goog.require('goog.math');
-goog.require('vgps3.IPlugin');
 goog.require('vgps3.Map');
+goog.require('vgps3.PluginBase');
 goog.require('vgps3.proj.GProj');
 goog.require('vgps3.proj.Swisstopo');
 
@@ -25,16 +25,9 @@ goog.require('vgps3.proj.Swisstopo');
 
 /**
  * @constructor Spain IGN map type for google maps.
- * @implements {vgps3.IPlugin}
+ * @extends {vgps3.PluginBase}
  */
 vgps3.topo.ch.Map = function() {
-  /**
-   * The google map
-   * @type {google.maps.Map}
-   * @private
-   */
-  this.gMap_;
-
   /**
    * @type {google.maps.MapsEventListener} Listen to zoom changes
    * @private
@@ -58,7 +51,10 @@ vgps3.topo.ch.Map = function() {
    * @private
    */
   this.center_;
+
+  goog.base(this);
 };
+goog.inherits(vgps3.topo.ch.Map, vgps3.PluginBase);
 
 
 /**
@@ -68,8 +64,7 @@ vgps3.topo.ch.Map = function() {
  */
 vgps3.topo.ch.Map.prototype.init = function(vgps) {
   var that = this;
-
-  this.gMap_ = vgps.getGoogleMap();
+  goog.base(this, 'init', vgps);
   this.gMap_.mapTypes.set(vgps3.topo.ch.MapTypeId.TERRAIN, /** @type {?} */ (this.getMapType_()));
   this.center_ = this.gMap_.getCenter();
   this.previousZoom_ = this.gMap_.getZoom();
@@ -114,7 +109,7 @@ vgps3.topo.ch.Map.prototype.enable_ = function() {
       this.gMap_,
       'zoom_changed',
       goog.bind(this.updateProjection_, this)
-  );
+      );
 };
 
 
@@ -143,7 +138,7 @@ vgps3.topo.ch.Map.prototype.updateProjection_ = function() {
   this.previousZoom_ = zoom;
 
   this.projection_.setScale0(
-      vgps3.topo.ch.PARAMETERS_[zoom].scale * Math.pow(2, zoom)
+      vgps3.topo.ch.PARAMETERS[zoom].scale * Math.pow(2, zoom)
   );
   this.gMap_.setCenter(this.center_);
 };
@@ -190,7 +185,7 @@ vgps3.topo.ch.Map.prototype.getTileUrl_ = function(coord, zoom) {
       .replace('{y}', coord.y.toString(10))
       .replace('{x}', (coord.x).toString(10))
       .replace('{proj}', '21781')
-      .replace('{zoom}', vgps3.topo.ch.PARAMETERS_[this.previousZoom_].zoom.toString(10))
+      .replace('{zoom}', vgps3.topo.ch.PARAMETERS[this.previousZoom_].zoom.toString(10))
       .replace('{date}', '20111206')
       .replace('{layer}', 'ch.swisstopo.pixelkarte-farbe');
 };
@@ -215,9 +210,8 @@ vgps3.topo.ch.MapTypeId = {
  *
  * @const
  * @type {Object.<number, {scale: number, zoom: number}>}
- * @private
  */
-vgps3.topo.ch.PARAMETERS_ = {
+vgps3.topo.ch.PARAMETERS = {
   5: {scale: 4000, zoom: 0},
   6: {scale: 2500, zoom: 6},
   7: {scale: 1250, zoom: 11},

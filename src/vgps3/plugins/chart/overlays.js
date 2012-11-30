@@ -46,7 +46,7 @@ goog.inherits(vgps3.chart.Overlays, goog.ui.Component);
 
 
 /**
- * Add a layer to the set of overlays.
+ * Adds a layer to the set of overlays.
  *
  * The first layer has an opacity set to 0.9 and subsequent ones to 0.3.
  * The layers are added with a decreasing z-index (starting from 100).
@@ -91,8 +91,8 @@ vgps3.chart.Overlays.prototype.getPosition = function() {
 
 /** @override */
 vgps3.chart.Overlays.prototype.createDom = function() {
-  this.element_ = this.dom_.createElement('div');
-  goog.style.setStyle(this.element_, {width: '100%', height: '100%'});
+  goog.base(this, 'createDom');
+  goog.style.setStyle(this.getElement(), {width: '100%', height: '100%'});
 };
 
 
@@ -112,8 +112,16 @@ vgps3.chart.Overlays.prototype.enterDocument = function() {
   this.getHandler().listen(
       this.getElement(),
       [goog.events.EventType.MOUSEDOWN, goog.events.EventType.MOUSEMOVE],
-      this.handleMouseEvents_
+      this.mouseEventsHandler_
   );
+};
+
+
+/** @override */
+vgps3.chart.Overlays.prototype.exitDocument = function() {
+  goog.base(this, 'exitDocument');
+  goog.dom.removeNode(this.cursor_);
+  delete this.cursor_;
 };
 
 
@@ -121,7 +129,7 @@ vgps3.chart.Overlays.prototype.enterDocument = function() {
  * @param {goog.events.BrowserEvent} event
  * @private
  */
-vgps3.chart.Overlays.prototype.handleMouseEvents_ = function(event) {
+vgps3.chart.Overlays.prototype.mouseEventsHandler_ = function(event) {
   var width = goog.style.getSize(this.getElement()).width,
       offsetX = event.clientX - goog.style.getPosition(this.getElement()).x;
 
@@ -131,18 +139,11 @@ vgps3.chart.Overlays.prototype.handleMouseEvents_ = function(event) {
 
 
 /** @override */
-vgps3.chart.Overlays.prototype.exitDocument = function() {
-  goog.base(this, 'exitDocument');
-};
-
-
-/** @override */
 vgps3.chart.Overlays.prototype.disposeInternal = function() {
   goog.base(this, 'disposeInternal');
-  var that = this;
-  delete this.cursor_;
   goog.array.forEach(this.layers_, function(el, index) {
-    delete that.layers_[index];
+    this.layers_[index] = null;
+    goog.dom.removeNode(el);
   });
 };
 

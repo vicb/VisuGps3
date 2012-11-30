@@ -19,7 +19,7 @@
   "type-prefixes-to-strip": ["goog.debug", "goog.asserts", "goog.testing"],
   "define": {
       "vgps3.VERSION": "3.0.0-beta1",
-      "vgps3.topo.fr.API_KEY": ""
+      "goog.Disposable.MONITORING_MODE": 0
   },
   "output-file": "dist/vgps3.js"
 }

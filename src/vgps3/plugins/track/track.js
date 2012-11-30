@@ -16,40 +16,28 @@
 goog.provide('vgps3.track.Track');
 
 goog.require('goog.color');
+goog.require('goog.events');
 goog.require('goog.events.Event');
 goog.require('goog.math');
 goog.require('goog.net.XhrIo');
 goog.require('goog.string.format');
 goog.require('goog.style');
 goog.require('vgps3.Control');
-goog.require('vgps3.IPlugin');
 goog.require('vgps3.Map');
+goog.require('vgps3.PluginBase');
 goog.require('vgps3.loadMask');
 goog.require('vgps3.track.ClickEvent');
 goog.require('vgps3.track.LoadEvent');
 goog.require('vgps3.track.TrackSelectEvent');
 goog.require('vgps3.track.templates');
-goog.require('goog.string.format');
 
 
 
 /**
  * @constructor
- * @implements {vgps3.IPlugin}
+ * @extends {vgps3.PluginBase}
  */
 vgps3.track.Track = function() {
-  /**
-  * @type {vgps3.Map} The visugps map
-  * @private
-  */
-  this.vgps_;
-
-  /**
-  * @type {google.maps.Map} The google map
-  * @private
-  */
-  this.gMap_;
-
   /**
   * Track data
   * @typedef {Array.<{
@@ -89,27 +77,23 @@ vgps3.track.Track = function() {
   this.trackControl_;
 
   /**
-   * @type {goog.ui.ModalPopup} Mask used while loading
-   * @private
-   */
-  this.loadMask_;
-
-  /**
   * @type {!goog.debug.Logger}
   * @private
   */
   this.logger_ = goog.debug.Logger.getLogger('vgps3.track.Track');
 
+  goog.base(this);
+
   vgps3.loadMask.setMessage('Chargement de la trace');
 };
+goog.inherits(vgps3.track.Track, vgps3.PluginBase);
 
 
 /**
  * @override
  */
 vgps3.track.Track.prototype.init = function(vgps) {
-  this.vgps_ = vgps;
-  this.gMap_ = vgps.getGoogleMap();
+  goog.base(this, 'init', vgps);
   google.maps.event.addListener(this.gMap_, 'click', goog.bind(this.clickHandler_, this));
 };
 
@@ -137,7 +121,7 @@ vgps3.track.Track.prototype.moveTo = function(position, opt_setCenter, opt_zoomO
 
   this.updateInfoControl_(position);
   this.currentTrackMarker_.setPosition(track.points[pointIndex]);
-  goog.isDef(track.IconScaler) && track.IconScaler(position);
+  track.iconScaler && track.iconScaler(position);
 
   if (opt_setCenter) {
     this.gMap_.setCenter(track.points[pointIndex]);
@@ -146,6 +130,22 @@ vgps3.track.Track.prototype.moveTo = function(position, opt_setCenter, opt_zoomO
   if (opt_zoomOffset) {
     this.gMap_.setZoom(this.gMap_.getZoom() + opt_zoomOffset);
   }
+};
+
+
+/**
+ * @override
+ */
+vgps3.track.Track.prototype.disposeInternal = function() {
+  var that = this;
+  goog.base(this, 'disposeInternal');
+  goog.disposeAll(this.infoControl_, this.trackControl_);
+  this.currentTrackMarker_.setMap(null);
+  delete this.currentTrackMarker_;
+  goog.array.forEach(this.tracks_, function(track, index) {
+    track.polyline.setMap(null);
+    that.tracks_[index] = null;
+  });
 };
 
 
@@ -163,8 +163,8 @@ vgps3.track.Track.prototype.trackLoadHandler_ = function(url, event) {
 
   if (xhr.isSuccess()) {
     var track = /** @type {vgps3.track.GpsFixes} */ (xhr.getResponseJson());
-    //goog.dispose(xhr);
-    if (goog.isDef(track)) {
+    goog.dispose(xhr);
+    if (track) {
       this.addTrack_(url, track);
       return;
     }
@@ -261,7 +261,9 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
 
   this.tracks_[trackIndex].iconScaler = this.getIconScaler_(minElevation, maxElevation, gpsFixes['elev']);
 
-  this.vgps_.dispatchEvent(new vgps3.track.LoadEvent(trackIndex, gpsFixes, this.tracks_[trackIndex].color));
+  this.dispatchEvent(
+      new vgps3.track.LoadEvent(trackIndex, gpsFixes, this.tracks_[trackIndex].color)
+  );
 };
 
 
@@ -317,9 +319,7 @@ vgps3.track.Track.prototype.getPolylineOptions_ = function(trackIndex) {
  * @private
  */
 vgps3.track.Track.prototype.getTrackColor_ = function(trackIndex) {
-  var colors = ['#ff0000', '#5e008c', '#002b40', '#f2f200', '#00e64d', '#00ffff', '#e60099', '#ffffff', '#0088cc'];
-
-  return colors[trackIndex % colors.length];
+  return vgps3.track.COLORS[trackIndex % vgps3.track.COLORS.length];
 };
 
 
@@ -357,8 +357,11 @@ vgps3.track.Track.prototype.selectCurrentTrack_ = function(trackIndex, previousT
     this.updateInfoControl_(0);
     this.moveTo(0);
     this.tracks_[trackIndex].polyline.setOptions(this.getPolylineOptions_(trackIndex));
-    goog.isDef(previousTrackIndex) && this.tracks_[previousTrackIndex].polyline.setOptions(this.getPolylineOptions_(previousTrackIndex));
-    this.vgps_.dispatchEvent(new vgps3.track.TrackSelectEvent(
+    if (goog.isDef(previousTrackIndex)) {
+      this.tracks_[previousTrackIndex].polyline.setOptions(this.getPolylineOptions_(previousTrackIndex));
+    }
+    this.dispatchEvent(
+        new vgps3.track.TrackSelectEvent(
         trackIndex,
         goog.isDef(previousTrackIndex) ? previousTrackIndex : null
         ));
@@ -405,12 +408,14 @@ vgps3.track.Track.prototype.clickHandler_ = function(event) {
     }
   });
 
-  if (goog.isDef(location)) {
+  if (location) {
     this.selectCurrentTrack_(trackIndex, this.currentTrackIndex_);
     var position = pointIndex / (this.tracks_[trackIndex].fixes['nbTrackPt'] - 1);
     this.currentTrackMarker_.setPosition(location);
     this.updateInfoControl_(position);
-    this.vgps_.dispatchEvent(new vgps3.track.ClickEvent(this.tracks_[trackIndex].fixes, position));
+    this.dispatchEvent(
+        new vgps3.track.ClickEvent(this.tracks_[trackIndex].fixes, position
+        ));
   }
 };
 
@@ -447,6 +452,12 @@ vgps3.track.EventType = {
   LOAD: 'vgps3.track.load',
   SELECT: 'vgps3.track.select'
 };
+
+
+/**
+ * @const {Array.<string>} Successive track colors
+ */
+vgps3.track.COLORS = ['#ff0000', '#5e008c', '#002b40', '#f2f200', '#00e64d', '#00ffff', '#e60099', '#ffffff', '#0088cc'];
 
 
 /**

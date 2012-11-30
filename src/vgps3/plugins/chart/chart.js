@@ -28,8 +28,8 @@ goog.require('goog.events.MouseWheelHandler.EventType');
 goog.require('goog.string.format');
 goog.require('goog.style');
 goog.require('goog.ui.Slider');
-goog.require('vgps3.IPlugin');
 goog.require('vgps3.Map');
+goog.require('vgps3.PluginBase');
 goog.require('vgps3.chart.AboutEvent');
 goog.require('vgps3.chart.ClickEvent');
 goog.require('vgps3.chart.MoveEvent');
@@ -44,15 +44,9 @@ goog.require('vgps3.loader');
  * @param {!Element} container
  *
  * @constructor
- * @implements {vgps3.IPlugin}
+ * @extends {vgps3.PluginBase}
  */
 vgps3.chart.Chart = function(container) {
-  /**
-  * @type {vgps3.Map} The vgps3 map
-  * @private
-  */
-  this.vgps_;
-
   /**
   * @type {goog.events.MouseWheelHandler} The mouse wheel event handler
   * @private
@@ -63,13 +57,13 @@ vgps3.chart.Chart = function(container) {
   * @type {vgps3.chart.Overlays} Chart overlays
   * @private
   */
-  this.overlays_ = new vgps3.chart.Overlays();
+  this.overlays_;
 
   /**
   * @type {vgps3.chart.Sliders} Set of sliders to adjust opacity
   * @private
   */
-  this.sliders_ = new vgps3.chart.Sliders();
+  this.sliders_;
 
   /**
    * @typedef {Array.<{
@@ -103,6 +97,18 @@ vgps3.chart.Chart = function(container) {
   this.currentTrackIndex_;
 
   /**
+   * @type {goog.async.Throttle} Throttle window resize events
+   * @private
+   */
+  this.resizeThrottler_;
+
+  /**
+   * @type {goog.dom.ViewportSizeMonitor} Monitor view port size change
+   * @private
+   */
+  this.vpMonitor_;
+
+  /**
    * @type {goog.debug.Logger}
    * @private
    */
@@ -114,18 +120,21 @@ vgps3.chart.Chart = function(container) {
    */
   this.container_ = container;
 
+  goog.base(this);
+
   vgps3.loader.load('visualization', '1', vgps3.chart.chartApiLoaded_, {packages: ['corechart']});
 };
+goog.inherits(vgps3.chart.Chart, vgps3.PluginBase);
 
 
 /**
  * @override
  */
 vgps3.chart.Chart.prototype.init = function(vgps) {
-  this.vgps_ = vgps;
-
-  this.vgps_.addEventListener(vgps3.track.EventType.LOAD, goog.bind(this.mapLoadHandler_, this));
-  this.vgps_.addEventListener(vgps3.track.EventType.SELECT, goog.bind(this.mapSelectHandler_, this));
+  goog.base(this, 'init', vgps);
+  this.getHandler()
+    .listen(vgps, vgps3.track.EventType.LOAD, this.mapLoadHandler_)
+    .listen(vgps, vgps3.track.EventType.SELECT, this.mapSelectHandler_);
 };
 
 
@@ -140,6 +149,27 @@ vgps3.chart.Chart.prototype.moveTo = function(position) {
 
 
 /**
+ * @override
+ */
+vgps3.chart.Chart.prototype.disposeInternal = function() {
+  goog.base(this, 'disposeInternal');
+  goog.disposeAll([
+    this.overlays_,
+    this.sliders_,
+    this.mouseWheelHandler_,
+    this.resizeThrottler_,
+    this.vpMonitor_
+  ]);
+  if (goog.isDef(this.charts_)) {
+    goog.object.forEach(this.charts_, function(chart) {
+      chart.clearChart();
+    });
+    delete this.charts_;
+  }
+};
+
+
+/**
  * Dispatches events on mouse down and move.
  *
  * @param {goog.events.BrowserEvent} event
@@ -149,10 +179,10 @@ vgps3.chart.Chart.prototype.handleMouseEvents_ = function(event)
     {
   event.preventDefault();
 
-  this.vgps_.dispatchEvent(
+  this.dispatchEvent(
       event.type === goog.events.EventType.MOUSEDOWN
-            ? new vgps3.chart.ClickEvent(this.overlays_.getPosition())
-            : new vgps3.chart.MoveEvent(this.overlays_.getPosition())
+        ? new vgps3.chart.ClickEvent(this.overlays_.getPosition())
+        : new vgps3.chart.MoveEvent(this.overlays_.getPosition())
   );
 };
 
@@ -166,7 +196,10 @@ vgps3.chart.Chart.prototype.handleMouseEvents_ = function(event)
 vgps3.chart.Chart.prototype.handleMouseWheel_ = function(event) {
   event.preventDefault();
 
-  this.vgps_.dispatchEvent(new vgps3.chart.WheelEvent(this.overlays_.getPosition(), event.deltaY > 0 ? 1 : -1));
+  this.dispatchEvent(new vgps3.chart.WheelEvent(
+      this.overlays_.getPosition(),
+      event.deltaY > 0 ? 1 : -1
+      ));
 };
 
 
@@ -178,8 +211,11 @@ vgps3.chart.Chart.prototype.handleMouseWheel_ = function(event) {
  */
 vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
   this.logger_.info(goog.string.format('Adding track[%d]', event.trackIndex));
-  if (!goog.isDef(this.chartContainers_)) {
+  if (!this.chartContainers_) {
+
+    this.overlays_ = new vgps3.chart.Overlays();
     this.overlays_.render(goog.dom.getElement('charts'));
+    this.sliders_ = new vgps3.chart.Sliders();
     this.sliders_.render(goog.dom.getElement('sliders'));
 
     this.chartContainers_ = {
@@ -194,30 +230,29 @@ vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
 
     this.mouseWheelHandler_ = new goog.events.MouseWheelHandler(this.overlays_.getElement());
 
-    goog.events.listen(
+    this.resizeThrottler_ = new goog.async.Throttle(this.resizeHandler_, 100, this);
+    this.vpMonitor_ = new goog.dom.ViewportSizeMonitor();
+
+    this.getHandler()
+      .listen(
         this.mouseWheelHandler_,
         goog.events.MouseWheelHandler.EventType.MOUSEWHEEL,
-        goog.bind(this.handleMouseWheel_, this)
-    );
-
-    goog.events.listen(
+        this.handleMouseWheel_
+        )
+      .listen(
         this.overlays_.getElement(),
         [goog.events.EventType.MOUSEDOWN, goog.events.EventType.MOUSEMOVE],
-        goog.bind(this.handleMouseEvents_, this)
-    );
-
-    goog.events.listen(
+        this.handleMouseEvents_
+        )
+      .listen(
         this.sliders_.getTitleElement(),
         goog.events.EventType.CLICK,
-        goog.bind(this.vgps_.dispatchEvent, this.vgps_, new vgps3.chart.AboutEvent())
-    );
-
-    var resizeThrottler = new goog.async.Throttle(this.resizeHandler_, 100, this);
-    goog.events.listen(
-        new goog.dom.ViewportSizeMonitor(),
+        goog.bind(this.dispatchEvent, this, new vgps3.chart.AboutEvent())
+        ).listen(
+        this.vpMonitor_,
         goog.events.EventType.RESIZE,
-        goog.bind(resizeThrottler.fire, resizeThrottler)
-    );
+        goog.bind(this.resizeThrottler_.fire, this.resizeThrottler_)
+        );
   }
 
   this.chartData_[event.trackIndex] = {fixes: event.fixes};
@@ -257,11 +292,11 @@ vgps3.chart.Chart.prototype.resizeHandler_ = function() {
  */
 vgps3.chart.Chart.prototype.drawCharts_ = function(index) {
   vgps3.chart.chartApiLoaded_.addCallback(function() {
-    if (!goog.isDef(this.chartData_[index].dataView)) {
+    if (!this.chartData_[index].dataView) {
       this.chartData_[index].dataView = this.createDataView_(index);
     }
 
-    if (!goog.isDef(this.charts_)) {
+    if (!this.charts_) {
       this.charts_ = {
         elevation: new google.visualization.AreaChart(this.chartContainers_.elevation),
         speed: new google.visualization.LineChart(this.chartContainers_.speed),
@@ -298,10 +333,10 @@ vgps3.chart.Chart.prototype.drawChart_ = function(type, index, columns) {
       chart = this.charts_[type],
       container = this.chartContainers_[type],
       nbPoints = this.chartData_[index].fixes.nbChartPt,
-      options = vgps3.chart.CHART_OPTIONS_[type];
+      options = vgps3.chart.CHART_OPTIONS[type];
 
   if (goog.isDef(options.hAxis.showTextEvery)) {
-    options.hAxis.showTextEvery = Math.round(nbPoints / vgps3.chart.NB_HLABELS_);
+    options.hAxis.showTextEvery = Math.round(nbPoints / vgps3.chart.NB_HLABELS);
   }
 
   if (goog.isDef(options.curve)) {
@@ -351,7 +386,7 @@ vgps3.chart.chartApiLoaded_ = new goog.async.Deferred();
 
 
 /**
- * @enum {string} The events that can be dispacthed
+ * @enum {string} The plugin events
  */
 vgps3.chart.EventType = {
   CLICK: 'vgps3.chart.click',
@@ -362,18 +397,16 @@ vgps3.chart.EventType = {
 
 
 /**
- * @defined {number} Number of horizontal labels
- * @private
+ * @define {number} Number of horizontal labels.
  */
-vgps3.chart.NB_HLABELS_ = 6;
+vgps3.chart.NB_HLABELS = 6;
 
 
 /**
  * @type {Object} Default options for charts
  * @const
- * @private
  */
-vgps3.chart.CHART_OPTIONS_ = {
+vgps3.chart.CHART_OPTIONS = {
   elevation: {
     theme: 'maximized',
     fontName: 'verdana',

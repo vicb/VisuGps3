@@ -20,7 +20,8 @@
     "vgps3.track.PROXY_URL": "tests/fixtures/tracks/json/",
     "vgps3.topo.fr.API_KEY": "",
     "vgps3.VERSION": "3.0-DEV",
-    "goog.DEBUG": true
+    "goog.DEBUG": true,
+    "goog.Disposable.MONITORING_MODE": 1
   },
   "output-file": "dist/vgps3.js",
   "jsdoc-html-output-path": "doc/"

@@ -14,7 +14,6 @@
  * Original code by Nianwei Liu:
  * @see http://code.google.com/p/google-maps-utility-library-v3/source/browse/trunk/arcgislink/src/arcgislink.js
  * @see http://en.wikipedia.org/wiki/Transverse_Mercator_projection
- *
  * @author Victor Berchet <victor@suumit.com>
  */
 
@@ -79,22 +78,6 @@ vgps3.proj.TransverseMercator.prototype.setParameters = function(parameters) {
 
 
 /**
- * calc_m_
- * @param {number} phi
- * @param {number} a
- * @param {number} es
- * @param {number} ep4
- * @param {number} ep6
- * @return {number}
- *
- * @private
- */
-vgps3.proj.TransverseMercator.prototype.calc_m_ = function(phi, a, es, ep4, ep6) {
-  return a * ((1 - es / 4 - 3 * ep4 / 64 - 5 * ep6 / 256) * phi - (3 * es / 8 + 3 * ep4 / 32 + 45 * ep6 / 1024) * Math.sin(2 * phi) + (15 * ep4 / 256 + 45 * ep6 / 1024) * Math.sin(4 * phi) - (35 * ep6 / 3072) * Math.sin(6 * phi));
-};
-
-
-/**
  * @override
  */
 vgps3.proj.TransverseMercator.prototype.forward = function(lat, lng) {
@@ -135,4 +118,20 @@ vgps3.proj.TransverseMercator.prototype.inverse = function(x, y) {
  */
 vgps3.proj.TransverseMercator.prototype.getOrigin = function() {
   return {x: 0, y: 0};
+};
+
+
+/**
+ * calc_m_
+ * @param {number} phi
+ * @param {number} a
+ * @param {number} es
+ * @param {number} ep4
+ * @param {number} ep6
+ * @return {number}
+ *
+ * @private
+ */
+vgps3.proj.TransverseMercator.prototype.calc_m_ = function(phi, a, es, ep4, ep6) {
+  return a * ((1 - es / 4 - 3 * ep4 / 64 - 5 * ep6 / 256) * phi - (3 * es / 8 + 3 * ep4 / 32 + 45 * ep6 / 1024) * Math.sin(2 * phi) + (15 * ep4 / 256 + 45 * ep6 / 1024) * Math.sin(4 * phi) - (35 * ep6 / 3072) * Math.sin(6 * phi));
 };

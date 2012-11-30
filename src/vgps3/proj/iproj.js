@@ -57,7 +57,7 @@ vgps3.proj.IProj.prototype.getOrigin = function() {};
 
 
 /**
- * @const
+ * @const {{A: number, B: number, IF: number}}
  */
 vgps3.proj.IProj.wgs84 = {
   A: 6378137,

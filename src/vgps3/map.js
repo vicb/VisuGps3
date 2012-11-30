@@ -28,44 +28,44 @@ goog.require('vgps3.templates');
 
 /**
  * @param {!Element} container The container.
- * @param {Object.<string>=} options Google Maps options.
- * @param {(Array.<vgps3.IPlugin>|vgps3.IPlugin)=} plugins A list of plugins.
+ * @param {Object.<string>=} userOptions Google Maps options.
+ * @param {(Array.<vgps3.PluginBase>|vgps3.PluginBase)=} plugins A list of plugins.
  *
  * @constructor
  * @extends {goog.events.EventTarget}
  */
-vgps3.Map = function(container, options, plugins) {
+vgps3.Map = function(container, userOptions, plugins) {
   /**
   * @type {google.maps.Map}
   * @private
   */
-  this.gMap_ = null;
+  this.gMap_;
 
   /**
   * @type {goog.ui.Dialog}
   * @private
   */
-  this.aboutDialog_ = null;
+  this.aboutDialog_;
 
   /**
-  * @type {goog.events.EventHandler}
-  */
-  this.events = new goog.events.EventHandler(this);
+   * @type {goog.ui.IframeMask}
+   * @private
+   */
+  this.shim_;
+
+  /**
+   * @type {Array.<vgps3.PluginBase>}
+   * @private
+   */
+  this.plugins_ = [];
 
   goog.base(this);
 
-  var opt = {
-    center: new google.maps.LatLng(46.73986, 2.17529),
-    zoom: 5,
-    minZoom: 6,
-    mapTypeId: google.maps.MapTypeId.TERRAIN,
-    streetViewControl: false,
-    scaleControl: true
-  };
+  var options = goog.object.clone(vgps3.DEFAULT_GMAP_OPTIONS);
 
-  goog.object.extend(opt, options || {});
+  goog.object.extend(options, userOptions || {});
 
-  this.gMap_ = new google.maps.Map(container, opt);
+  this.gMap_ = new google.maps.Map(container, options);
 
   goog.events.listen(
       window,
@@ -103,9 +103,9 @@ vgps3.Map.prototype.showAbout = function() {
     this.aboutDialog_.getDialogElement();
     // Do not allow drawing as the iframe shim would not follow the dialog
     this.aboutDialog_.setDraggable(false);
-    var mask = new goog.ui.IframeMask();
-    mask.setOpacity(1);
-    mask.listenOnTarget(
+    this.shim_ = new goog.ui.IframeMask();
+    this.shim_.setOpacity(1);
+    this.shim_.listenOnTarget(
         this.aboutDialog_,
         goog.ui.Component.EventType.SHOW,
         goog.ui.Component.EventType.HIDE,
@@ -117,15 +117,50 @@ vgps3.Map.prototype.showAbout = function() {
 
 
 /**
+ * @override
+ */
+vgps3.Map.prototype.disposeInternal = function() {
+  goog.base(this, 'disposeInternal');
+  goog.events.removeAll();
+  google.maps.clearInstanceListeners(this.gMap_);
+  goog.disposeAll(this.shim_, this.aboutDialog_);
+  this.shim_ = null;
+  this.aboutDialog_ = null;
+  goog.array.forEach(this.plugins_, function(plugin) {
+    goog.dispose(plugin);
+  });
+};
+
+
+/**
  * Calls the plugins initialization function.
  *
- * @param {(Array.<vgps3.IPlugin>|vgps3.IPlugin)=} plugins A list of plugins.
+ * @param {(Array.<vgps3.PluginBase>|vgps3.PluginBase)=} plugins A list of plugins.
  * @private
  */
 vgps3.Map.prototype.initPlugins_ = function(plugins) {
-  if (goog.isDef(plugins)) {
-    plugins = goog.isArray(plugins) ? plugins : [plugins];
-    goog.array.forEach(plugins, function(plugin) {plugin.init(this);}, this);
+  if (plugins) {
+    this.plugins_ = goog.isArray(plugins) ? plugins : [plugins];
+    goog.array.forEach(this.plugins_, function(plugin) {plugin.init(this);}, this);
   }
 };
+
+
+/**
+ * @const {google.maps.MapOptions}
+ */
+vgps3.DEFAULT_GMAP_OPTIONS = {
+  center: new google.maps.LatLng(46.73986, 2.17529),
+  zoom: 5,
+  minZoom: 6,
+  mapTypeId: google.maps.MapTypeId.TERRAIN,
+  streetViewControl: false,
+  scaleControl: true
+};
+
+
+/**
+ * @define {string}
+ */
+vgps3.VERSION = '3.0';
 

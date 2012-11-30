@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview interface for projection.
+ * @fileoverview Swisstopo projection.
  * @see http://www.swisstopo.admin.ch/internet/swisstopo/fr/home/topics/survey/sys/refsys/projections.html
  * @author Victor Berchet <victor@suumit.com>
  */

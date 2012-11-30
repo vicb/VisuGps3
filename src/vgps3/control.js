@@ -15,6 +15,7 @@
 
 goog.provide('vgps3.Control');
 
+goog.require('goog.Disposable');
 goog.require('goog.dom');
 goog.require('goog.soy');
 goog.require('vgps3.track.templates');
@@ -26,6 +27,7 @@ goog.require('vgps3.track.templates');
  * @param {!Function} template
  * @param {google.maps.ControlPosition} position
  * @constructor
+ * @extends {goog.Disposable}
  */
 vgps3.Control = function(map, template, position) {
   /**
@@ -40,8 +42,11 @@ vgps3.Control = function(map, template, position) {
    */
   this.template_ = template;
 
+  goog.base(this);
+
   map.controls[position].push(this.dom_);
 };
+goog.inherits(vgps3.Control, goog.Disposable);
 
 
 /**
@@ -59,6 +64,16 @@ vgps3.Control.prototype.update = function(opt_templateData) {
  */
 vgps3.Control.prototype.getElement = function() {
   return this.dom_;
+};
+
+
+/**
+ * @override
+ */
+vgps3.Control.prototype.disposeInternal = function() {
+  goog.base(this, 'disposeInternal');
+  goog.dom.removeNode(this.dom_);
+  delete this.dom_;
 };
 
 

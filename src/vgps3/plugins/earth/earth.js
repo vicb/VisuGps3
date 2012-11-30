@@ -27,10 +27,11 @@ goog.require('goog.debug.Trace');
 goog.require('goog.dom');
 goog.require('goog.functions');
 goog.require('goog.math');
+goog.require('goog.object');
 goog.require('goog.string.format');
 goog.require('goog.style');
-goog.require('vgps3.IPlugin');
 goog.require('vgps3.Map');
+goog.require('vgps3.PluginBase');
 goog.require('vgps3.loader');
 
 
@@ -38,7 +39,7 @@ goog.require('vgps3.loader');
 /**
  *
  * @constructor
- * @implements {vgps3.IPlugin}
+ * @extends {vgps3.PluginBase}
  */
 vgps3.earth.Earth = function() {
 
@@ -47,18 +48,6 @@ vgps3.earth.Earth = function() {
   * @private
   */
   this.ge_;
-
-  /**
-   * @type {vgps3.Map} The vgps map
-   * @private
-   */
-  this.vgps_;
-
-  /**
-  * @type {google.maps.Map} The google map
-  * @private
-  */
-  this.gMap_;
 
   /**
    * @type {Element} The div hierarchy where the earth get rendered
@@ -124,27 +113,35 @@ vgps3.earth.Earth = function() {
    * @type {boolean} Whether the earth is visible
    * @private
    */
-  this.visible_;
+  this.visible_ = false;
 
+  /**
+   * @type {Object.<string, Function>} Listeners to ge events
+   * @private
+   */
+  this.geListeners_ = {};
+
+  goog.base(this);
   /**
    * @type {goog.debug.Logger} The logger
    * @private
    */
   this.logger_ = goog.debug.Logger.getLogger('vgps3.earth.Earth');
 };
+goog.inherits(vgps3.earth.Earth, vgps3.PluginBase);
 
 
 /**
  * @override
  */
 vgps3.earth.Earth.prototype.init = function(vgps) {
-  this.gMap_ = vgps.getGoogleMap();
-  this.vgps_ = vgps;
+  goog.base(this, 'init', vgps);
 
   this.currentMapTypeId_ = this.gMap_.getMapTypeId();
 
-  this.vgps_.addEventListener(vgps3.track.EventType.LOAD, goog.bind(this.trackLoadHandler_, this));
-  this.vgps_.addEventListener(vgps3.track.EventType.SELECT, goog.bind(this.trackSelectHandler_, this));
+  this.getHandler()
+    .listen(vgps, vgps3.track.EventType.LOAD, this.trackLoadHandler_)
+    .listen(vgps, vgps3.track.EventType.SELECT, this.trackSelectHandler_);
 
   vgps3.loader.load('earth', 1, vgps3.earth.geApiLoaded_);
 
@@ -159,6 +156,8 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
               'maptypeid_changed',
               goog.bind(this.mapTypeChangeHandler_, this)
           );
+        } else {
+          this.getHandler().removeAll();
         }
       },
       this
@@ -173,7 +172,7 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
  */
 vgps3.earth.Earth.prototype.mapTypeChangeHandler_ = function() {
   if (this.gMap_.getMapTypeId() === vgps3.earth.MapTypeId.EARTH) {
-    if (!goog.isDef(this.ge_)) {
+    if (!this.ge_) {
       vgps3.loadMask.setMessage('Chargement de Google Earth');
       this.mapCreated_.addCallback(goog.partial(vgps3.loadMask.setMessage, 'Chargement de la trace'));
       this.trackAdded_.addCallback(vgps3.loadMask.close);
@@ -181,14 +180,10 @@ vgps3.earth.Earth.prototype.mapTypeChangeHandler_ = function() {
     }
     this.mapCreated_.addCallback(function() {
       this.currentMapTypeId_ = this.gMap_.getMapTypeId();
-      this.visible_ = true;
     });
-    goog.style.showElement(this.earthDom_, true);
-    this.showControls_(true);
+    this.showEarth_(true);
   } else {
-    this.visible_ = false;
-    this.showControls_(false);
-    goog.style.showElement(this.earthDom_, false);
+    this.showEarth_(false);
     this.currentMapTypeId_ = this.gMap_.getMapTypeId();
   }
 };
@@ -197,11 +192,15 @@ vgps3.earth.Earth.prototype.mapTypeChangeHandler_ = function() {
 /**
  * Makes the map type controls available when the GE plugin is in use.
  *
- * @param {boolean} show
+ * @param {boolean} visible
  * @private
  */
-vgps3.earth.Earth.prototype.showControls_ = function(show) {
-  if (show) {
+vgps3.earth.Earth.prototype.showEarth_ = function(visible) {
+  if (visible === this.visible_) {
+    return;
+  }
+
+  if (visible) {
     // Sets the z-index of all controls except for the map type control so that they appear behind Earth.
     var oldIndex = this.mapControlDiv_.style.zIndex;
     // Sets the zIndex of all controls to be behind Earth
@@ -213,7 +212,7 @@ vgps3.earth.Earth.prototype.showControls_ = function(show) {
     this.earthDom_.style.zIndex = -1;
     this.mapControlDiv_.style.zIndex = 0;
     // Create a shim so that controls appear in front of the plugin
-    if (!goog.isDef(this.shim_)) {
+    if (!this.shim_) {
       this.shim_ = goog.dom.createDom('iframe', {src: 'javascript:false;', scrolling: 'no', frameBorder: 0});
       goog.style.setStyle(this.shim_, {zIndex: -100000, width: '100%', height: '100%', position: 'absolute', top: 0, left: 0});
       goog.dom.appendChild(this.mapControlDiv_, this.shim_);
@@ -224,6 +223,9 @@ vgps3.earth.Earth.prototype.showControls_ = function(show) {
       sibling.style.zIndex = sibling['__gme_ozi'];
     });
   }
+
+  this.visible_ = visible;
+  goog.style.showElement(this.earthDom_, visible);
 };
 
 
@@ -281,6 +283,7 @@ vgps3.earth.Earth.prototype.createEarth_ = function() {
        */
       function(error) {
         vgps3.loadMask.close();
+        // If not installed, let the plugin show the www link
         if (google.earth.isInstalled()) {
           that.logger_.severe('GE Plugin failed to start: ' + error);
           that.gMap_.setMapTypeId(that.currentMapTypeId_);
@@ -359,13 +362,16 @@ vgps3.earth.Earth.prototype.moveTo = function(position, opt_setCenter, opt_zoomO
 vgps3.earth.Earth.prototype.installClickHandler_ = function() {
   var that = this;
 
-  google.earth.addEventListener(this.ge_.getWindow(), 'mousedown', function(e) {
-    if (0 === e.getButton()) {
-      that.downEvent_ = e;
-    }
-  });
+  this.geListeners_['mousedown'] = function(e) {
+    0 === e.getButton() && (that.downEvent_ = e);
+  };
+  google.earth.addEventListener(
+    this.ge_.getWindow(),
+    'mousedown',
+    this.geListeners_['mousedown']
+  );
 
-  google.earth.addEventListener(this.ge_.getWindow(), 'mouseup', function(e) {
+  this.geListeners_['mouseup'] = function(e) {
     if (0 === e.getButton()) {
       var de = that.downEvent_,
           distPx = Math.pow(2, de.getClientX() - e.getClientX()) + Math.pow(2, de.getClientY() - e.getClientY());
@@ -373,7 +379,13 @@ vgps3.earth.Earth.prototype.installClickHandler_ = function() {
         that.clickHandler_.call(that, de);
       }
     }
-  });
+  };
+
+  google.earth.addEventListener(
+    this.ge_.getWindow(),
+    'mouseup',
+    this.geListeners_['mouseup']
+  );
 };
 
 
@@ -426,7 +438,7 @@ vgps3.earth.Earth.prototype.trackSelectHandler_ = function(event) {
   this.trackAdded_.addCallback(function() {
     var that = this;
     // Create the 3D model
-    if (!goog.isDef(this.orientation_)) {
+    if (!this.orientation_) {
       this.logger_.info('Creating 3D model');
       google.earth.executeBatch(this.ge_, function() {
         var placemark = that.ge_.createPlacemark('modelPm');
@@ -517,17 +529,16 @@ vgps3.earth.Earth.prototype.displayTrack_ = function(trackIndex, fixes, trackCol
       that.ge_.getOptions().setFlyToSpeed(that.ge_.SPEED_TELEPORT);
       that.ge_.getOptions().setScaleLegendVisibility(true);
       that.location_ = that.ge_.createLocation('');
-      that.location_.setLatitude(fixes['lat'][0]);
-      that.location_.setLongitude(fixes['lon'][0]);
-      that.location_.setAltitude(fixes['elev'][0]);
+      that.location_.setLatLngAlt(fixes['lat'][0], fixes['lon'][0], fixes['elev'][0]);
       // fly to that location
       var lookAt = that.ge_.getView().copyAsLookAt(that.ge_.ALTITUDE_ABSOLUTE);
-      lookAt.setRange(Math.pow(2, vgps3.earth.MAX_EARTH_ZOOM_ - 14));
-      lookAt.setLatitude(fixes['lat'][0]);
-      lookAt.setLongitude(fixes['lon'][0]);
-      lookAt.setHeading(0);
-      lookAt.setAltitude(fixes['elev'][0]);
-      lookAt.setTilt(80);
+      lookAt.set(
+          fixes['lat'][0], fixes['lon'][0], fixes['elev'][0],
+          that.ge_.ALTITUDE_ABSOLUTE,
+          0,                                             // heading
+          80,                                            // tilt
+          Math.pow(2, vgps3.earth.MAX_EARTH_ZOOM_ - 14)  // range
+      );
       that.ge_.getView().setAbstractView(lookAt);
     });
     goog.Timer.callOnce(that.trackAdded_.callback, 10, that.trackAdded_);
@@ -549,6 +560,22 @@ vgps3.earth.Earth.prototype.estimateElevation_ = function(factor, fixes, index) 
   var chartIndex = Math.round(index),
       nextChartIndex = chartIndex + 1 < fixes['nbTrackPt'] ? chartIndex + 1 : chartIndex;
   return fixes['elev'][chartIndex] + (index - chartIndex) * (fixes['elev'][nextChartIndex] - fixes['elev'][chartIndex]);
+};
+
+
+/**
+ * @override
+ */
+vgps3.earth.Earth.prototype.disposeInternal = function() {
+  goog.base(this, 'disposeInternal');
+  delete this.mapControlDiv_;
+  goog.dom.removeNode(this.earthDom_);
+  delete this.earthDom_;
+  goog.dom.removeNode(this.shim_);
+  delete this.shim_;
+  goog.object.forEach(this.geListeners_, function(listener, event) {
+    google.earth.removeEventListener(this.ge_.getWindow(), event, listener);
+  });
 };
 
 

@@ -16,8 +16,8 @@
 
 goog.provide('vgps3.topo.es.Map');
 
-goog.require('vgps3.IPlugin');
 goog.require('vgps3.Map');
+goog.require('vgps3.PluginBase');
 goog.require('vgps3.proj.GProj');
 goog.require('vgps3.proj.Iberpix');
 
@@ -25,16 +25,9 @@ goog.require('vgps3.proj.Iberpix');
 
 /**
  * @constructor Spain IGN map type for google maps.
- * @implements {vgps3.IPlugin}
+ * @extends {vgps3.PluginBase}
  */
 vgps3.topo.es.Map = function() {
-  /**
-   * The google map
-   * @type {google.maps.Map}
-   * @private
-   */
-  this.gMap_;
-
   /**
    * @type {google.maps.MapsEventListener} Listen to zoom changes
    * @private
@@ -58,7 +51,10 @@ vgps3.topo.es.Map = function() {
    * @private
    */
   this.projection_ = new vgps3.proj.Iberpix(this.zone_);
+
+  goog.base(this);
 };
+goog.inherits(vgps3.topo.es.Map, vgps3.PluginBase);
 
 
 /**
@@ -67,7 +63,7 @@ vgps3.topo.es.Map = function() {
  * @override
  */
 vgps3.topo.es.Map.prototype.init = function(vgps) {
-  this.gMap_ = vgps.getGoogleMap();
+  goog.base(this, 'init', vgps);
   this.gMap_.mapTypes.set(vgps3.topo.es.MapTypeId.TERRAIN, /** @type {?} */ (this.getMapType_()));
   google.maps.event.addListener(
       this.gMap_,
@@ -168,7 +164,7 @@ vgps3.topo.es.Map.prototype.getMapType_ = function() {
     alt: 'Cartes IGN Espagne'
   });
 
-  mapType.projection = new vgps3.proj.GProj(this.projection_, 2048 * Math.pow(2, vgps3.topo.es.ZOOM_OFFSET_));
+  mapType.projection = new vgps3.proj.GProj(this.projection_, 2048 * Math.pow(2, vgps3.topo.es.ZOOM_OFFSET));
 
   return mapType;
 };
@@ -208,15 +204,15 @@ vgps3.topo.es.Map.prototype.getTileUrl_ = function(coord, zoom) {
  */
 vgps3.topo.es.Map.prototype.getLayerName_ = function(zoomLevel) {
   if (zoomLevel < 11) {
-    return vgps3.topo.es.LAYER_NAMES_[0];
+    return vgps3.topo.es.LAYER_NAMES[0];
   }
   if (zoomLevel < 13) {
-    return vgps3.topo.es.LAYER_NAMES_[1];
+    return vgps3.topo.es.LAYER_NAMES[1];
   }
   if (zoomLevel < 15) {
-    return vgps3.topo.es.LAYER_NAMES_[2];
+    return vgps3.topo.es.LAYER_NAMES[2];
   }
-  return vgps3.topo.es.LAYER_NAMES_[3];
+  return vgps3.topo.es.LAYER_NAMES[3];
 };
 
 
@@ -238,17 +234,15 @@ vgps3.topo.es.MapTypeId = {
  * The layer names according to zoom level [<11, <13, <15, >=15]
  * @const
  * @type {Array.<string>}
- * @private
  */
-vgps3.topo.es.LAYER_NAMES_ = ['mapa_millon', 'mapa_mtn200', 'mapa_mtn50', 'mapa_mtn25'];
+vgps3.topo.es.LAYER_NAMES = ['mapa_millon', 'mapa_mtn200', 'mapa_mtn50', 'mapa_mtn25'];
 
 
 /**
  * @const
  * @type {number}
- * @private
  */
-vgps3.topo.es.ZOOM_OFFSET_ = Math.round(Math.log(2 * Math.PI * 6378137 / (2048 * 256)) / Math.LN2);
+vgps3.topo.es.ZOOM_OFFSET = Math.round(Math.log(2 * Math.PI * 6378137 / (2048 * 256)) / Math.LN2);
 
 
 /**

@@ -15,31 +15,26 @@
 
 goog.provide('vgps3.route.Route');
 
-goog.require('vgps3.IPlugin');
 goog.require('vgps3.Map');
+goog.require('vgps3.PluginBase');
 
 
 
 /**
  *
  * @constructor
- * @implements {vgps3.IPlugin}
+ * @extends {vgps3.PluginBase}
  */
 vgps3.route.Route = function() {
   /**
-  * @type {google.maps.Map} The google map.
-  * @private
-  */
-  this.gMap_;
-};
+   * @type {Array} The map overlays (lines & markers)
+   * @private
+   */
+  this.overlays_ = [];
 
-
-/**
- * @override
- */
-vgps3.route.Route.prototype.init = function(vgps) {
-  this.gMap_ = vgps.getGoogleMap();
+  goog.base(this);
 };
+goog.inherits(vgps3.route.Route, vgps3.PluginBase);
 
 
 /**
@@ -55,59 +50,75 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end
       icon = new google.maps.MarkerImage(vgps3.route.ICON_URL, new google.maps.Size(12, 20)),
       closed = type.length && type.substr(-1) === 'c';
 
-  new google.maps.Polyline({
+  this.overlays_.push(new google.maps.Polyline({
     clickable: false,
     map: this.gMap_,
     path: turnpoints,
     strokeColor: '#00f',
     strokeOpacity: 0.8,
     strokeWeight: 1
-  });
+  }));
 
   if (closed && goog.isDef(opt_start)) {
-    new google.maps.Polyline({
+    this.overlays_.push(new google.maps.Polyline({
       clickable: false,
       map: this.gMap_,
       path: [opt_start, turnpoints[0]],
       strokeColor: '#222',
       strokeOpacity: 0.8,
       strokeWeight: 1
-    });
+    }));
   }
 
   if (closed && goog.isDef(opt_end)) {
-    new google.maps.Polyline({
+    this.overlays_.push(new google.maps.Polyline({
       clickable: false,
       map: this.gMap_,
       path: [opt_end, turnpoints[turnpoints.length - 1]],
       strokeColor: '#222',
       strokeOpacity: 0.8,
       strokeWeight: 1
-    });
+    }));
   }
 
-  new google.maps.Marker({
+  this.overlays_.push(new google.maps.Marker({
     clickable: false,
     position: closed && goog.isDef(opt_start) ? opt_start : turnpoints[0],
     map: this.gMap_,
     icon: startIcon
-  });
-  new google.maps.Marker({
+  }));
+  this.overlays_.push(new google.maps.Marker({
     clickable: false,
     position: closed && goog.isDef(opt_end) ? opt_end : turnpoints[turnpoints.length - 1],
     map: this.gMap_,
     icon: endIcon
-  });
+  }));
 
   closed && turnpoints.push(turnpoints[0]);
 
   goog.array.forEach(
       closed ? turnpoints : goog.array.slice(turnpoints, 1, -1),
       function(tp) {
-        new google.maps.Marker({clickable: false, position: tp, map: this.gMap_, icon: icon});
+        this.overlays_.push(new google.maps.Marker({
+          clickable: false,
+          position: tp,
+          map: this.gMap_,
+          icon: icon
+        }));
       },
       this
   );
+};
+
+
+vgps3.route.Route.prototype.disposeInternal = function() {
+  var that = this;
+
+  goog.base(this, 'disposeInternal');
+  goog.array.forEach(this.overlays_, function(overlay, index) {
+    overlay.setMap(null);
+    that.overlays_[index] = null;
+  });
 };
 
 

@@ -35,7 +35,7 @@ vgps3.proj.GProj = function(projection, opt_scale0) {
    * @type {number}
    * @private
    */
-  this.scale0_ = goog.isDef(opt_scale0) ? opt_scale0 : 1;
+  this.scale0_;
 
   /**
    * @type {number}
@@ -48,6 +48,8 @@ vgps3.proj.GProj = function(projection, opt_scale0) {
    * @private
    */
   this.y0_ = projection.getOrigin().y;
+
+  this.setScale0(opt_scale0);
 };
 
 
@@ -85,8 +87,8 @@ vgps3.proj.GProj.prototype.fromPointToLatLng = function(point, opt_nowrap) {
 
 
 /**
- * @param {number} scale0
+ * @param {number=} scale0
  */
 vgps3.proj.GProj.prototype.setScale0 = function(scale0) {
-  this.scale0_ = scale0;
+  this.scale0_ = scale0 ? scale0 : 1;
 };

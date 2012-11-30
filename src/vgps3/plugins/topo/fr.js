@@ -16,16 +16,19 @@
 
 goog.provide('vgps3.topo.fr.Map');
 
-goog.require('vgps3.IPlugin');
 goog.require('vgps3.Map');
+goog.require('vgps3.PluginBase');
 
 
 
 /**
  * @constructor France IGN map type for google maps.
- * @implements {vgps3.IPlugin}
+ * @extends {vgps3.PluginBase}
  */
-vgps3.topo.fr.Map = function() {};
+vgps3.topo.fr.Map = function() {
+  goog.base(this);
+};
+goog.inherits(vgps3.topo.fr.Map, vgps3.PluginBase);
 
 
 /**
@@ -34,8 +37,8 @@ vgps3.topo.fr.Map = function() {};
  * @override
  */
 vgps3.topo.fr.Map.prototype.init = function(vgps) {
-  var gMap = vgps.getGoogleMap();
-  gMap.mapTypes.set(vgps3.topo.fr.MapTypeId.TERRAIN, /** @type {?} */ (this.getMapType_()));
+  goog.base(this, 'init', vgps);
+  this.gMap_.mapTypes.set(vgps3.topo.fr.MapTypeId.TERRAIN, /** @type {?} */ (this.getMapType_()));
 };
 
 
