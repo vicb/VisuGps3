@@ -115,6 +115,6 @@ vgps3.chart.Sliders.prototype.disposeInternal = function() {
 
 
 /**
- * @defined {string}
+ * @define {string}
  */
 vgps3.chart.Sliders.title_ = '<h1>VisuGps?</h1>';

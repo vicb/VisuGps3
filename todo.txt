@@ -33,3 +33,5 @@
 - chart plugin
   - vs distance (in addition to vs time)
   - allow to specify displayed charts
+
+- js loader: handler errors

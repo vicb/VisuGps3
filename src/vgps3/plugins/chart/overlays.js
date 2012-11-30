@@ -93,6 +93,8 @@ vgps3.chart.Overlays.prototype.getPosition = function() {
 vgps3.chart.Overlays.prototype.createDom = function() {
   goog.base(this, 'createDom');
   goog.style.setStyle(this.getElement(), {width: '100%', height: '100%'});
+  this.cursor_ = this.getDomHelper().createDom('div', 'vgps3-chart-cursor');
+  this.getElement().appendChild(this.cursor_);
 };
 
 
@@ -105,9 +107,6 @@ vgps3.chart.Overlays.prototype.canDecorate = function(element) {
 /** @override */
 vgps3.chart.Overlays.prototype.enterDocument = function() {
   goog.base(this, 'enterDocument');
-
-  this.cursor_ = this.getDomHelper().createDom('div', 'vgps3-chart-cursor');
-  this.getElement().appendChild(this.cursor_);
 
   this.getHandler().listen(
       this.getElement(),

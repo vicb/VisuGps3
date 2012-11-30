@@ -463,7 +463,7 @@ vgps3.track.COLORS = ['#ff0000', '#5e008c', '#002b40', '#f2f200', '#00e64d', '#0
 /**
  * @define {string} The proxy URL used to load track (AJAX does not support XDomain).
  */
-vgps3.track.PROXY_URL = 'php/vg_proxy.php?track=';
+vgps3.track.PROXY_URL = 'tests/fixtures/tracks/json/';
 
 
 /**
@@ -545,4 +545,7 @@ vgps3.track.Date;
 vgps3.track.GpsFixes;
 
 goog.exportSymbol('vgps3.track.Track', vgps3.track.Track);
+goog.exportSymbol('vgps3.track.PROXY_URL', vgps3.track.PROXY_URL);
 goog.exportSymbol('vgps3.track.Track.init', vgps3.track.Track.prototype.init);
+goog.exportSymbol('vgps3.track.Track.load', vgps3.track.Track.prototype.load);
+

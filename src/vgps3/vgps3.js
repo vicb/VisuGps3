@@ -1,7 +1,7 @@
 /**
- * Copyright 2012 Victor Berchet.
+ * Copyright 2012 Victor Berchet
  *
- * VisuGps3
+ * This file is part of VisuGps3
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -9,175 +9,159 @@
  */
 
 /**
- * @fileoverview VisuGps3 viewer.
+ * @fileoverview VisuGps3 map.
  * @author Victor Berchet <victor@suumit.com>
  */
 
-goog.provide('vgps3.Viewer');
+goog.provide('vgps3.Map');
 
-goog.require('goog.Uri');
 goog.require('goog.array');
-goog.require('goog.debug.Console');
-goog.require('goog.debug.Logger');
-goog.require('goog.events');
-goog.require('goog.json');
+goog.require('goog.events.EventHandler');
+goog.require('goog.events.EventTarget');
 goog.require('goog.object');
-goog.require('goog.structs.Map');
-goog.require('vgps3.chart.Chart');
-goog.require('vgps3.earth.Earth');
-goog.require('vgps3.path.Path');
-goog.require('vgps3.route.Route');
-goog.require('vgps3.topo.ch.Map');
-goog.require('vgps3.topo.es.Map');
-goog.require('vgps3.topo.fr.Map');
-goog.require('vgps3.track.Track');
+goog.require('goog.ui.Dialog');
+goog.require('goog.ui.Dialog.ButtonSet');
+goog.require('goog.ui.IframeMask');
+goog.require('vgps3.templates');
 
 
 
 /**
- * Creates a VisuGps3 viewer with all the plugins.
+ * @param {!Element} container The container.
+ * @param {function(): Object.<string>} userOptions Google Maps options.
+ * @param {(Array.<vgps3.PluginBase>|vgps3.PluginBase)=} opt_plugins A list of plugins.
+ * @param {Function=} opt_callback Called once the map has been initialized.
  *
- * @param {!Element} mapContainer
- * @param {!Element} chartContainer
  * @constructor
+ * @extends {goog.events.EventTarget}
  */
-vgps3.Viewer = function(mapContainer, chartContainer) {
+vgps3.Map = function(container, userOptions, opt_plugins, opt_callback) {
   /**
-   * @type {vgps3.Map}
-   * @private
-   */
-  this.vgps_;
-
-  /**
-  * @type {Object.<string, vgps3.PluginBase>}
-  */
-  this.plugins = {
-    track: new vgps3.track.Track(),
-    chart: new vgps3.chart.Chart(chartContainer),
-    topofr: new vgps3.topo.fr.Map(),
-    topoes: new vgps3.topo.es.Map(),
-    topoch: new vgps3.topo.ch.Map(),
-    route: new vgps3.route.Route(),
-    earth: new vgps3.earth.Earth(),
-    path: new vgps3.path.Path()
-  };
-
-  /**
-  * @type {!goog.debug.Logger}
+  * @type {google.maps.Map}
   * @private
   */
-  this.logger_ = goog.debug.Logger.getLogger('vgps3.Viewer');
+  this.gMap_;
 
-  this.vgps_ = new vgps3.Map(
-      mapContainer,
-      {
-        mapTypeControlOptions: {
-          mapTypeIds: vgps3.Viewer.MAP_TYPES
-        }
-      },
-      goog.object.getValues(this.plugins)
-      );
+  /**
+  * @type {goog.ui.Dialog}
+  * @private
+  */
+  this.aboutDialog_;
 
-  var console = new goog.debug.Console();
-  console.setCapturing(true);
+  /**
+   * @type {goog.ui.IframeMask}
+   * @private
+   */
+  this.shim_;
 
-  this.wireEvents_();
+  /**
+   * @type {Array.<vgps3.PluginBase>}
+   * @private
+   */
+  this.plugins_ = goog.isArray(opt_plugins) ? opt_plugins : [opt_plugins];
 
-  this.parseUrl_(document.location.href);
+  goog.base(this);
+
+  vgps3.loader.load(
+      'maps',
+      '3',
+      goog.bind(this.init_, this, container, userOptions, opt_callback),
+      {'other_params': 'libraries=drawing,geometry&sensor=false'}
+  );
+};
+goog.inherits(vgps3.Map, goog.events.EventTarget);
+
+
+/**
+ * @return {google.maps.Map} The google map object.
+ */
+vgps3.Map.prototype.getGoogleMap = function() {
+  return this.gMap_;
 };
 
 
 /**
- * Wires all the events.
+ * Displays the about dialog.
  *
- * @private
+ * @return {undefined}
  */
-vgps3.Viewer.prototype.wireEvents_ = function() {
+vgps3.Map.prototype.showAbout = function() {
+  if (goog.isDef(this.aboutDialog_)) {
+    this.aboutDialog_ = new goog.ui.Dialog(undefined);
+    this.aboutDialog_.setTitle('VisuGps v' + vgps3.VERSION);
+    this.aboutDialog_.setContent(vgps3.templates.about());
+    this.aboutDialog_.setButtonSet(goog.ui.Dialog.ButtonSet.createOk());
+    this.aboutDialog_.setEscapeToCancel(true);
+    this.aboutDialog_.getDialogElement();
+    // Do not allow drawing as the iframe shim would not follow the dialog
+    this.aboutDialog_.setDraggable(false);
+    this.shim_ = new goog.ui.IframeMask();
+    this.shim_.setOpacity(1);
+    this.shim_.listenOnTarget(
+        this.aboutDialog_,
+        goog.ui.Component.EventType.SHOW,
+        goog.ui.Component.EventType.HIDE,
+        this.aboutDialog_.getDialogElement()
+    );
+  }
+  this.aboutDialog_.setVisible(true);
+};
 
-  var vgps = this.vgps_,
-      track = this.plugins.track,
-      chart = this.plugins.chart,
-      earth = this.plugins.earth,
-      eventMap = new goog.structs.Map(
-      vgps3.chart.EventType.MOVE, function(e) {track.moveTo(e.position); earth.moveTo(e.position);},
-      vgps3.chart.EventType.CLICK, function(e) {track.moveTo(e.position, true); earth.moveTo(e.position, true);},
-      vgps3.chart.EventType.WHEEL, function(e) {track.moveTo(e.position, true, -e.direction); earth.moveTo(e.position, true, e.direction);},
-      vgps3.chart.EventType.ABOUT, function(e) {vgps.showAbout();},
-      vgps3.track.EventType.CLICK, function(e) {chart.moveTo(e.position); earth.moveTo(e.position);}
-      );
 
-  goog.object.forEach(eventMap.toObject(), function(listener, event) {
-    goog.events.listen(vgps, event, listener);
+/**
+ * @override
+ */
+vgps3.Map.prototype.disposeInternal = function() {
+  goog.base(this, 'disposeInternal');
+  goog.events.removeAll();
+  google.maps.clearInstanceListeners(this.gMap_);
+  goog.disposeAll(this.shim_, this.aboutDialog_);
+  this.shim_ = null;
+  this.aboutDialog_ = null;
+  goog.array.forEach(this.plugins_, function(plugin) {
+    goog.dispose(plugin);
   });
 };
 
 
 /**
- * Parse the URL to display tracks and turnpoints.
- * Supported parameters:
- *   - track: URL to a track (could appear multiple times)
- *   - turnpoints: Array of turnpoints, json encoded (Array<latitude, longitude>)
- *   - start: Start of the track (Array<latitude, longitude>, json encoded)
- *   - end: End of the track (Array<latitude, longitude>, json encoded)
+ * Creates the map and initializes the plugins.
  *
- * @param {string} url
- *
+ * @param {!Element} container The map container.
+ * @param {function(): Object.<string>} userOptions A list of plugins.
+ * @param {Function} callback called at the end of the init phase.
  * @private
  */
-vgps3.Viewer.prototype.parseUrl_ = function(url) {
-  var uri = new goog.Uri(url),
-      routeType = uri.getParameterValue('flightType'),
-      turnpoints = uri.getParameterValues('turnpoints'),
-      start = uri.getParameterValue('start'),
-      end = uri.getParameterValue('end');
+vgps3.Map.prototype.init_ = function(container, userOptions, callback) {
+  var options = {
+    'center': new google.maps.LatLng(46.73986, 2.17529),
+    'zoom': 5,
+    'minZoom': 6,
+    'mapTypeId': google.maps.MapTypeId.TERRAIN,
+    'streetViewControl': false,
+    'scaleControl': true
+  };
 
-  goog.array.forEach(
-      uri.getParameterValues('track') || [],
-      function(track) {
-        this.logger_.info('Loading track: ' + track);
-        this.plugins.track.load(track);
-      },
+  goog.object.extend(options, userOptions() || {});
+
+  this.gMap_ = new google.maps.Map(container, options);
+
+  goog.events.listen(
+      window,
+      'resize',
+      function() {google.maps.event.trigger(this.gMap_, 'resize')},
+      undefined,
       this
   );
 
-  if (routeType && turnpoints) {
-    turnpoints = goog.array.map(/** @type {!Array.<number>} */(goog.json.parse(turnpoints)), this.array2LatLng_);
-    this.plugins.route.draw(
-        routeType,
-        turnpoints,
-        start ? this.array2LatLng_(/** @type {!Array.<number>} */(goog.json.parse(start))) : undefined,
-        end ? this.array2LatLng_(/** @type {!Array.<number>} */(goog.json.parse(end))) : undefined
-    );
-  }
+  goog.array.forEach(this.plugins_, function(plugin) {plugin.init(this);}, this);
+
+  callback();
 };
 
 
 /**
- * Converts an Array.<latitude, longitude> to a Google maps LatLng.
- *
- * @param {(Array.<number>|number)=} opt_latlng
- *
- * @return {google.maps.LatLng}
- * @private
+ * @define {string}
  */
-vgps3.Viewer.prototype.array2LatLng_ = function(opt_latlng) {
-  return opt_latlng && goog.isArray(opt_latlng) ? new google.maps.LatLng(opt_latlng[0], opt_latlng[1]) : null;
-};
+vgps3.VERSION = '3.0.0-beta1';
 
-
-/**
- * @const {!Array} The map types to display
- */
-vgps3.Viewer.MAP_TYPES = [
-  google.maps.MapTypeId.HYBRID,
-  google.maps.MapTypeId.ROADMAP,
-  google.maps.MapTypeId.SATELLITE,
-  google.maps.MapTypeId.TERRAIN,
-  vgps3.topo.fr.MapTypeId.TERRAIN,
-  vgps3.topo.ch.MapTypeId.TERRAIN,
-  vgps3.topo.es.MapTypeId.TERRAIN,
-  vgps3.earth.MapTypeId.EARTH
-];
-
-
-goog.exportSymbol('vgps3.Viewer', vgps3.Viewer);

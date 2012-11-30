@@ -150,7 +150,7 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
         this.logger_.info('Google Earth API loaded');
         if (google.earth.isSupported()) {
           this.logger_.info('GE Plugin supported');
-          this.gMap_.mapTypes.set(vgps3.earth.MapTypeId.EARTH, vgps3.earth.EarthMapType_);
+          this.gMap_.mapTypes.set(vgps3.earth.MapTypeId.EARTH, this.getMapType_());
           google.maps.event.addListener(
               this.gMap_,
               'maptypeid_changed',
@@ -353,6 +353,40 @@ vgps3.earth.Earth.prototype.moveTo = function(position, opt_setCenter, opt_zoomO
 
 
 /**
+ * @override
+ */
+vgps3.earth.Earth.prototype.disposeInternal = function() {
+  goog.base(this, 'disposeInternal');
+  delete this.mapControlDiv_;
+  goog.dom.removeNode(this.earthDom_);
+  delete this.earthDom_;
+  goog.dom.removeNode(this.shim_);
+  delete this.shim_;
+  goog.object.forEach(this.geListeners_, function(listener, event) {
+    google.earth.removeEventListener(this.ge_.getWindow(), event, listener);
+  });
+};
+
+
+/**
+ * @return {google.maps.MapType}
+ * @private
+ */
+vgps3.earth.Earth.prototype.getMapType_ = function() {
+  return /** @type {google.maps.MapType} */ ({
+    tileSize: new google.maps.Size(256, 256),
+    maxZoom: 19,
+    name: vgps3.earth.TITLE_,
+    alt: vgps3.earth.TITLE_,
+    getTile: function(tileCoord, zoom, ownerDocument) {
+      var div = ownerDocument.createElement('div');
+      return div;
+    }
+  });
+};
+
+
+/**
  * Installs the click handler.
  *
  * The click handle is able to discriminate click and drag events.
@@ -366,9 +400,9 @@ vgps3.earth.Earth.prototype.installClickHandler_ = function() {
     0 === e.getButton() && (that.downEvent_ = e);
   };
   google.earth.addEventListener(
-    this.ge_.getWindow(),
-    'mousedown',
-    this.geListeners_['mousedown']
+      this.ge_.getWindow(),
+      'mousedown',
+      this.geListeners_['mousedown']
   );
 
   this.geListeners_['mouseup'] = function(e) {
@@ -382,9 +416,9 @@ vgps3.earth.Earth.prototype.installClickHandler_ = function() {
   };
 
   google.earth.addEventListener(
-    this.ge_.getWindow(),
-    'mouseup',
-    this.geListeners_['mouseup']
+      this.ge_.getWindow(),
+      'mouseup',
+      this.geListeners_['mouseup']
   );
 };
 
@@ -541,7 +575,7 @@ vgps3.earth.Earth.prototype.displayTrack_ = function(trackIndex, fixes, trackCol
       );
       that.ge_.getView().setAbstractView(lookAt);
     });
-    goog.Timer.callOnce(that.trackAdded_.callback, 10, that.trackAdded_);
+    goog.Timer.callOnce(that.trackAdded_.callback, 0, that.trackAdded_);
   }
 };
 
@@ -564,44 +598,11 @@ vgps3.earth.Earth.prototype.estimateElevation_ = function(factor, fixes, index) 
 
 
 /**
- * @override
- */
-vgps3.earth.Earth.prototype.disposeInternal = function() {
-  goog.base(this, 'disposeInternal');
-  delete this.mapControlDiv_;
-  goog.dom.removeNode(this.earthDom_);
-  delete this.earthDom_;
-  goog.dom.removeNode(this.shim_);
-  delete this.shim_;
-  goog.object.forEach(this.geListeners_, function(listener, event) {
-    google.earth.removeEventListener(this.ge_.getWindow(), event, listener);
-  });
-};
-
-
-/**
  * @type {string}
  * @const
  * @private
  */
 vgps3.earth.TITLE_ = 'Earth3D';
-
-
-/**
- * @type {google.maps.MapType}
- * @const
- * @private
- */
-vgps3.earth.EarthMapType_ = /** @type {google.maps.MapType} */ {
-  tileSize: new google.maps.Size(256, 256),
-  maxZoom: 19,
-  name: vgps3.earth.TITLE_,
-  alt: vgps3.earth.TITLE_,
-  getTile: function(tileCoord, zoom, ownerDocument) {
-    var div = ownerDocument.createElement('div');
-    return div;
-  }
-};
 
 
 /**

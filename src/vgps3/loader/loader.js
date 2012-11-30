@@ -15,6 +15,7 @@
 
 goog.provide('vgps3.loader');
 
+goog.require('goog.Timer');
 goog.require('goog.array');
 goog.require('goog.async.Deferred');
 goog.require('goog.iter');
@@ -42,62 +43,74 @@ vgps3.loader.logger_ = goog.debug.Logger.getLogger('vgps3.loader');
  *
  * @param {string} module The name of the module.
  * @param {string|number} version The version of the module.
- * @param {Function|goog.async.Deferred} callback Called when the API has been loaded.
- * @param {Object=} options Extra options.
+ * @param {Function|goog.async.Deferred} cb Called when the API has been loaded.
+ * @param {Object=} opt_options Extra options.
  */
-vgps3.loader.load = function(module, version, callback, options) {
-  options = options || {};
-  var optionsMap = new goog.structs.Map(options);
-  version = version.toString();
+vgps3.loader.load = function(module, version, cb, opt_options) {
+  var callback,
+      options = opt_options || {},
+      optionsMap = new goog.structs.Map(options),
+      v = version.toString();
 
-  if (!goog.isFunction(callback)) {
-    if (callback.hasFired()) {
+  vgps3.loader.logger_.info(goog.string.format('Module %s v%s requested with options %s', module, v, goog.debug.expose(options)));
+
+  if (goog.isFunction(cb)) {
+    callback = cb;
+  } else {
+    vgps3.loader.logger_.info(goog.string.format('Using a Deferred', module, v));
+    if (cb.hasFired()) {
+      vgps3.loader.logger_.info(goog.string.format('Deferred already fired', module, v));
       return;
     }
     // If the callback is a deferred it should be fired when the api has been loaded
-    callback = goog.bind(callback.callback, callback);
+    callback = goog.bind(cb.callback, cb);
   }
 
   // Loading or loaded
   vgps3.loader.modules_[module] = vgps3.loader.modules_[module] || [];
-  if (goog.isDef(vgps3.loader.modules_[module][version]) &&
-      goog.iter.some(vgps3.loader.modules_[module][version].getKeyIterator(), function(opts) {
+
+  if (goog.isDef(vgps3.loader.modules_[module][v]) &&
+      goog.iter.some(vgps3.loader.modules_[module][v].getKeyIterator(), function(opts) {
         if (opts.equals(optionsMap)) {
-          var api = vgps3.loader.modules_[module][version].get(opts);
-          if (api.loaded) {
-            vgps3.loader.logger_.info(goog.string.format('Module %s v%s already loaded', module, version));
+          vgps3.loader.logger_.info(goog.string.format('Module %s v%s already requested with the same options'));
+          var api = vgps3.loader.modules_[module][v].get(opts);
+          if (api['loaded']) {
+            vgps3.loader.logger_.info(goog.string.format('Module %s v%s already loaded', module, v));
             // Loaded
             /** @type {Function} */(callback)();
           } else {
             // Loading
-            vgps3.loader.logger_.info(goog.string.format('Loading module %s v%s', module, version));
-            api.callbacks.push(callback);
-            vgps3.loader.modules_[module][version].set(opts, api);
+            vgps3.loader.logger_.info(goog.string.format('Loading module %s v%s', module, v));
+            api['callbacks'].push(callback);
+            vgps3.loader.modules_[module][v].set(opts, api);
           }
           return true;
+        } else {
+          vgps3.loader.logger_.info(goog.string.format('Module %s v%s already requested with different options'));
         }
       })) {
     return;
   } else {
     // To load
-    vgps3.loader.modules_[module][version] = vgps3.loader.modules_[module][version] || new goog.structs.Map();
-    vgps3.loader.modules_[module][version].set(optionsMap, {
-      loaded: false,
-      callbacks: [callback]
+    vgps3.loader.logger_.info(goog.string.format('Loading module %s v%s', module, v));
+    vgps3.loader.modules_[module][v] = vgps3.loader.modules_[module][v] || new goog.structs.Map();
+    vgps3.loader.modules_[module][v].set(optionsMap, {
+      'loaded': false,
+      'callbacks': [callback]
     });
   }
 
   if (!goog.isDef(vgps3.loader.loaderLoaded_)) {
-    vgps3.loader.loaderLoaded_ = new goog.async.Deferred();
-    goog.net.jsloader.load(vgps3.loader.LOADER_URL).addCallback(function() {
-      vgps3.loader.loaderLoaded_.callback();
+    vgps3.loader.logger_.info('Loading the Google API loader');
+    vgps3.loader.loaderLoaded_ = goog.net.jsloader.load(vgps3.loader.LOADER_URL);
+    vgps3.loader.loaderLoaded_.addCallback(function() {
+      vgps3.loader.logger_.info('Google API loader loaded');
     });
   }
 
-  options.callback = goog.partial(vgps3.loader.loadHandler_, module, version, optionsMap);
-
   vgps3.loader.loaderLoaded_.addCallback(function() {
-    google.load(module, /** @type {string} */ (version), options);
+    options['callback'] = goog.partial(vgps3.loader.loadHandler_, module, v, optionsMap);
+    goog.Timer.callOnce(function() {google.load(module, v, options)});
   });
 };
 
@@ -113,11 +126,11 @@ vgps3.loader.load = function(module, version, callback, options) {
 vgps3.loader.loadHandler_ = function(module, version, optionsMap) {
   vgps3.loader.logger_.info(goog.string.format('Module %s v%s loaded', module, version));
   var api = vgps3.loader.modules_[module][version].get(optionsMap);
-  api.loaded = true;
-  goog.array.forEach(api.callbacks, function(cb) {
-    goog.Timer.callOnce(cb, 10);
+  api['loaded'] = true;
+  goog.array.forEach(api['callbacks'], function(cb) {
+    goog.Timer.callOnce(cb);
   });
-  api.callbacks = [];
+  api['callbacks'] = [];
   vgps3.loader.modules_[module][version].set(optionsMap, module);
 };
 
