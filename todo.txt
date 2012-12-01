@@ -12,7 +12,6 @@
 
 - gmaps
   - keys per domain,
-  - load via js load
 
 - ign
   - request a key

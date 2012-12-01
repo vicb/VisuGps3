@@ -301,30 +301,30 @@ vgps3.chart.Chart.prototype.resizeHandler_ = function() {
  */
 vgps3.chart.Chart.prototype.drawCharts_ = function(index) {
   vgps3.chart.chartApiLoaded_.addCallback(function() {
-      if (!this.chartData_[index]['dataView']) {
-        this.chartData_[index]['dataView'] = this.createDataView_(index);
-      }
+    if (!this.chartData_[index]['dataView']) {
+      this.chartData_[index]['dataView'] = this.createDataView_(index);
+    }
 
-      if (!this.charts_) {
-        this.charts_ = {
-          'elevation': new google.visualization.AreaChart(this.chartContainers_['elevation']),
-          'speed': new google.visualization.LineChart(this.chartContainers_['speed']),
-          'vario': new google.visualization.LineChart(this.chartContainers_['vario'])
-        };
-      }
+    if (!this.charts_) {
+      this.charts_ = {
+        'elevation': new google.visualization.AreaChart(this.chartContainers_['elevation']),
+        'speed': new google.visualization.LineChart(this.chartContainers_['speed']),
+        'vario': new google.visualization.LineChart(this.chartContainers_['vario'])
+      };
+    }
 
-      goog.debug.Trace.reset(0);
-      var tracer = goog.debug.Trace.startTracer(goog.string.format('Rendering charts[%d]', index));
-      this.drawChart_('elevation', index, [0, 1, 2]);
-      goog.debug.Trace.addComment('Elevation chart rendered');
-      this.drawChart_('speed', index, [0, 3]);
-      goog.debug.Trace.addComment('Speed chart rendered');
-      this.drawChart_('vario', index, [0, 4]);
-      goog.debug.Trace.addComment('Vario chart rendered');
-      goog.debug.Trace.stopTracer(tracer);
-      this.logger_.info(goog.debug.Trace.getFormattedTrace());
-    },
-    this
+    goog.debug.Trace.reset(0);
+    var tracer = goog.debug.Trace.startTracer(goog.string.format('Rendering charts[%d]', index));
+    this.drawChart_('elevation', index, [0, 1, 2]);
+    goog.debug.Trace.addComment('Elevation chart rendered');
+    this.drawChart_('speed', index, [0, 3]);
+    goog.debug.Trace.addComment('Speed chart rendered');
+    this.drawChart_('vario', index, [0, 4]);
+    goog.debug.Trace.addComment('Vario chart rendered');
+    goog.debug.Trace.stopTracer(tracer);
+    this.logger_.info(goog.debug.Trace.getFormattedTrace());
+  },
+  this
   );
 };
 
