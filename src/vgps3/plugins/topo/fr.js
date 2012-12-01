@@ -27,6 +27,11 @@ goog.require('vgps3.PluginBase');
  */
 vgps3.topo.fr.Map = function() {
   goog.base(this);
+
+  /**
+   * @type {?string}
+   */
+  this.tilesUrl_;
 };
 goog.inherits(vgps3.topo.fr.Map, vgps3.PluginBase);
 
@@ -38,6 +43,7 @@ goog.inherits(vgps3.topo.fr.Map, vgps3.PluginBase);
  */
 vgps3.topo.fr.Map.prototype.init = function(vgps) {
   goog.base(this, 'init', vgps);
+  this.tilesUrl_ = vgps.getTilesUrl(vgps3.topo.fr.TILES_URL, vgps3.topo.fr.API_KEYS);
   this.gMap_.mapTypes.set(vgps3.topo.fr.MapTypeId.TERRAIN, /** @type {?} */ (this.getMapType_()));
 };
 
@@ -69,10 +75,13 @@ vgps3.topo.fr.Map.prototype.getMapType_ = function() {
  */
 vgps3.topo.fr.Map.prototype.getTileUrl_ = function(coord, zoom) {
   var numTiles = 1 << zoom;
+  if (!this.tilesUrl_) {
+    return null;
+  }
   if (coord.y < 0 || coord.y >= numTiles) {
     return null;
   }
-  return vgps3.topo.fr.TILES_URL
+  return this.tilesUrl_
       .replace('{zoom}', zoom.toString(10))
       .replace('{x}', (((coord.x % numTiles) + numTiles) % numTiles).toString(10))
       .replace('{y}', coord.y.toString(10))
@@ -82,16 +91,16 @@ vgps3.topo.fr.Map.prototype.getTileUrl_ = function(coord, zoom) {
 
 
 /**
- * @define {string} The API key.
+ * @define {string} The API keys format='domain1="key1" domain2="key2" *="fallback key"'.
  * @see http://api.ign.fr/accueil
  */
-vgps3.topo.fr.API_KEY = '';
+vgps3.topo.fr.API_KEYS = '';
 
 
 /**
  * @define {string} The url for tiles.
  */
-vgps3.topo.fr.TILES_URL = 'http://gpp3-wxs.topo.fr.fr/' + vgps3.topo.fr.API_KEY + '/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER={layer}&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={zoom}&TILEROW={y}&TILECOL={x};';
+vgps3.topo.fr.TILES_URL = 'http://gpp3-wxs.ign.fr/{API_KEY}/geoportail/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER={layer}&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={zoom}&TILEROW={y}&TILECOL={x}';
 
 
 /**

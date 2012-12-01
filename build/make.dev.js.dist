@@ -9,6 +9,7 @@
     "vgps3.track.PROXY_URL": "tests/fixtures/tracks/json/",
     "vgps3.VERSION": "3.0-DEV",
     "goog.DEBUG": true,
-    "goog.Disposable.MONITORING_MODE": 1
+    "goog.Disposable.MONITORING_MODE": 1,
+    "vgps3.topo.fr.API_KEYS": 'domain1="key1" domain2="key2" *="fallback key"'
   }
 }

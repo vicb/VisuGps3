@@ -13,10 +13,6 @@
 - gmaps
   - keys per domain,
 
-- ign
-  - request a key
-  - keys per domain
-
 - add layers:
  - skyways (requires a "more" control)
  - modis

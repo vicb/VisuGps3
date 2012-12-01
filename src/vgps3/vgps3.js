@@ -54,6 +54,12 @@ vgps3.Map = function(container, userOptions, opt_plugins, opt_callback) {
    */
   this.plugins_ = goog.isArray(opt_plugins) ? opt_plugins : [opt_plugins];
 
+  /**
+   * @type {goog.debug.Logger}
+   * @private
+   */
+  this.logger_ = goog.debug.Logger.getLogger('vgps3.Map');
+
   goog.base(this);
 
   vgps3.loader.load(
@@ -144,6 +150,28 @@ vgps3.Map.prototype.init_ = function(container, userOptions, callback) {
 
 
 /**
+ * Set the {API_KEY} parameter in the URL according to the current domain
+ *
+ * @param {string} url  The tile URL, where "API_KEY" will be replaced by the API key.
+ * @param {string} keys The keys, format='domain1="key1" domain2="key2" *="fallback key"'
+ *
+ * @return {?string} The tiles URL, null when no matching domain has been found.
+ */
+vgps3.Map.prototype.getTilesUrl = function(url, keys) {
+  var re = /([\w-.*]+)="(.+?)"/g,
+      matches;
+
+  while (null !== (matches = re.exec(keys))) {
+    if ('*' === matches[1] || -1 !== document.domain.indexOf(matches[1])) {
+      return url.replace('{API_KEY}', matches[2]);
+    }
+  }
+
+  return null;
+};
+
+
+/**
  * @define {string}
  */
 vgps3.VERSION = '3.0.0-beta1';
@@ -151,3 +179,4 @@ vgps3.VERSION = '3.0.0-beta1';
 goog.exportSymbol('vgps3.Map', vgps3.Map);
 goog.exportSymbol('vgps3.Map.showAbout', vgps3.Map.prototype.showAbout);
 goog.exportSymbol('vgps3.Map.getGoogleMap', vgps3.Map.prototype.getGoogleMap);
+goog.exportSymbol('vgps3.Map.getTilesUrl', vgps3.Map.prototype.getTilesUrl);
