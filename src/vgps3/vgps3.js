@@ -49,12 +49,6 @@ vgps3.Map = function(container, userOptions, opt_plugins, opt_callback) {
   this.aboutDialog_;
 
   /**
-   * @type {goog.ui.IframeMask}
-   * @private
-   */
-  this.shim_;
-
-  /**
    * @type {Array.<vgps3.PluginBase>}
    * @private
    */
@@ -86,23 +80,13 @@ vgps3.Map.prototype.getGoogleMap = function() {
  * @return {undefined}
  */
 vgps3.Map.prototype.showAbout = function() {
-  if (goog.isDef(this.aboutDialog_)) {
-    this.aboutDialog_ = new goog.ui.Dialog(undefined);
+  if (!this.aboutDialog_) {
+    this.aboutDialog_ = new goog.ui.Dialog(undefined, true);
     this.aboutDialog_.setTitle('VisuGps v' + vgps3.VERSION);
     this.aboutDialog_.setContent(vgps3.templates.about());
     this.aboutDialog_.setButtonSet(goog.ui.Dialog.ButtonSet.createOk());
     this.aboutDialog_.setEscapeToCancel(true);
     this.aboutDialog_.getDialogElement();
-    // Do not allow drawing as the iframe shim would not follow the dialog
-    this.aboutDialog_.setDraggable(false);
-    this.shim_ = new goog.ui.IframeMask();
-    this.shim_.setOpacity(1);
-    this.shim_.listenOnTarget(
-        this.aboutDialog_,
-        goog.ui.Component.EventType.SHOW,
-        goog.ui.Component.EventType.HIDE,
-        this.aboutDialog_.getDialogElement()
-    );
   }
   this.aboutDialog_.setVisible(true);
 };
@@ -115,8 +99,7 @@ vgps3.Map.prototype.disposeInternal = function() {
   goog.base(this, 'disposeInternal');
   goog.events.removeAll();
   google.maps.clearInstanceListeners(this.gMap_);
-  goog.disposeAll(this.shim_, this.aboutDialog_);
-  this.shim_ = null;
+  goog.dispose(this.aboutDialog_);
   this.aboutDialog_ = null;
   goog.array.forEach(this.plugins_, function(plugin) {
     goog.dispose(plugin);
