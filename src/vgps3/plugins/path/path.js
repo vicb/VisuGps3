@@ -82,6 +82,14 @@ vgps3.path.Path.prototype.init = function(vgps) {
 /**
  * @override
  */
+vgps3.path.Path.prototype.requireGoogleMapLibs = function() {
+  return ['geometry'];
+};
+
+
+/**
+ * @override
+ */
 vgps3.path.Path.prototype.disposeInternal = function() {
   goog.base(this, 'disposeInternal');
   this.line_.setMap(null);

@@ -99,6 +99,14 @@ vgps3.track.Track.prototype.init = function(vgps) {
 
 
 /**
+ * @override
+ */
+vgps3.track.Track.prototype.requireGoogleMapLibs = function() {
+  return ['geometry'];
+};
+
+
+/**
  * Loads track on the map.
  *
  * @param {string} url The track url.

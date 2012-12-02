@@ -43,7 +43,8 @@ goog.inherits(vgps3.topo.fr.Map, vgps3.PluginBase);
  */
 vgps3.topo.fr.Map.prototype.init = function(vgps) {
   goog.base(this, 'init', vgps);
-  this.tilesUrl_ = vgps.getTilesUrl(vgps3.topo.fr.TILES_URL, vgps3.topo.fr.API_KEYS);
+  var key = vgps.getDomainKey(vgps3.topo.fr.API_KEYS);
+  this.tilesUrl_ = null == key ? null : vgps3.topo.fr.TILES_URL.replace('{API_KEY}', key);
   this.gMap_.mapTypes.set(vgps3.topo.fr.MapTypeId.TERRAIN, /** @type {?} */ (this.getMapType_()));
 };
 

@@ -76,6 +76,14 @@ vgps3.PluginBase.prototype.getHandler = function() {
 
 
 /**
+ * @return {!Array.<string>} The google maps libraries required by this plugin.
+ */
+vgps3.PluginBase.prototype.requireGoogleMapLibs = function() {
+  return [];
+};
+
+
+/**
  * @override
  */
 vgps3.PluginBase.prototype.disposeInternal = function() {

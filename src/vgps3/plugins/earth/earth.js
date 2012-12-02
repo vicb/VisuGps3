@@ -166,6 +166,14 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
 
 
 /**
+ * @override
+ */
+vgps3.earth.Earth.prototype.requireGoogleMapLibs = function() {
+  return ['geometry'];
+};
+
+
+/**
  * Shows the plugin when the earth map type is selected.
  *
  * @private
