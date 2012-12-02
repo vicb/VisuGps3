@@ -103,9 +103,10 @@ vgps3.loader.load = function(module, version, cb, opt_options) {
   if (!goog.isDef(vgps3.loader.loaderLoaded_)) {
     vgps3.loader.logger_.info('Loading the Google API loader');
     vgps3.loader.loaderLoaded_ = goog.net.jsloader.load(vgps3.loader.LOADER_URL);
-    vgps3.loader.loaderLoaded_.addCallback(function() {
-      vgps3.loader.logger_.info('Google API loader loaded');
-    });
+    vgps3.loader.loaderLoaded_.addCallbacks(
+      function() {vgps3.loader.logger_.info('Google API loader loaded');},
+      function() {vgps3.loadMask.setMessage('Erreur lors du chargement !', vgps3.loadMask.Style.ERROR);}
+    );
   }
 
   vgps3.loader.loaderLoaded_.addCallback(function() {
