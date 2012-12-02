@@ -84,7 +84,7 @@ vgps3.track.Track = function() {
 
   goog.base(this);
 
-  vgps3.loadMask.setMessage('Chargement de la trace');
+  vgps3.loadMask.setMessage('Chargement de la trace', undefined, true);
 };
 goog.inherits(vgps3.track.Track, vgps3.PluginBase);
 

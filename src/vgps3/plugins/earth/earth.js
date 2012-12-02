@@ -173,7 +173,7 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
 vgps3.earth.Earth.prototype.mapTypeChangeHandler_ = function() {
   if (this.gMap_.getMapTypeId() === vgps3.earth.MapTypeId.EARTH) {
     if (!this.ge_) {
-      vgps3.loadMask.setMessage('Chargement de Google Earth');
+      vgps3.loadMask.setMessage('Chargement de Google Earth', undefined, true);
       this.mapCreated_.addCallback(goog.partial(vgps3.loadMask.setMessage, 'Chargement de la trace'));
       this.trackAdded_.addCallback(vgps3.loadMask.close);
       this.createEarth_();
@@ -282,10 +282,10 @@ vgps3.earth.Earth.prototype.createEarth_ = function() {
        * @param {string} error
        */
       function(error) {
+        that.logger_.severe('GE Plugin failed to start: ' + error);
         vgps3.loadMask.close();
         // If not installed, let the plugin show the www link
         if (google.earth.isInstalled()) {
-          that.logger_.severe('GE Plugin failed to start: ' + error);
           that.gMap_.setMapTypeId(that.currentMapTypeId_);
         }
       }
