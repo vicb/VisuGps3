@@ -58,7 +58,7 @@ vgps3.chart.Overlays.prototype.addLayer = function() {
     throw Error(goog.ui.Component.Error.NOT_IN_DOCUMENT);
   }
   var el = this.getDomHelper().createDom('div', 'vgps3-chart-overlay');
-  goog.style.setOpacity(el, this.layers_.length > 0 ? 0.3 : 0.9);
+  goog.style.setOpacity(el, 0.9);
   goog.style.setStyle(el, 'zIndex', -this.layers_.length);
   goog.dom.appendChild(this.getElement(), el);
   this.layers_.push(el);
