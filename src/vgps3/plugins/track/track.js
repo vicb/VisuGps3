@@ -252,16 +252,18 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
     });
 
     this.infoControl_ = new vgps3.Control(
-        this.gMap_,
-        vgps3.track.templates.infoControl,
-        google.maps.ControlPosition.RIGHT_BOTTOM
-        );
+      this.gMap_,
+      vgps3.track.templates.infoControl,
+      google.maps.ControlPosition.RIGHT_BOTTOM,
+      true
+    );
 
     this.trackControl_ = new vgps3.Control(
-        this.gMap_,
-        vgps3.track.templates.dateControl,
-        google.maps.ControlPosition.RIGHT_TOP
-        );
+      this.gMap_,
+      vgps3.track.templates.dateControl,
+      google.maps.ControlPosition.RIGHT_TOP,
+      true
+    );
 
     this.selectCurrentTrack_(0);
     vgps3.loadMask.close();
@@ -358,7 +360,7 @@ vgps3.track.Track.prototype.selectCurrentTrack_ = function(trackIndex, previousT
     this.currentTrackIndex_ = trackIndex;
     this.updateTrackControl_(trackIndex);
     goog.style.setStyle(
-        this.trackControl_.getElement(),
+        /** @type {Element} */ (this.trackControl_.getElement().parentNode),
         'background-color',
         goog.color.rgbArrayToHex(goog.color.lighten(goog.color.hexToRgb(this.tracks_[trackIndex].color), .6))
     );
@@ -369,10 +371,10 @@ vgps3.track.Track.prototype.selectCurrentTrack_ = function(trackIndex, previousT
       this.tracks_[previousTrackIndex].polyline.setOptions(this.getPolylineOptions_(previousTrackIndex));
     }
     this.dispatchEvent(
-        new vgps3.track.TrackSelectEvent(
+      new vgps3.track.TrackSelectEvent(
         trackIndex,
         goog.isDef(previousTrackIndex) ? previousTrackIndex : null
-        ));
+    ));
   }
 };
 

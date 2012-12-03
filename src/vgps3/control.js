@@ -26,15 +26,13 @@ goog.require('vgps3.track.templates');
  * @param {google.maps.Map} map
  * @param {!Function} template
  * @param {google.maps.ControlPosition} position
+ * @param {boolean=} opt_iframe
+ *
  * @constructor
  * @extends {goog.Disposable}
  */
-vgps3.Control = function(map, template, position) {
-  /**
-  * @type {!Element}
-  * @private
-  */
-  this.dom_ = goog.dom.createDom('div', 'map-ctrl');
+vgps3.Control = function(map, template, position, opt_iframe) {
+  goog.base(this);
 
   /**
    * @type {!Function} The template to render in the control
@@ -42,9 +40,42 @@ vgps3.Control = function(map, template, position) {
    */
   this.template_ = template;
 
-  goog.base(this);
+  /**
+   * @type {!Element}
+   * @private
+   */
+  this.dom_;
 
-  map.controls[position].push(this.dom_);
+  /**
+   * @type {Element}
+   * @private
+   */
+  this.shim_;
+
+  if (opt_iframe) {
+    this.shim_ = goog.dom.createDom('iframe', {
+      'src': 'javascript:false;',
+      'scrolling': 'no',
+      'frameBorder': 0
+    });
+
+    goog.style.setStyle(this.shim_, {
+      zIndex: -100000,
+      width: '100%',
+      height: '100%',
+      position: 'absolute',
+      top: 0,
+      left: 0
+    });
+  }
+
+  map.controls[position].push(
+    goog.dom.createDom(
+      'div',
+      'map-ctrl',
+      this.dom_ = goog.dom.createElement('div'),
+      this.shim_
+  ));
 };
 goog.inherits(vgps3.Control, goog.Disposable);
 
@@ -55,7 +86,11 @@ goog.inherits(vgps3.Control, goog.Disposable);
  * @param {Object=} opt_templateData
  */
 vgps3.Control.prototype.update = function(opt_templateData) {
-  goog.soy.renderElement(this.dom_, this.template_, opt_templateData);
+  goog.soy.renderElement(
+    this.dom_,
+    this.template_,
+    opt_templateData
+  );
 };
 
 
@@ -72,8 +107,11 @@ vgps3.Control.prototype.getElement = function() {
  */
 vgps3.Control.prototype.disposeInternal = function() {
   goog.base(this, 'disposeInternal');
-  goog.dom.removeNode(this.dom_);
+  goog.dom.removeNode(this.dom_.parentNode);
   delete this.dom_;
+  this.shim_ && goog.dom.removeNode(this.shim_);
+  delete this.shim_;
+
 };
 
 
