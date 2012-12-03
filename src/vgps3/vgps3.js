@@ -22,7 +22,6 @@ goog.require('goog.events.EventTarget');
 goog.require('goog.object');
 goog.require('goog.ui.Dialog');
 goog.require('goog.ui.Dialog.ButtonSet');
-goog.require('goog.ui.IframeMask');
 goog.require('vgps3.templates');
 
 

@@ -17,6 +17,8 @@ goog.provide('vgps3.Control');
 
 goog.require('goog.Disposable');
 goog.require('goog.dom');
+goog.require('goog.dom.DomHelper');
+goog.require('goog.dom.iframe');
 goog.require('goog.soy');
 goog.require('vgps3.track.templates');
 
@@ -53,11 +55,7 @@ vgps3.Control = function(map, template, position, opt_iframe) {
   this.shim_;
 
   if (opt_iframe) {
-    this.shim_ = goog.dom.createDom('iframe', {
-      'src': 'javascript:false;',
-      'scrolling': 'no',
-      'frameBorder': 0
-    });
+    this.shim_ = goog.dom.iframe.createBlank(new goog.dom.DomHelper());
 
     goog.style.setStyle(this.shim_, {
       zIndex: -100000,
@@ -70,12 +68,12 @@ vgps3.Control = function(map, template, position, opt_iframe) {
   }
 
   map.controls[position].push(
-    goog.dom.createDom(
+      goog.dom.createDom(
       'div',
       'map-ctrl',
       this.dom_ = goog.dom.createElement('div'),
       this.shim_
-  ));
+      ));
 };
 goog.inherits(vgps3.Control, goog.Disposable);
 
@@ -87,9 +85,9 @@ goog.inherits(vgps3.Control, goog.Disposable);
  */
 vgps3.Control.prototype.update = function(opt_templateData) {
   goog.soy.renderElement(
-    this.dom_,
-    this.template_,
-    opt_templateData
+      this.dom_,
+      this.template_,
+      opt_templateData
   );
 };
 

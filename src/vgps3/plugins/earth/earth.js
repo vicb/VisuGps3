@@ -25,6 +25,8 @@ goog.require('goog.color');
 goog.require('goog.debug.Logger');
 goog.require('goog.debug.Trace');
 goog.require('goog.dom');
+goog.require('goog.dom.DomHelper');
+goog.require('goog.dom.iframe');
 goog.require('goog.functions');
 goog.require('goog.math');
 goog.require('goog.object');
@@ -216,8 +218,15 @@ vgps3.earth.Earth.prototype.showEarth_ = function(visible) {
     this.mapControlDiv_.style.zIndex = 0;
     // Create a shim so that controls appear in front of the plugin
     if (!this.shim_) {
-      this.shim_ = goog.dom.createDom('iframe', {src: 'javascript:false;', scrolling: 'no', frameBorder: 0});
-      goog.style.setStyle(this.shim_, {zIndex: -100000, width: '100%', height: '100%', position: 'absolute', top: 0, left: 0});
+      this.shim_ = goog.dom.iframe.createBlank(new goog.dom.DomHelper());
+      goog.style.setStyle(this.shim_, {
+        zIndex: -100000,
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
+        top: 0,
+        left: 0
+      });
       goog.dom.appendChild(this.mapControlDiv_, this.shim_);
     }
   } else {
