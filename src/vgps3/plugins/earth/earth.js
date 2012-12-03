@@ -29,6 +29,7 @@ goog.require('goog.functions');
 goog.require('goog.math');
 goog.require('goog.object');
 goog.require('goog.string.format');
+goog.require('goog.structs.Map');
 goog.require('goog.style');
 goog.require('vgps3.Map');
 goog.require('vgps3.PluginBase');
@@ -104,22 +105,16 @@ vgps3.earth.Earth = function() {
   this.shim_;
 
   /**
-   * @type {KmlEvent} Mouse down event used to discriminate click vs drag
-   * @private
-   */
-  this.downEvent_;
-
-  /**
    * @type {boolean} Whether the earth is visible
    * @private
    */
   this.visible_ = false;
 
   /**
-   * @type {Object} Listeners to ge events
+   * @type {goog.structs.Map} Listeners to ge events
    * @private
    */
-  this.geListeners_ = {};
+  this.geListeners_ = new goog.structs.Map();
 
   goog.base(this);
   /**
@@ -273,7 +268,7 @@ vgps3.earth.Earth.prototype.createEarth_ = function() {
       function(ge) {
         that.logger_.info('GE Plugin started');
         that.ge_ = /** @type {GEPlugin} */(ge);
-        that.installClickHandler_();
+        that.installClickHandler_(ge.getWindow());
         google.earth.executeBatch(ge, function() {
           ge.getWindow().setVisibility(true);
           var navControl = ge.getNavigationControl();
@@ -370,9 +365,12 @@ vgps3.earth.Earth.prototype.disposeInternal = function() {
   delete this.earthDom_;
   goog.dom.removeNode(this.shim_);
   delete this.shim_;
-  goog.object.forEach(this.geListeners_, function(listener, event) {
-    google.earth.removeEventListener(this.ge_.getWindow(), event, listener);
+  goog.object.forEach(this.geListeners_.toObject(), function(listeners, source) {
+    goog.object.forEach(listeners, function(listener, event) {
+      google.earth.removeEventListener(source, event, listener);
+    });
   });
+  delete this.geListeners_;
 };
 
 
@@ -399,35 +397,27 @@ vgps3.earth.Earth.prototype.getMapType_ = function() {
  *
  * The click handle is able to discriminate click and drag events.
  *
+ * @param {GEEventEmitter} source The event source.
+ *
  * @private
  */
-vgps3.earth.Earth.prototype.installClickHandler_ = function() {
-  var that = this;
+vgps3.earth.Earth.prototype.installClickHandler_ = function(source) {
+  var de;
 
-  this.geListeners_['mousedown'] = function(e) {
-    0 === e.getButton() && (that.downEvent_ = e);
-  };
-  google.earth.addEventListener(
-      this.ge_.getWindow(),
-      'mousedown',
-      this.geListeners_['mousedown']
-  );
+  var mdListener = function(e) {0 === e.getButton() && (de = e);};
+  google.earth.addEventListener(source, 'mousedown', mdListener);
 
-  this.geListeners_['mouseup'] = function(e) {
+  var muListener = function(e) {
     if (0 === e.getButton()) {
-      var de = that.downEvent_,
-          distPx = Math.pow(2, de.getClientX() - e.getClientX()) + Math.pow(2, de.getClientY() - e.getClientY());
+      var distPx = Math.pow(2, de.getClientX() - e.getClientX()) + Math.pow(2, de.getClientY() - e.getClientY());
       if (distPx < 10 * 10) {
         that.clickHandler_.call(that, de);
       }
     }
   };
+  google.earth.addEventListener(source, 'mouseup', muListener);
 
-  google.earth.addEventListener(
-      this.ge_.getWindow(),
-      'mouseup',
-      this.geListeners_['mouseup']
-  );
+  this.geListeners_.set(source, {'mouseup': muListener, 'mousedown': mdListener});
 };
 
 
@@ -461,7 +451,6 @@ vgps3.earth.Earth.prototype.trackLoadHandler_ = function(event) {
 
   this.logger_.info(goog.string.format('Track[%d] loaded', index));
   this.mapCreated_.addCallback(goog.partial(this.displayTrack_, index, fixes, color), this);
-
 };
 
 
@@ -554,12 +543,12 @@ vgps3.earth.Earth.prototype.displayTrack_ = function(trackIndex, fixes, trackCol
   google.earth.executeBatch(this.ge_, function() {
     that.ge_.getFeatures().appendChild(lineStringPm);
     lineString.setAltitudeMode(that.ge_.ALTITUDE_ABSOLUTE);
-
     lineStringPm.setStyleSelector(that.ge_.createStyle('trackStyle-' + trackIndex));
     var lineStyle = lineStringPm.getStyleSelector().getLineStyle();
     lineStyle.setWidth(2);
     // color format: aabbggrr
     lineStyle.getColor().set(goog.color.parse(trackColor).hex.replace(/^#(..)(..)(..)/, '7f$3$2$1'));
+    that.installClickHandler_(lineString);
   });
 
   this.logger_.info(goog.string.format('Track[%d] added', trackIndex));
