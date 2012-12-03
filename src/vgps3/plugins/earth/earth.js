@@ -402,7 +402,7 @@ vgps3.earth.Earth.prototype.getMapType_ = function() {
  * @private
  */
 vgps3.earth.Earth.prototype.installClickHandler_ = function(source) {
-  var de;
+  var de, that = this;
 
   var mdListener = function(e) {0 === e.getButton() && (de = e);};
   google.earth.addEventListener(source, 'mousedown', mdListener);
