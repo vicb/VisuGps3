@@ -17,32 +17,50 @@
 goog.provide('vgps3.topo.fr.Map');
 
 goog.require('vgps3.Map');
-goog.require('vgps3.PluginBase');
+goog.require('vgps3.topo.AbstractTopo');
 
 
 
 /**
  * @constructor France IGN map type for google maps.
- * @extends {vgps3.PluginBase}
+ * @extends {vgps3.topo.AbstractTopo}
  */
 vgps3.topo.fr.Map = function() {
   goog.base(this);
 
   /**
    * @type {?string}
+   * @private
    */
   this.tilesUrl_;
 };
-goog.inherits(vgps3.topo.fr.Map, vgps3.PluginBase);
+goog.inherits(vgps3.topo.fr.Map, vgps3.topo.AbstractTopo);
 
 
 /**
- * Registers this map type in google maps.
- *
  * @override
  */
 vgps3.topo.fr.Map.prototype.init = function(vgps) {
   goog.base(this, 'init', vgps);
+  this.setBounds_([
+    [42.3058, -0.7618, 46.4181, 7.9109],  // FXX
+    [11.7, -64, 18.18, -59],  // ANF
+    [-40, 76, -36, 79],  // ASP
+    [-68.62, 132.56, -64.03, 144.54],  // ATF
+    [-48, 47, -44, 55],  // CRZ
+    [15.75, -63.2, 17.5, -60],  // GLP
+    [-4.3, -62.1, 11.5, -46],  // GUF
+    [-53, 62, -45, 76],  // KER
+    [11.7, -64, 15.7, -59],  // MTQ
+    [-17.5, 40, 3, 56],  //MYT
+    [-24.3, 160, -17.1, 170],  // NCL
+    [-28.2, -160, 11, -108],  // PYF
+    [-26.2, 37.5, -17.75, 60],  // REU
+    [17.75, -63, 17.99, -62.7],  // SBA
+    [18, -63.19, 18.18, -62.9],  // SMA
+    [43.5, -60, 52, -50],  // SPM
+    [-14.6, -178.5, -12.8, -175.8] // WLF
+  ]);
   var key = vgps.getDomainKey(vgps3.topo.fr.API_KEYS);
   this.tilesUrl_ = null == key ? null : vgps3.topo.fr.TILES_URL.replace('{API_KEY}', key);
   this.gMap_.mapTypes.set(vgps3.topo.fr.MapTypeId.TERRAIN, /** @type {?} */ (this.getMapType_()));
@@ -50,8 +68,7 @@ vgps3.topo.fr.Map.prototype.init = function(vgps) {
 
 
 /**
- * @return {google.maps.ImageMapType} The map type.
- * @private
+ * @override
  */
 vgps3.topo.fr.Map.prototype.getMapType_ = function() {
   return new google.maps.ImageMapType({
@@ -66,28 +83,19 @@ vgps3.topo.fr.Map.prototype.getMapType_ = function() {
 
 
 /**
- * Returns the URL of a tile.
- *
- * @param {google.maps.Point} coord
- * @param {number} zoom
- * @return {?string}
- *
- * @private
+ * @override
  */
 vgps3.topo.fr.Map.prototype.getTileUrl_ = function(coord, zoom) {
-  var numTiles = 1 << zoom;
-  if (!this.tilesUrl_) {
+  var numTiles = Math.pow(2, zoom);
+  if (!this.tilesUrl_ || !this.isTileVisible_(coord, zoom)) {
     return null;
   }
-  if (coord.y < 0 || coord.y >= numTiles) {
-    return null;
-  }
+
   return this.tilesUrl_
       .replace('{zoom}', zoom.toString(10))
       .replace('{x}', (((coord.x % numTiles) + numTiles) % numTiles).toString(10))
       .replace('{y}', coord.y.toString(10))
       .replace('{layer}', 'GEOGRAPHICALGRIDSYSTEMS.MAPS');
-
 };
 
 

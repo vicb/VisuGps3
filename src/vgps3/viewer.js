@@ -176,6 +176,8 @@ vgps3.Viewer.prototype.array2LatLng_ = function(opt_latlng) {
 goog.exportSymbol('vgps3.Viewer', vgps3.Viewer);
 
 if (goog.DEBUG) {
-  var console = new goog.debug.Console();
-  console.setCapturing(true);
+  (function() {
+    var console = new goog.debug.Console();
+    console.setCapturing(true);
+  })();
 }

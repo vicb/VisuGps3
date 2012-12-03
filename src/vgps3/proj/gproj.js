@@ -21,7 +21,7 @@ goog.require('vgps3.proj.IProj');
 
 /**
  * @param {vgps3.proj.IProj} projection
- * @param {number=} opt_scale0 The resolution at zoom level 0 (ie a single tile).
+ * @param {number=} opt_scale0 The resolution at zoom level 0 = world width in meters.
  * @constructor
  */
 vgps3.proj.GProj = function(projection, opt_scale0) {
@@ -32,7 +32,7 @@ vgps3.proj.GProj = function(projection, opt_scale0) {
   this.projection_ = projection;
 
   /**
-   * @type {number}
+   * @type {number} The resolution at zoom level 0
    * @private
    */
   this.scale0_;
@@ -50,7 +50,6 @@ vgps3.proj.GProj = function(projection, opt_scale0) {
   this.y0_ = projection.getOrigin().y;
 
   this.setScale0(opt_scale0);
-
 };
 
 

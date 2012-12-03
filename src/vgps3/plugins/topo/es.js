@@ -17,7 +17,7 @@
 goog.provide('vgps3.topo.es.Map');
 
 goog.require('vgps3.Map');
-goog.require('vgps3.PluginBase');
+goog.require('vgps3.topo.AbstractTopo');
 goog.require('vgps3.proj.GProj');
 goog.require('vgps3.proj.Iberpix');
 
@@ -25,7 +25,7 @@ goog.require('vgps3.proj.Iberpix');
 
 /**
  * @constructor Spain IGN map type for google maps.
- * @extends {vgps3.PluginBase}
+ * @extends {vgps3.topo.AbstractTopo}
  */
 vgps3.topo.es.Map = function() {
   /**
@@ -54,16 +54,16 @@ vgps3.topo.es.Map = function() {
 
   goog.base(this);
 };
-goog.inherits(vgps3.topo.es.Map, vgps3.PluginBase);
+goog.inherits(vgps3.topo.es.Map, vgps3.topo.AbstractTopo);
 
 
 /**
- * Registers this map type in google maps.
- *
  * @override
  */
 vgps3.topo.es.Map.prototype.init = function(vgps) {
   goog.base(this, 'init', vgps);
+  // @see http://www.idee.es/wms/PNOA/PNOA?Request=GetCapabilities&Service=WMS
+  this.setBounds_([[44.0314, -21.3797, 27.1410, 5.0789]]);
   this.gMap_.mapTypes.set(vgps3.topo.es.MapTypeId.TERRAIN, /** @type {?} */ (this.getMapType_()));
   google.maps.event.addListener(
       this.gMap_,
@@ -94,16 +94,16 @@ vgps3.topo.es.Map.prototype.enable_ = function() {
   this.updateProjection_(true);
 
   this.zoomListener_ = google.maps.event.addListener(
-      this.gMap_,
-      'zoom_changed',
-      goog.bind(this.updateProjection_, this)
-      );
+    this.gMap_,
+    'zoom_changed',
+    goog.bind(this.updateProjection_, this)
+  );
 
   this.moveListener_ = google.maps.event.addListener(
-      this.gMap_,
-      'center_changed',
-      goog.bind(this.updateProjection_, this)
-      );
+    this.gMap_,
+    'center_changed',
+    goog.bind(this.updateProjection_, this)
+  );
 };
 
 
@@ -151,14 +151,13 @@ vgps3.topo.es.Map.prototype.updateProjection_ = function(opt_force) {
 
 
 /**
- * @return {google.maps.ImageMapType} The map type.
- * @private
+ * @override
  */
 vgps3.topo.es.Map.prototype.getMapType_ = function() {
   var mapType = new google.maps.ImageMapType({
     getTileUrl: goog.bind(this.getTileUrl_, this),
     tileSize: new google.maps.Size(256, 256),
-    minZoom: 6,
+    minZoom: vgps3.topo.es.ZOOM_OFFSET,
     maxZoom: 18,
     name: 'TopoES',
     alt: 'Cartes IGN Espagne'
@@ -171,28 +170,21 @@ vgps3.topo.es.Map.prototype.getMapType_ = function() {
 
 
 /**
- * Returns the URL of a tile.
- *
- * @param {google.maps.Point} coord
- * @param {number} zoom
- * @return {?string}
- *
- * @private
+ * @override
  */
 vgps3.topo.es.Map.prototype.getTileUrl_ = function(coord, zoom) {
-  var numTiles = 1 << zoom,
-      y = -coord.y - 1;
-  if (y < 0 || y >= numTiles) {
+  var numTiles = Math.pow(2,zoom);
+
+  if (!this.isTileVisible_(coord, zoom)) {
     return null;
   }
   return vgps3.topo.es.TILES_URL
         .replace('{server}', (vgps3.topo.es.serverIndex_++ % 5).toString(10))
         .replace('{layer}', this.getLayerName_(zoom))
         .replace('{zone}', this.zone_.toString(10))
-        .replace('{scale}', (2048 / Math.pow(2, zoom - 6) * 1000).toString(10))
+        .replace('{scale}', (2048 / Math.pow(2, zoom - vgps3.topo.es.ZOOM_OFFSET) * 1000).toString(10))
         .replace('{x}', (((coord.x % numTiles) + numTiles) % numTiles).toString(10))
-        .replace('{y}', y.toString(10));
-
+        .replace('{y}', (-coord.y - 1).toString(10));
 };
 
 
@@ -240,7 +232,7 @@ vgps3.topo.es.LAYER_NAMES = ['mapa_millon', 'mapa_mtn200', 'mapa_mtn50', 'mapa_m
 
 /**
  * @const
- * @type {number}
+ * @type {number} 2^ZOOM_OFFSET should be >= number of tiles required to cover the whole world
  */
 vgps3.topo.es.ZOOM_OFFSET = Math.round(Math.log(2 * Math.PI * 6378137 / (2048 * 256)) / Math.LN2);
 

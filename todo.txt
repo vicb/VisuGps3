@@ -3,15 +3,10 @@
   - https://addons.mozilla.org/en-US/firefox/addon/leak-monitor/
   - https://code.google.com/p/leak-finder-for-javascript/
 
-- Restrict topo map to their boundaries
-
 - track plugin
   - add a track
-  - remove a track
-  - load kml (!earth plugin)
-
-- gmaps
-  - keys per domain,
+  - remove a track (no more track -> no more marker, ..., remove selected track)
+  - load kml (!earth plugin) -> chart should probably dispay h=f(dist)
 
 - add layers:
  - skyways (requires a "more" control)
@@ -29,4 +24,3 @@
   - vs distance (in addition to vs time)
   - allow to specify displayed charts
 
-- js loader: handler errors

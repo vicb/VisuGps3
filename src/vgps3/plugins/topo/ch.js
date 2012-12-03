@@ -17,7 +17,7 @@ goog.provide('vgps3.topo.ch.Map');
 
 goog.require('goog.math');
 goog.require('vgps3.Map');
-goog.require('vgps3.PluginBase');
+goog.require('vgps3.topo.AbstractTopo');
 goog.require('vgps3.proj.GProj');
 goog.require('vgps3.proj.Swisstopo');
 
@@ -25,7 +25,7 @@ goog.require('vgps3.proj.Swisstopo');
 
 /**
  * @constructor Spain IGN map type for google maps.
- * @extends {vgps3.PluginBase}
+ * @extends {vgps3.topo.AbstractTopo}
  */
 vgps3.topo.ch.Map = function() {
   /**
@@ -54,17 +54,16 @@ vgps3.topo.ch.Map = function() {
 
   goog.base(this);
 };
-goog.inherits(vgps3.topo.ch.Map, vgps3.PluginBase);
+goog.inherits(vgps3.topo.ch.Map, vgps3.topo.AbstractTopo);
 
 
 /**
- * Registers this map type in google maps.
- *
  * @override
  */
 vgps3.topo.ch.Map.prototype.init = function(vgps) {
   var that = this;
   goog.base(this, 'init', vgps);
+  this.setBounds_([[45.3981, 5.1402, 48.2306, 11.4774]]);
   this.gMap_.mapTypes.set(vgps3.topo.ch.MapTypeId.TERRAIN, /** @type {?} */ (this.getMapType_()));
   this.center_ = this.gMap_.getCenter();
   this.previousZoom_ = this.gMap_.getZoom();
@@ -73,7 +72,6 @@ vgps3.topo.ch.Map.prototype.init = function(vgps) {
       'maptypeid_changed',
       goog.bind(this.mapTypeChangeHandler_, this)
   );
-
   // Capture the center value when the map becomes idle
   // This is required to apply this value when the zoom level changes as consecutive zoom
   // resolution ratio is not 2 as expected by the google maps API
@@ -106,10 +104,10 @@ vgps3.topo.ch.Map.prototype.enable_ = function() {
   this.updateProjection_();
 
   this.zoomListener_ = google.maps.event.addListener(
-      this.gMap_,
-      'zoom_changed',
-      goog.bind(this.updateProjection_, this)
-      );
+    this.gMap_,
+    'zoom_changed',
+    goog.bind(this.updateProjection_, this)
+  );
 };
 
 
@@ -145,8 +143,7 @@ vgps3.topo.ch.Map.prototype.updateProjection_ = function() {
 
 
 /**
- * @return {google.maps.ImageMapType} The map type.
- * @private
+ * @override
  */
 vgps3.topo.ch.Map.prototype.getMapType_ = function() {
   var mapType = new google.maps.ImageMapType({
@@ -166,18 +163,12 @@ vgps3.topo.ch.Map.prototype.getMapType_ = function() {
 
 
 /**
- * Returns the URL of a tile.
- *
- * @param {google.maps.Point} coord
- * @param {number} zoom
- * @return {?string}
- *
- * @private
+ * @override
  */
 vgps3.topo.ch.Map.prototype.getTileUrl_ = function(coord, zoom) {
-  var numTiles = 1 << zoom;
+  var numTiles = Math.pow(2, zoom);
 
-  if (coord.y < 0 || coord.y >= numTiles) {
+  if (!this.isTileVisible_(coord, zoom)) {
     return null;
   }
   return vgps3.topo.ch.TILES_URL
