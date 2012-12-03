@@ -61,9 +61,10 @@ vgps3.topo.fr.Map.prototype.init = function(vgps) {
     [43.5, -60, 52, -50],  // SPM
     [-14.6, -178.5, -12.8, -175.8] // WLF
   ]);
+  this.setCopyright_('img/topo.fr.png', 'http://www.ign.fr/');
+  this.registerMapType_(vgps3.topo.fr.MapTypeId.TERRAIN);
   var key = vgps.getDomainKey(vgps3.topo.fr.API_KEYS);
   this.tilesUrl_ = null == key ? null : vgps3.topo.fr.TILES_URL.replace('{API_KEY}', key);
-  this.gMap_.mapTypes.set(vgps3.topo.fr.MapTypeId.TERRAIN, /** @type {?} */ (this.getMapType_()));
 };
 
 

@@ -17,9 +17,9 @@
 goog.provide('vgps3.topo.es.Map');
 
 goog.require('vgps3.Map');
-goog.require('vgps3.topo.AbstractTopo');
 goog.require('vgps3.proj.GProj');
 goog.require('vgps3.proj.Iberpix');
+goog.require('vgps3.topo.AbstractTopo');
 
 
 
@@ -62,57 +62,38 @@ goog.inherits(vgps3.topo.es.Map, vgps3.topo.AbstractTopo);
  */
 vgps3.topo.es.Map.prototype.init = function(vgps) {
   goog.base(this, 'init', vgps);
-  // @see http://www.idee.es/wms/PNOA/PNOA?Request=GetCapabilities&Service=WMS
   this.setBounds_([[44.0314, -21.3797, 27.1410, 5.0789]]);
-  this.gMap_.mapTypes.set(vgps3.topo.es.MapTypeId.TERRAIN, /** @type {?} */ (this.getMapType_()));
-  google.maps.event.addListener(
-      this.gMap_,
-      'maptypeid_changed',
-      goog.bind(this.mapTypeChangeHandler_, this)
-  );
+  this.setCopyright_('img/topo.es.png', 'http://www.ign.es/');
+  this.registerMapType_(vgps3.topo.es.MapTypeId.TERRAIN);
 };
 
 
 /**
- * Handling map show / hide
- * @private
+ * @override
  */
-vgps3.topo.es.Map.prototype.mapTypeChangeHandler_ = function() {
-  if (this.gMap_.getMapTypeId() === vgps3.topo.es.MapTypeId.TERRAIN) {
-    this.enable_();
-  } else {
-    this.disable_();
-  }
-};
-
-
-/**
- * Should be called when the map gets shown
- * @private
- */
-vgps3.topo.es.Map.prototype.enable_ = function() {
+vgps3.topo.es.Map.prototype.showHandler_ = function() {
+  goog.base(this, 'showHandler_');
   this.updateProjection_(true);
 
   this.zoomListener_ = google.maps.event.addListener(
-    this.gMap_,
-    'zoom_changed',
-    goog.bind(this.updateProjection_, this)
-  );
+      this.gMap_,
+      'zoom_changed',
+      goog.bind(this.updateProjection_, this)
+      );
 
   this.moveListener_ = google.maps.event.addListener(
-    this.gMap_,
-    'center_changed',
-    goog.bind(this.updateProjection_, this)
-  );
+      this.gMap_,
+      'center_changed',
+      goog.bind(this.updateProjection_, this)
+      );
 };
 
 
 /**
- * Should be called when the map gets hidden
- *
- * @private
+ * @override
  */
-vgps3.topo.es.Map.prototype.disable_ = function() {
+vgps3.topo.es.Map.prototype.hideHandler_ = function() {
+  goog.base(this, 'hideHandler_');
   google.maps.event.removeListener(this.zoomListener_);
   google.maps.event.removeListener(this.moveListener_);
 };
@@ -173,7 +154,7 @@ vgps3.topo.es.Map.prototype.getMapType_ = function() {
  * @override
  */
 vgps3.topo.es.Map.prototype.getTileUrl_ = function(coord, zoom) {
-  var numTiles = Math.pow(2,zoom);
+  var numTiles = Math.pow(2, zoom);
 
   if (!this.isTileVisible_(coord, zoom)) {
     return null;

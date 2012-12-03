@@ -17,9 +17,9 @@ goog.provide('vgps3.topo.ch.Map');
 
 goog.require('goog.math');
 goog.require('vgps3.Map');
-goog.require('vgps3.topo.AbstractTopo');
 goog.require('vgps3.proj.GProj');
 goog.require('vgps3.proj.Swisstopo');
+goog.require('vgps3.topo.AbstractTopo');
 
 
 
@@ -64,14 +64,11 @@ vgps3.topo.ch.Map.prototype.init = function(vgps) {
   var that = this;
   goog.base(this, 'init', vgps);
   this.setBounds_([[45.3981, 5.1402, 48.2306, 11.4774]]);
-  this.gMap_.mapTypes.set(vgps3.topo.ch.MapTypeId.TERRAIN, /** @type {?} */ (this.getMapType_()));
+  this.registerMapType_(vgps3.topo.ch.MapTypeId.TERRAIN);
+  this.setCopyright_('img/topo.ch.png', 'http://www.swisstopo.ch/');
+
   this.center_ = this.gMap_.getCenter();
   this.previousZoom_ = this.gMap_.getZoom();
-  google.maps.event.addListener(
-      this.gMap_,
-      'maptypeid_changed',
-      goog.bind(this.mapTypeChangeHandler_, this)
-  );
   // Capture the center value when the map becomes idle
   // This is required to apply this value when the zoom level changes as consecutive zoom
   // resolution ratio is not 2 as expected by the google maps API
@@ -84,39 +81,24 @@ vgps3.topo.ch.Map.prototype.init = function(vgps) {
 
 
 /**
- * Handling map show / hide
- * @private
+ * @override
  */
-vgps3.topo.ch.Map.prototype.mapTypeChangeHandler_ = function() {
-  if (this.gMap_.getMapTypeId() === vgps3.topo.ch.MapTypeId.TERRAIN) {
-    this.enable_();
-  } else {
-    this.disable_();
-  }
-};
-
-
-/**
- * Should be called when the map gets shown
- * @private
- */
-vgps3.topo.ch.Map.prototype.enable_ = function() {
+vgps3.topo.ch.Map.prototype.showHandler_ = function() {
+  goog.base(this, 'showHandler_');
   this.updateProjection_();
-
   this.zoomListener_ = google.maps.event.addListener(
-    this.gMap_,
-    'zoom_changed',
-    goog.bind(this.updateProjection_, this)
-  );
+      this.gMap_,
+      'zoom_changed',
+      goog.bind(this.updateProjection_, this)
+      );
 };
 
 
 /**
- * Should be called when the map gets hidden
- *
- * @private
+ * @override
  */
-vgps3.topo.ch.Map.prototype.disable_ = function() {
+vgps3.topo.ch.Map.prototype.hideHandler_ = function() {
+  goog.base(this, 'hideHandler_');
   google.maps.event.removeListener(this.zoomListener_);
 };
 

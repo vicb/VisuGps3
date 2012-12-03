@@ -16,6 +16,9 @@
 goog.provide('vgps3.topo.AbstractTopo');
 
 goog.require('goog.array');
+goog.require('goog.dom');
+goog.require('goog.style');
+
 
 
 /**
@@ -32,6 +35,18 @@ vgps3.topo.AbstractTopo = function() {
   this.bounds_;
 
   /**
+   * @type {Element} The copyright
+   * @protected
+   */
+  this.copyright_;
+
+  /**
+   * @type {string} The map type
+   * @protected
+   */
+  this.mapType_;
+
+  /**
    * @type {goog.debug.Logger}
    * @private_
    */
@@ -40,10 +55,11 @@ vgps3.topo.AbstractTopo = function() {
 };
 goog.inherits(vgps3.topo.AbstractTopo, vgps3.PluginBase);
 
+
 /**
  * Set the visible area
  *
- * @param {!Array.<Array.<number>>} latlngBounds format: [lat, lng, lat, lng]
+ * @param {!Array.<Array.<number>>} latlngBounds format: [lat, lng, lat, lng].
  * @protected
  */
 vgps3.topo.AbstractTopo.prototype.setBounds_ = function(latlngBounds) {
@@ -58,10 +74,69 @@ vgps3.topo.AbstractTopo.prototype.setBounds_ = function(latlngBounds) {
     goog.array.sort(lngs);
 
     that.bounds_.push(new google.maps.LatLngBounds(
-      new google.maps.LatLng(lats[0], lngs[0]),
-      new google.maps.LatLng(lats[1], lngs[1])
-    ));
+        new google.maps.LatLng(lats[0], lngs[0]),
+        new google.maps.LatLng(lats[1], lngs[1])
+        ));
   });
+};
+
+
+/**
+ * Create a copyright control on the map
+ *
+ * @param {string} logo Path to the logo.
+ * @param {string} url  Link target.
+ *
+ * @private
+ */
+vgps3.topo.AbstractTopo.prototype.setCopyright_ = function(logo, url) {
+  this.copyright_ = goog.dom.createDom(
+      'a',
+      {'target': '_blank', 'href': url, 'class': 'vgps3-topo-logo'},
+      goog.dom.createDom('img', {src: logo})
+      );
+
+  this.gMap_.controls[google.maps.ControlPosition.BOTTOM_RIGHT].push(this.copyright_);
+
+  goog.style.showElement(this.copyright_, false);
+};
+
+
+/**
+ * Registers the custom map.
+ *
+ * @param {string} mapType
+ *
+ * @protected
+ */
+vgps3.topo.AbstractTopo.prototype.registerMapType_ = function(mapType) {
+  this.mapType_ = mapType;
+  this.gMap_.mapTypes.set(mapType, /** @type {?} */ (this.getMapType_()));
+  google.maps.event.addListener(
+      this.gMap_,
+      'maptypeid_changed',
+      goog.bind(this.mapTypeChangeHandler_, this)
+  );
+};
+
+
+/**
+ * Triggered when the map is shown
+ *
+ * @protected
+ */
+vgps3.topo.AbstractTopo.prototype.showHandler_ = function() {
+  this.copyright_ && goog.style.showElement(this.copyright_, true);
+};
+
+
+/**
+ * Triggered when the map is hidden
+ *
+ * @protected
+ */
+vgps3.topo.AbstractTopo.prototype.hideHandler_ = function() {
+  this.copyright_ && goog.style.showElement(this.copyright_, false);
 };
 
 
@@ -70,9 +145,10 @@ vgps3.topo.AbstractTopo.prototype.setBounds_ = function(latlngBounds) {
  *
  * @param {google.maps.Point} coord
  * @param {number} zoom
- * @protected
  *
- * @return {boolean} Whether the tile is provided by the current map
+ * @return {boolean} Whether the tile is provided by the current map.
+ *
+ * @protected
  */
 vgps3.topo.AbstractTopo.prototype.isTileVisible_ = function(coord, zoom) {
   var numTiles = Math.pow(2, zoom),
@@ -87,24 +163,25 @@ vgps3.topo.AbstractTopo.prototype.isTileVisible_ = function(coord, zoom) {
   projection = this.gMap_.getProjection();
 
   tileBounds = new google.maps.LatLngBounds(
-    projection.fromPointToLatLng(new google.maps.Point(w, s)),
-    projection.fromPointToLatLng(new google.maps.Point(e, n))
-  );
+      projection.fromPointToLatLng(new google.maps.Point(w, s)),
+      projection.fromPointToLatLng(new google.maps.Point(e, n))
+      );
 
   goog.array.some(this.bounds_, function(bounds) {
-      visible = bounds.intersects(tileBounds);
+    visible = bounds.intersects(tileBounds);
 
-      if (visible) {
-        this.logger_.info("Tile visible in range: " + bounds.toString());
-      }
+    if (visible) {
+      this.logger_.info('Tile visible in range: ' + bounds.toString());
+    }
 
-      return visible;
-    },
-    this
+    return visible;
+  },
+  this
   );
 
   return visible;
-}
+};
+
 
 /**
  * Returns the map type.
@@ -114,6 +191,7 @@ vgps3.topo.AbstractTopo.prototype.isTileVisible_ = function(coord, zoom) {
  * @protected
  */
 vgps3.topo.AbstractTopo.prototype.getMapType_ = goog.abstractMethod;
+
 
 /**
  * Returns the URL of a tile.
@@ -125,3 +203,17 @@ vgps3.topo.AbstractTopo.prototype.getMapType_ = goog.abstractMethod;
  * @protected
  */
 vgps3.topo.AbstractTopo.prototype.getTileUrl_ = goog.abstractMethod;
+
+
+/**
+ * Handling map show / hide
+ *
+ * @private
+ */
+vgps3.topo.AbstractTopo.prototype.mapTypeChangeHandler_ = function() {
+  if (this.gMap_.getMapTypeId() === this.mapType_) {
+    this.showHandler_();
+  } else {
+    this.hideHandler_();
+  }
+};
