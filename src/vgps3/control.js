@@ -49,31 +49,33 @@ vgps3.Control = function(map, template, position, opt_iframe) {
   this.dom_;
 
   /**
+   * @type {?string} An extra class to add to the control
+   * @private
+   */
+  this.extraClass_;
+
+  /**
+   * @type {google.maps.ControlPosition}
+   * @private
+   */
+  this.position_ = position;
+
+  /**
+   * @type {boolean|undefined}
+   * @private
+   */
+  this.useIframe_ = opt_iframe;
+
+  /**
+   * @type {google.maps.Map}
+   * @private
+   */
+  this.gMap_ = map;
+  /**
    * @type {Element}
    * @private
    */
   this.shim_;
-
-  if (opt_iframe) {
-    this.shim_ = goog.dom.iframe.createBlank(new goog.dom.DomHelper());
-
-    goog.style.setStyle(this.shim_, {
-      zIndex: -100000,
-      width: '100%',
-      height: '100%',
-      position: 'absolute',
-      top: 0,
-      left: 0
-    });
-  }
-
-  map.controls[position].push(
-      goog.dom.createDom(
-      'div',
-      'map-ctrl',
-      this.dom_ = goog.dom.createElement('div'),
-      this.shim_
-      ));
 };
 goog.inherits(vgps3.Control, goog.Disposable);
 
@@ -84,11 +86,43 @@ goog.inherits(vgps3.Control, goog.Disposable);
  * @param {Object=} opt_templateData
  */
 vgps3.Control.prototype.update = function(opt_templateData) {
+  if (!this.dom_) {
+    if (this.useIframe_) {
+      this.shim_ = goog.dom.iframe.createBlank(new goog.dom.DomHelper());
+
+      goog.style.setStyle(this.shim_, {
+        zIndex: -100000,
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
+        top: 0,
+        left: 0
+      });
+    }
+
+    this.gMap_.controls[this.position_].push(
+      goog.dom.createDom(
+        'div',
+        ['map-ctrl', this.extraClass_].join(' '),
+        this.dom_ = goog.dom.createElement('div'),
+        this.shim_
+      ));
+  }
+
   goog.soy.renderElement(
       this.dom_,
       this.template_,
       opt_templateData
   );
+};
+
+
+/**
+ * Adds a class to the control div
+ * @param {?string} extraClass
+ */
+vgps3.Control.prototype.setExtraClass = function(extraClass) {
+  this.extraClass_ = goog.isNull(extraClass) ? null : extraClass;
 };
 
 
@@ -109,7 +143,6 @@ vgps3.Control.prototype.disposeInternal = function() {
   delete this.dom_;
   this.shim_ && goog.dom.removeNode(this.shim_);
   delete this.shim_;
-
 };
 
 

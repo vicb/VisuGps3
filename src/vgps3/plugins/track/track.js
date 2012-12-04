@@ -257,6 +257,7 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
         google.maps.ControlPosition.RIGHT_BOTTOM,
         true
         );
+    this.infoControl_.setExtraClass('vgps3-earth-control');
 
     this.trackControl_ = new vgps3.Control(
         this.gMap_,
@@ -264,6 +265,7 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
         google.maps.ControlPosition.RIGHT_TOP,
         true
         );
+    this.trackControl_.setExtraClass('vgps3-earth-control');
 
     this.selectCurrentTrack_(0);
     vgps3.loadMask.close();

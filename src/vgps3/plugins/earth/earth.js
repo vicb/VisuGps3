@@ -207,15 +207,15 @@ vgps3.earth.Earth.prototype.showEarth_ = function(visible) {
 
   if (visible) {
     // Sets the z-index of all controls except for the map type control so that they appear behind Earth.
-    var oldIndex = this.mapControlDiv_.style.zIndex;
-    // Sets the zIndex of all controls to be behind Earth
     goog.array.forEach(this.earthDom_.parentNode.childNodes, function(sibling) {
       sibling['__gme_ozi'] = sibling.style.zIndex;
-      sibling.style.zIndex = -10;
+      if (sibling === this.mapControlDiv_ || null !== goog.dom.getAncestorByClass(sibling, 'vgps3-earth-control')) {
+        sibling.style.zIndex = 0;
+      } else {
+        sibling.style.zIndex = -10
+      }
     });
-    this.mapControlDiv_['__gme_ozi'] = oldIndex;
     this.earthDom_.style.zIndex = -1;
-    this.mapControlDiv_.style.zIndex = 0;
     // Create a shim so that controls appear in front of the plugin
     if (!this.shim_) {
       this.shim_ = goog.dom.iframe.createBlank(new goog.dom.DomHelper());
@@ -296,7 +296,7 @@ vgps3.earth.Earth.prototype.createEarth_ = function() {
       function(error) {
         that.logger_.severe('GE Plugin failed to start: ' + error);
         vgps3.loadMask.close();
-        // If not installed, let the plugin show the www link
+        // If not installed, let the plugin show the download GE link
         if (google.earth.isInstalled()) {
           that.gMap_.setMapTypeId(that.currentMapTypeId_);
         }
@@ -433,13 +433,17 @@ vgps3.earth.Earth.prototype.installClickHandler_ = function(source) {
 /**
  * Triggers a click on the google map when the earth gets clicked.
  *
- * @param {Object} event
+ * @param {Object} e
  *
  * @private
  */
-vgps3.earth.Earth.prototype.clickHandler_ = function(event) {
+vgps3.earth.Earth.prototype.clickHandler_ = function(e) {
+  this.logger_.info(goog.string.format(
+    'Click event lat=%.4f lon=%.4f alt=%d',
+    e.getLatitude(), e.getLongitude(), e.getAltitude())
+  );
   var mdEvent = {
-    latLng: new google.maps.LatLng(event.getLatitude(), event.getLongitude()),
+    latLng: new google.maps.LatLng(e.getLatitude(), e.getLongitude()),
     stop: goog.functions.NULL
   };
   google.maps.event.trigger(this.gMap_, 'click', mdEvent);
