@@ -106,6 +106,15 @@ vgps3.chart.Sliders.prototype.canDecorate = function(element) {
 };
 
 
+/**
+ * Redraws the sliders on resize.
+ */
+vgps3.chart.Sliders.prototype.resizeHandler = function() {
+  this.forEachChild(function(slider) {
+    slider.setVisible(true);
+  })
+}
+
 /** @override */
 vgps3.chart.Sliders.prototype.disposeInternal = function() {
   goog.base(this, 'disposeInternal');
