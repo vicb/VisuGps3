@@ -185,8 +185,6 @@ vgps3.earth.Earth.prototype.mapTypeChangeHandler_ = function() {
   if (this.gMap_.getMapTypeId() === vgps3.earth.MapTypeId.EARTH) {
     if (!this.ge_) {
       vgps3.loadMask.setMessage('Chargement de Google Earth', undefined, true);
-      this.mapCreated_.addCallback(goog.partial(vgps3.loadMask.setMessage, 'Chargement de la trace'));
-      this.trackAdded_.addCallback(vgps3.loadMask.close);
       this.createEarth_();
     }
     this.mapCreated_.addCallback(function() {
@@ -284,19 +282,17 @@ vgps3.earth.Earth.prototype.createEarth_ = function() {
         that.logger_.info('GE Plugin started');
         that.ge_ = /** @type {GEPlugin} */(ge);
         that.batchExecutor_ = vgps3.earth.DEBUG_BATCH
-          ? function(cb) {goog.bind(cb, that)(); }
+          ? function(cb) {cb.call(that);}
           : function(cb) {google.earth.executeBatch(ge, goog.bind(cb, that)); };
         that.installClickHandler_(ge.getWindow());
         that.batchExecutor_(function() {
-          ge.getWindow().setVisibility(true);
-          var navControl = ge.getNavigationControl();
-          navControl.setVisibility(ge.VISIBILITY_AUTO);
+          that.ge_.getWindow().setVisibility(true);
+          var navControl = that.ge_.getNavigationControl();
+          navControl.setVisibility(that.ge_.VISIBILITY_AUTO);
           var screen = navControl.getScreenXY();
-          screen.setYUnits(ge.UNITS_INSET_PIXELS);
-          screen.setXUnits(ge.UNITS_PIXELS);
-          // BUG: wait before using the ge plugin
-          // Note: Trust me, do not play too much with this init code !
-          goog.Timer.callOnce(that.mapCreated_.callback, 100, that.mapCreated_);
+          screen.setYUnits(that.ge_.UNITS_INSET_PIXELS);
+          screen.setXUnits(that.ge_.UNITS_PIXELS);
+          goog.Timer.callOnce(that.mapCreated_.callback, 0, that.mapCreated_);
         });
       },
       /**
@@ -447,8 +443,8 @@ vgps3.earth.Earth.prototype.installClickHandler_ = function(source) {
  */
 vgps3.earth.Earth.prototype.clickHandler_ = function(e) {
   this.logger_.info(goog.string.format(
-    'Click event lat=%.4f lon=%.4f alt=%d',
-    e.getLatitude(), e.getLongitude(), e.getAltitude())
+    'Click event lat=%.4f lon=%.4f alt=%d on %s',
+    e.getLatitude(), e.getLongitude(), e.getAltitude(), e.getTarget().getType())
   );
   var mdEvent = {
     latLng: new google.maps.LatLng(e.getLatitude(), e.getLongitude()),
@@ -490,6 +486,7 @@ vgps3.earth.Earth.prototype.trackSelectHandler_ = function(event) {
   this.trackAdded_.addCallback(function() {
     // Create the 3D model
     if (!this.orientation_) {
+      vgps3.loadMask.close();
       this.logger_.info('Creating 3D model');
       this.batchExecutor_(function() {
         var placemark = this.ge_.createPlacemark('modelPm');
@@ -543,6 +540,7 @@ vgps3.earth.Earth.prototype.displayTrack_ = function(trackIndex, fixes, trackCol
       getElevation = goog.bind(this.estimateElevation_, this, (fixes['nbChartPt'] - 1) / (fixes['nbTrackPt'] - 1)),
       elev = [];
 
+  vgps3.loadMask.setMessage('Chargement de la trace');
   this.logger_.info(goog.string.format('Displaying track[%d]', trackIndex));
 
   lineStringPm.setGeometry(lineString);
@@ -656,7 +654,7 @@ vgps3.earth.MapTypeId = {
 };
 
 /**
- * @defined {boolean} Set to true to ease debugging batch calls
+ * @define {boolean} Set to true to ease debugging batch calls
  */
 vgps3.earth.DEBUG_BATCH = false;
 
