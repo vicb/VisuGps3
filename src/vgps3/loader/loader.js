@@ -30,6 +30,12 @@ goog.require('goog.structs.Map');
  */
 vgps3.loader.loaderLoaded_;
 
+/**
+ * @type {goog.async.Deferred} Triggered when the DOM has loaded
+ * @private
+ */
+vgps3.loader.domLoaded_ = new goog.async.Deferred();
+
 
 /**
  * @type {goog.debug.Logger}
@@ -100,16 +106,21 @@ vgps3.loader.load = function(module, version, cb, opt_options) {
     });
   }
 
-  if (!goog.isDef(vgps3.loader.loaderLoaded_)) {
+  if (!vgps3.loader.loaderLoaded_) {
     vgps3.loader.logger_.info('Loading the Google API loader');
     vgps3.loader.loaderLoaded_ = goog.net.jsloader.load(vgps3.loader.LOADER_URL);
     vgps3.loader.loaderLoaded_.addCallbacks(
-        function() {vgps3.loader.logger_.info('Google API loader loaded');},
+        function() {
+          vgps3.loader.logger_.info('Google API loader loaded');
+          google.setOnLoadCallback(function() {
+            vgps3.loader.domLoaded_.callback();
+          })
+        },
         function() {vgps3.loadMask.setMessage('Erreur lors du chargement !', vgps3.loadMask.Style.ERROR);}
     );
   }
 
-  vgps3.loader.loaderLoaded_.addCallback(function() {
+  vgps3.loader.domLoaded_.addCallback(function() {
     options['callback'] = goog.partial(vgps3.loader.loadHandler_, module, v, optionsMap);
     goog.Timer.callOnce(function() {google.load(module, v, options)});
   });
