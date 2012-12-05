@@ -148,18 +148,21 @@ vgps3.earth.Earth.prototype.init = function(vgps) {
 
   vgps3.loader.load('earth', 1, vgps3.earth.geApiLoaded_);
 
+  // Ideally this should be done in the cb below but it seems not to work every time then !
+  this.gMap_.mapTypes.set(vgps3.earth.MapTypeId.EARTH, this.getMapType_());
+
   vgps3.earth.geApiLoaded_.addCallback(
       function() {
         this.logger_.info('Google Earth API loaded');
         if (google.earth.isSupported()) {
           this.logger_.info('GE Plugin supported');
-          this.gMap_.mapTypes.set(vgps3.earth.MapTypeId.EARTH, this.getMapType_());
           google.maps.event.addListener(
               this.gMap_,
               'maptypeid_changed',
               goog.bind(this.mapTypeChangeHandler_, this)
           );
         } else {
+          this.gMap_.mapTypes.set(vgps3.earth.MapTypeId.EARTH, null);
           this.getHandler().removeAll();
         }
       },
@@ -350,7 +353,7 @@ vgps3.earth.Earth.prototype.moveTo = function(position, opt_setCenter, opt_zoomO
       this.orientation_.setHeading(goog.math.standardAngle(heading + vgps3.earth.MODEL_ORIGIN_ANGLE));
 
       if (opt_setCenter) {
-        var lookAt = this.ge_.getView().copyAsLookAt(this.ge_.ALTITUDE_ABSOLUTE);
+        var lookAt = this.ge_.getView().copyAsLookAt(this.ge_.ALTITUDE_CLAMP_TO_SEA_FLOOR);
         lookAt.setLatitude(location.getLatitude());
         lookAt.setLongitude(location.getLongitude());
         lookAt.setAltitude(location.getAltitude());
@@ -358,7 +361,7 @@ vgps3.earth.Earth.prototype.moveTo = function(position, opt_setCenter, opt_zoomO
       }
 
       if (opt_zoomOffset) {
-        var lookAt = this.ge_.getView().copyAsLookAt(this.ge_.ALTITUDE_ABSOLUTE);
+        var lookAt = this.ge_.getView().copyAsLookAt(this.ge_.ALTITUDE_CLAMP_TO_SEA_FLOOR);
         lookAt.setRange(Math.pow(2, opt_zoomOffset) * lookAt.getRange());
         this.ge_.getView().setAbstractView(lookAt);
       }
