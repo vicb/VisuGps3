@@ -8,7 +8,8 @@ Powered by:
 
 - [Google Maps API v3](https://developers.google.com/maps/documentation/javascript/),
 - [Google Chart Tools](https://developers.google.com/chart/),
-- [Google Closure Tools](https://developers.google.com/closure/).
+- [Google Closure Tools](https://developers.google.com/closure/),
+- [Google Earth Plugin](http://www.google.com/earth/explore/products/plugin.html).
 
 This is the next version of [VisuGps](https://github.com/vicb/VisuGps), one of my
 first web project. It has been rewritten to leverage the latest JS API form Google
@@ -21,7 +22,11 @@ as the maps API v2 will be deprecated in 2013.
 - The track can be viewed in 3D on platforms where the [GE plugin is supported](http://www.google.com/earth/explore/products/plugin.html),
 - Display markers for routes,
 - Measure distances with the path plugin,
-- Display topographic maps for France, Spain & Switzerland.
+- Topographic maps:
+  - [France IGN](http://www.ign.fr/),
+  - [Spain IGN](http://www.ign.es/),
+  - [Switzerland SwissTopo](http://www.swisstopo.ch/),
+  - [Europe 4UMaps](http://www.4umaps.eu/).
 
 ## Roadmap
 

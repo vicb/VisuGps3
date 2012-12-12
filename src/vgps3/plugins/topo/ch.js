@@ -24,7 +24,7 @@ goog.require('vgps3.topo.AbstractTopo');
 
 
 /**
- * @constructor Spain IGN map type for google maps.
+ * @constructor Switzerland map type for google maps.
  * @extends {vgps3.topo.AbstractTopo}
  */
 vgps3.topo.ch.Map = function() {
