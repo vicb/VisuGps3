@@ -37,7 +37,7 @@ goog.inherits(vgps3.topo.eu.Map, vgps3.topo.AbstractTopo);
 vgps3.topo.eu.Map.prototype.init = function(vgps) {
   goog.base(this, 'init', vgps);
   this.setBounds_([
-    [-90, -180, 90, 180]
+    [27.06, -33.74, 61.60, 36.58]
   ]);
   this.setCopyright_('img/topo.eu.png', 'http://www.4umaps.eu/');
   this.registerMapType_(vgps3.topo.eu.MapTypeId.TERRAIN);
