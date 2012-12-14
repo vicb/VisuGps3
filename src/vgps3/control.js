@@ -101,12 +101,12 @@ vgps3.Control.prototype.update = function(opt_templateData) {
     }
 
     this.gMap_.controls[this.position_].push(
-      goog.dom.createDom(
+        goog.dom.createDom(
         'div',
         ['map-ctrl', this.extraClass_].join(' '),
         this.dom_ = goog.dom.createElement('div'),
         this.shim_
-      ));
+        ));
   }
 
   goog.soy.renderElement(

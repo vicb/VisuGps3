@@ -244,22 +244,22 @@ vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
         this.mouseWheelHandler_,
         goog.events.MouseWheelHandler.EventType.MOUSEWHEEL,
         this.handleMouseWheel_
-      )
+        )
       .listen(
         this.overlays_.getElement(),
         [goog.events.EventType.MOUSEDOWN, goog.events.EventType.MOUSEMOVE],
         this.handleMouseEvents_
-      )
+        )
       .listen(
         this.sliders_.getTitleElement(),
         goog.events.EventType.CLICK,
         goog.bind(this.dispatchEvent, this, new vgps3.chart.AboutEvent())
-      )
+        )
       .listen(
         this.vpMonitor_,
         goog.events.EventType.RESIZE,
         goog.bind(this.resizeThrottler_.fire, this.resizeThrottler_)
-      );
+        );
   }
 
   this.chartData_[event.trackIndex] = {'fixes': event.fixes};

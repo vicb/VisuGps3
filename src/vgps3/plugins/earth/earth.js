@@ -219,7 +219,7 @@ vgps3.earth.Earth.prototype.showEarth_ = function(visible) {
       if (sibling === this.mapControlDiv_ || null !== goog.dom.getAncestorByClass(sibling, 'vgps3-earth-control')) {
         sibling.style.zIndex = 0;
       } else {
-        sibling.style.zIndex = -10
+        sibling.style.zIndex = -10;
       }
     });
     this.earthDom_.style.zIndex = -1;
@@ -286,7 +286,7 @@ vgps3.earth.Earth.prototype.createEarth_ = function() {
         that.ge_ = /** @type {GEPlugin} */(ge);
         that.batchExecutor_ = vgps3.earth.DEBUG_BATCH
           ? function(cb) {cb.call(that);}
-          : function(cb) {google.earth.executeBatch(ge, goog.bind(cb, that)); };
+            : function(cb) {google.earth.executeBatch(ge, goog.bind(cb, that)); };
         that.installClickHandler_(ge.getWindow());
         that.batchExecutor_(function() {
           that.ge_.getWindow().setVisibility(true);
@@ -446,8 +446,8 @@ vgps3.earth.Earth.prototype.installClickHandler_ = function(source) {
  */
 vgps3.earth.Earth.prototype.clickHandler_ = function(e) {
   this.logger_.info(goog.string.format(
-    'Click event lat=%.4f lon=%.4f alt=%d on %s',
-    e.getLatitude(), e.getLongitude(), e.getAltitude(), e.getTarget().getType())
+      'Click event lat=%.4f lon=%.4f alt=%d on %s',
+      e.getLatitude(), e.getLongitude(), e.getAltitude(), e.getTarget().getType())
   );
   var mdEvent = {
     latLng: new google.maps.LatLng(e.getLatitude(), e.getLongitude()),
@@ -656,8 +656,9 @@ vgps3.earth.MapTypeId = {
   EARTH: 'vgps3-earth-3d'
 };
 
+
 /**
- * @define {boolean} Set to true to ease debugging batch calls
+ * @define {boolean} Set to true to ease debugging batch calls.
  */
 vgps3.earth.DEBUG_BATCH = false;
 

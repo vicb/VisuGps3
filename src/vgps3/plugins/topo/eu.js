@@ -74,6 +74,7 @@ vgps3.topo.eu.Map.prototype.getTileUrl_ = function(coord, zoom) {
       .replace('{y}', coord.y.toString(10));
 };
 
+
 /**
  * @define {string} The url for tiles.
  */

@@ -30,6 +30,7 @@ goog.require('goog.structs.Map');
  */
 vgps3.loader.loaderLoaded_;
 
+
 /**
  * @type {goog.async.Deferred} Triggered when the DOM has loaded
  * @private
@@ -114,7 +115,7 @@ vgps3.loader.load = function(module, version, cb, opt_options) {
           vgps3.loader.logger_.info('Google API loader loaded');
           google.setOnLoadCallback(function() {
             vgps3.loader.domLoaded_.callback();
-          })
+          });
         },
         function() {vgps3.loadMask.setMessage('Erreur lors du chargement !', vgps3.loadMask.Style.ERROR);}
     );

@@ -29,8 +29,8 @@ goog.require('vgps3.path.Path');
 goog.require('vgps3.route.Route');
 goog.require('vgps3.topo.ch.Map');
 goog.require('vgps3.topo.es.Map');
-goog.require('vgps3.topo.fr.Map');
 goog.require('vgps3.topo.eu.Map');
+goog.require('vgps3.topo.fr.Map');
 goog.require('vgps3.track.Track');
 
 
