@@ -1,15 +1,30 @@
 <?php
 
-if (isset($_GET['url'], $_GET['referer'], $_GET['content-type'])) {
+if (isset($_GET['url'])) {
+
+    $headers = array(
+        'Accept: */*'
+    );
+
+    if (isset($_GET['referer'])) {
+        $headers[] = 'Referer: ' . sanitizeHeader($_GET['referer']);
+    }
+
     $opts = array(
         'http' => array(
-            'header'     => "Accept: */*\r\n" .
-                            "Referer: ${_GET['referer']}\r\n",
+            'header'     => implode("\r\n", $headers) . "\r\n",
             'user-agent' => 'VisuGps3',
             'timeout'    => 5
         )
     );
 
-    header("Content-Type: ${_GET['content-type']}");
+    if (isset($_GET['content-type'])) {
+        header("Content-Type: " . sanitizeHeader($_GET['content-type']));
+    }
+
     readfile($_GET['url'], false, stream_context_create($opts));
+}
+
+function sanitizeHeader($header) {
+    return preg_replace('/[\r\n]/', '', $header);
 }

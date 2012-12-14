@@ -26,6 +26,7 @@ goog.require('goog.structs.Map');
 goog.require('vgps3.airspace.Airspace');
 goog.require('vgps3.chart.Chart');
 goog.require('vgps3.earth.Earth');
+goog.require('vgps3.cesium.Cesium');
 goog.require('vgps3.path.Path');
 goog.require('vgps3.route.Route');
 goog.require('vgps3.skyways.Skyways');
@@ -65,7 +66,8 @@ vgps3.Viewer = function(mapContainer, chartContainer) {
     'earth': new vgps3.earth.Earth(),
     'path': new vgps3.path.Path(),
     'airspace': new vgps3.airspace.Airspace(),
-    'skyways': new vgps3.skyways.Skyways()
+    'skyways': new vgps3.skyways.Skyways(),
+    'cesium': new vgps3.cesium.Cesium()
   };
 
   /**
@@ -89,6 +91,7 @@ vgps3.Viewer = function(mapContainer, chartContainer) {
             vgps3.topo.ch.MapTypeId.TERRAIN,
             vgps3.topo.es.MapTypeId.TERRAIN,
             vgps3.topo.eu.MapTypeId.TERRAIN,
+            vgps3.cesium.MapTypeId.EARTH,
             vgps3.earth.MapTypeId.EARTH
           ],
           style: google.maps.MapTypeControlStyle.DROPDOWN_MENU

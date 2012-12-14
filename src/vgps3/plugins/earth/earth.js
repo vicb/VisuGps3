@@ -573,7 +573,7 @@ vgps3.earth.Earth.prototype.displayTrack_ = function(trackIndex, fixes, trackCol
 
   this.logger_.info(goog.string.format('Track[%d] added', trackIndex));
 
-  if (!goog.isDef(this.location_)) {
+  if (!this.location_) {
     this.location_ = null;
     this.batchExecutor_(function() {
       // Location where to first display the 3D model

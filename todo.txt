@@ -1,3 +1,17 @@
+- more lazy loading:
+  - create objs when needed (ie Deferred in earth & cesium)
+
+- disposeable webgl
+
+- copyright logo as data (base64)
+
+- map provider: make it agnostic (gmap)
+
+- DropDown Control
+  - iframe to be on top of GE
+  - make title & arrow not selectable
+  - padding in ddc-dropdown for the arrow
+
 - Dispose: check & add to avoid leaks
   - https://wiki.mozilla.org/Performance%3aLeak_Tools
   - https://addons.mozilla.org/en-US/firefox/addon/leak-monitor/
@@ -14,6 +28,8 @@
 
 - capture slider events
 
+- support for history (pushState)
+
 - minify CSS
 
 - i18n
@@ -24,3 +40,7 @@
   - vs distance (in addition to vs time)
   - allow to specify displayed charts
 
+- topo.no
+
+http://translate.googleusercontent.com/translate_c?act=url&depth=1&hl=en&ie=UTF8&prev=_t&rurl=translate.google.com&sl=auto&tl=en&u=http://www.statkart.no/%3Fmodule%3DArticles%3Baction%3DArticle.publicShow%3BID%3D14165/&usg=ALkJrhi3mqKpbl91lgSQ-U6SQXFECS4WvA
+(c) http://translate.google.com/translate?sl=auto&tl=en&js=n&prev=_t&hl=en&ie=UTF-8&eotf=1&u=http%3A%2F%2Fwww.statkart.no%2Fnor%2FLand%2FKart_og_produkter%2Fvisningstjenester%2F&act=url
