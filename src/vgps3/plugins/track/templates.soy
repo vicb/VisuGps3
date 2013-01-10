@@ -18,7 +18,7 @@
   <h3>...iNfO</h3>
   <ul>
     <li>{$fixes['elev'][$index]}m [hV]</li>
-    <li>{$fixes['elevGnd'][$index]}m [hS]</li>
+    <li>{max($fixes['elev'][$index] - $fixes['elevGnd'][$index], 0)}m [hS]</li>
     <li>{$fixes['vario'][$index]}m/s [Vz]</li>
     <li>{$fixes['speed'][$index]}km/h [Vx]</li>
     <li>{$fixes['time']['hour'][$index]}:{$fixes['time']['min'][$index]}:{$fixes['time']['sec'][$index]} [Th]</li>
