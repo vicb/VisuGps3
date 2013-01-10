@@ -130,9 +130,11 @@ vgps3.path.Path.prototype.clickHandler_ = function(event) {
       }
     }
 
+    var mapViewSpan = this.gMap_.getBounds().toSpan();
+
     this.line_.setPath([
-      google.maps.geometry.spherical.computeOffset(center, 15000, 270),
-      google.maps.geometry.spherical.computeOffset(center, 15000, 90)
+      new google.maps.LatLng(center.lat(), center.lng() + mapViewSpan.lng() / 5),
+      new google.maps.LatLng(center.lat(), center.lng() - mapViewSpan.lng() / 5)
     ]);
     this.line_.setVisible(true);
     this.updateControl_();
