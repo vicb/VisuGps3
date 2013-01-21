@@ -15,9 +15,9 @@
 
 goog.provide('vgps3.route.Route');
 
+goog.require('goog.array');
 goog.require('vgps3.Map');
 goog.require('vgps3.PluginBase');
-goog.require('goog.array');
 
 
 

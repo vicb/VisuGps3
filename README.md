@@ -9,7 +9,8 @@ Powered by:
 - [Google Maps API v3](https://developers.google.com/maps/documentation/javascript/),
 - [Google Chart Tools](https://developers.google.com/chart/),
 - [Google Closure Tools](https://developers.google.com/closure/),
-- [Google Earth Plugin](http://www.google.com/earth/explore/products/plugin.html).
+- [Google Earth Plugin](http://www.google.com/earth/explore/products/plugin.html),
+- [Font Awesome](http://fortawesome.github.com/Font-Awesome/).
 
 This is the next version of [VisuGps](https://github.com/vicb/VisuGps), one of my
 first web project. It has been rewritten to leverage the latest JS API form Google
@@ -30,13 +31,13 @@ as the maps API v2 will be deprecated in 2013.
 
 ## Roadmap
 
-### v3.0 ... soon (12/12)
+### v3.0
 
 - Multiple tracks support
+- Airspace support
 
 ### v3.1
 
-- Airspace support (OpenAir format)
 - Rewritten track parsers (PHP)
 - use GeoJSON ?
 
