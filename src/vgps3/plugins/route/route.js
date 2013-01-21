@@ -17,6 +17,7 @@ goog.provide('vgps3.route.Route');
 
 goog.require('vgps3.Map');
 goog.require('vgps3.PluginBase');
+goog.require('goog.array');
 
 
 
@@ -43,12 +44,14 @@ goog.inherits(vgps3.route.Route, vgps3.PluginBase);
  * @param {Array.<google.maps.LatLng>} turnpoints
  * @param {google.maps.LatLng=} opt_start
  * @param {google.maps.LatLng=} opt_end
+ * @param {google.maps.LatLng=} opt_center
  */
-vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end) {
+vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end, opt_center) {
   var startIcon = new google.maps.MarkerImage(vgps3.route.START_ICON_URL, new google.maps.Size(12, 20)),
       endIcon = new google.maps.MarkerImage(vgps3.route.END_ICON_URL, new google.maps.Size(12, 20)),
       icon = new google.maps.MarkerImage(vgps3.route.ICON_URL, new google.maps.Size(12, 20)),
-      closed = type.length && type.substr(-1) === 'c';
+      closed = type.length && type.substr(-1) === 'c',
+      bounds = new google.maps.LatLngBounds();
 
   this.overlays_.push(new google.maps.Polyline({
     clickable: false,
@@ -59,7 +62,12 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end
     strokeWeight: 1
   }));
 
+  goog.array.forEach(turnpoints, function(tp) {
+    bounds.extend(tp);
+  });
+
   if (closed && goog.isDef(opt_start)) {
+    bounds.extend(opt_start);
     this.overlays_.push(new google.maps.Polyline({
       clickable: false,
       map: this.gMap_,
@@ -71,6 +79,7 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end
   }
 
   if (closed && goog.isDef(opt_end)) {
+    bounds.extend(opt_end);
     this.overlays_.push(new google.maps.Polyline({
       clickable: false,
       map: this.gMap_,
@@ -108,6 +117,10 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end
       },
       this
   );
+
+  if (opt_center) {
+    this.gMap_.fitBounds(bounds);
+  }
 };
 
 

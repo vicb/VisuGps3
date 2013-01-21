@@ -141,11 +141,13 @@ vgps3.Viewer.prototype.parseUrl_ = function(url) {
       routeType = uri.getParameterValue('flightType'),
       turnpoints = uri.getParameterValues('turnpoints'),
       start = uri.getParameterValue('start'),
-      end = uri.getParameterValue('end');
+      end = uri.getParameterValue('end'),
+      hasTrack = false;
 
   goog.array.forEach(
       uri.getParameterValues('track') || [],
       function(track) {
+        hasTrack = true;
         this.logger_.info('Loading track: ' + track);
         this.plugins['track'].load(track);
       },
@@ -158,7 +160,8 @@ vgps3.Viewer.prototype.parseUrl_ = function(url) {
         routeType,
         turnpoints,
         start ? this.array2LatLng_(/** @type {!Array.<number>} */(goog.json.parse(start))) : undefined,
-        end ? this.array2LatLng_(/** @type {!Array.<number>} */(goog.json.parse(end))) : undefined
+        end ? this.array2LatLng_(/** @type {!Array.<number>} */(goog.json.parse(end))) : undefined,
+        !hasTrack
     );
   }
 };

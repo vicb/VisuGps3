@@ -59,6 +59,12 @@ vgps3.track.Track = function() {
   this.currentTrackIndex_;
 
   /**
+   * @type {boolean} Whether a load request has been queued
+   * @private
+   */
+  this.jsonRequest_ = false;
+
+  /**
    * @type {google.maps.Marker} The marker for the current position (on any track)
    * @private
    */
@@ -83,8 +89,6 @@ vgps3.track.Track = function() {
   this.logger_ = goog.debug.Logger.getLogger('vgps3.track.Track');
 
   goog.base(this);
-
-  vgps3.loadMask.setMessage('Chargement de la trace', undefined, true);
 };
 goog.inherits(vgps3.track.Track, vgps3.PluginBase);
 
@@ -112,6 +116,10 @@ vgps3.track.Track.prototype.requireGoogleMapLibs = function() {
  * @param {string} url The track url.
  */
 vgps3.track.Track.prototype.load = function(url) {
+  if (!this.jsonRequest_) {
+    vgps3.loadMask.setMessage('Chargement de la trace', undefined, true);
+    this.jsonRequest_ = true;
+  }
   goog.net.XhrIo.send(vgps3.track.PROXY_URL + url, goog.bind(this.trackLoadHandler_, this, url));
 };
 
