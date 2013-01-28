@@ -152,7 +152,14 @@ vgps3.path.Path.prototype.clickHandler_ = function(event) {
 vgps3.path.Path.prototype.createLine_ = function() {
   var that = this;
 
-  this.line_ = new google.maps.Polyline({editable: true, map: this.gMap_, strokeColor: 'black', strokeWeight: 4, zIndex: 100});
+  this.line_ = new google.maps.Polyline({
+    editable: true,
+    draggable: true,
+    map: this.gMap_,
+    strokeColor: 'black',
+    strokeWeight: 4,
+    zIndex: 100
+  });
 
   google.maps.event.addListener(this.line_, 'mousemove', goog.bind(that.updateControl_, that));
 
