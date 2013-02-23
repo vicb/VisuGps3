@@ -140,7 +140,7 @@ vgps3.topo.es.Map.prototype.getMapType_ = function() {
     tileSize: new google.maps.Size(256, 256),
     minZoom: vgps3.topo.es.ZOOM_OFFSET,
     maxZoom: 18,
-    name: 'TopoES',
+    name: 'Espagne',
     alt: 'Cartes IGN Espagne'
   });
 

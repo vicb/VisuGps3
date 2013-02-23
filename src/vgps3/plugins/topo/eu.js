@@ -53,7 +53,7 @@ vgps3.topo.eu.Map.prototype.getMapType_ = function() {
     tileSize: new google.maps.Size(256, 256),
     minZoom: 6,
     maxZoom: 15,
-    name: 'TopoEU',
+    name: 'Europe',
     alt: 'Cartes Europe'
   });
 };

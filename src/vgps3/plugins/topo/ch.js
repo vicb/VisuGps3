@@ -133,7 +133,7 @@ vgps3.topo.ch.Map.prototype.getMapType_ = function() {
     tileSize: new google.maps.Size(256, 256),
     minZoom: 5,
     maxZoom: 18,
-    name: 'TopoCH',
+    name: 'Suisse',
     alt: 'Cartes de Suisse'
   });
 

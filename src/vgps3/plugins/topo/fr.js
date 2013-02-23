@@ -77,7 +77,7 @@ vgps3.topo.fr.Map.prototype.getMapType_ = function() {
     tileSize: new google.maps.Size(256, 256),
     minZoom: 6,
     maxZoom: 17,
-    name: 'TopoFR',
+    name: 'France',
     alt: 'Cartes IGN France'
   });
 };
