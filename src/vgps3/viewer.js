@@ -86,7 +86,8 @@ vgps3.Viewer = function(mapContainer, chartContainer) {
             vgps3.topo.es.MapTypeId.TERRAIN,
             vgps3.topo.eu.MapTypeId.TERRAIN,
             vgps3.earth.MapTypeId.EARTH
-          ]
+          ],
+          style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
         }
       };
       },
