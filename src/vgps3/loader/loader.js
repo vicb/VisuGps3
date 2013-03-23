@@ -1,5 +1,5 @@
 /**
- * Copyright 2012 Victor Berchet.
+ * Copyright Victor Berchet.
  *
  * VisuGps3
  *
