@@ -217,14 +217,19 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
     bounds.extend(point);
   }
 
+  gpsFixes['maxElev'] = 0;
+
   for (var i = 0, elev; i < gpsFixes['nbChartPt']; i++) {
     elev = goog.math.clamp(gpsFixes['elev'][i], 0, vgps3.track.MAX_ELEV);
     gpsFixes['elev'][i] = elev;
+    gpsFixes['maxElev'] = Math.max(elev, gpsFixes['maxElev']);
     maxElevation = Math.max(maxElevation, elev);
     minElevation = Math.min(minElevation, elev);
     gpsFixes['speed'][i] = Math.min(vgps3.track.MAX_SPEED, gpsFixes['speed'][i]);
     gpsFixes['vario'][i] = Math.min(vgps3.track.MAX_VARIO, gpsFixes['vario'][i]);
   }
+
+
 
   this.tracks_[trackIndex].bounds = bounds;
   this.tracks_[trackIndex].color = this.getTrackColor_(trackIndex);
@@ -550,6 +555,7 @@ vgps3.track.Date;
  * @typedef {{
  *   time: vgps3.track.Time,
  *   elev: !Array.<number>,
+ *   maxElev: number,
  *   elevGnd: !Array.<number>,
  *   speed: !Array.<number>,
  *   vario: !Array.<number>,

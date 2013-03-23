@@ -63,6 +63,10 @@ body {
     margin: 0;
 }
 
+.map-ctrl i {
+    margin-left: 5px;
+}
+
 .vgps3-topo-logo {
   margin: 2px 5px;
 }
@@ -149,4 +153,22 @@ body {
 
 .vgps3-progress p.error {
     color: red;
+}
+
+.vgps3-as-info {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.vgps3-as-title {
+    font-size: larger;
+    font-weight: bold;
+    font-variant: small-caps;
+    text-decoration: none;
+}
+
+.vgps3-as-info a:link,.vgps3-as-info a:visited, .vgps3-as-info a:active, .vgps3-as-info a:hover {
+    text-decoration: none;
+    color: inherit;
 }

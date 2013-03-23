@@ -105,6 +105,7 @@ vgps3.path.Path.prototype.disposeInternal = function() {
  * Toggles distance visibility when the control is clicked.
  *
  * @param {goog.events.Event} event
+ * @private
  */
 vgps3.path.Path.prototype.clickHandler_ = function(event) {
   /**

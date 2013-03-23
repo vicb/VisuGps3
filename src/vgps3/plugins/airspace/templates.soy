@@ -1,0 +1,34 @@
+/**
+ * Copyright 2012 Victor Berchet
+ *
+ * This file is part of VisuGps3
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ */
+
+{namespace vgps3.airspace.templates}
+
+/**
+ * @param row
+ */
+{template .infoWindow}
+  <ul class="vgps3-as-info">
+    <li class="vgps3-as-title"><a href="{$row['url'].value}">{$row['name'].value}</a></li>
+    <li><strong>class:</strong> {$row['class'].value}</li>
+    <li><strong>altitude:</strong> {$row['floor'].value} &#x21a6; {$row['ceiling'].value}</li>
+  </ul>
+{/template}
+
+/**
+ * @param maxAltitude
+ */
+{template .asControl}
+  <select id="vgps3-as-altitude">
+    {for $v in range(1, $maxAltitude + 1)}
+    <option value="{$v}" {if $v == 1}selected{/if}>{$v}000m</option>
+    {/for}
+  </select>
+  <i class="icon-plane"></i>
+{/template}

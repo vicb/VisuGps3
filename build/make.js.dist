@@ -7,7 +7,8 @@
     "goog.DEBUG": false,
     "goog.Disposable.MONITORING_MODE": 0,
     "vgps3.topo.fr.API_KEYS": 'domain1="key1" domain2="key2" *="fallback key"',
-    "vgps3.Map.GOOGLE_API_KEYS": 'domain1="key1" domain2="key2" *="fallback key"'
+    "vgps3.Map.GOOGLE_API_KEYS": 'domain1="key1" domain2="key2" *="fallback key"',
+    "vgps3.airspace.FUSION_TABLE_ID": "Encrypted ID of the fusion table"
   },
   "debug": false,
   "pretty-print": false,

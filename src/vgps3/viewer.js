@@ -23,6 +23,7 @@ goog.require('goog.events');
 goog.require('goog.json');
 goog.require('goog.object');
 goog.require('goog.structs.Map');
+goog.require('vgps3.airspace.Airspace');
 goog.require('vgps3.chart.Chart');
 goog.require('vgps3.earth.Earth');
 goog.require('vgps3.path.Path');
@@ -61,7 +62,8 @@ vgps3.Viewer = function(mapContainer, chartContainer) {
     'topoeu': new vgps3.topo.eu.Map(),
     'route': new vgps3.route.Route(),
     'earth': new vgps3.earth.Earth(),
-    'path': new vgps3.path.Path()
+    'path': new vgps3.path.Path(),
+    'airspace': new vgps3.airspace.Airspace()
   };
 
   /**
