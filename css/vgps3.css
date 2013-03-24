@@ -63,7 +63,7 @@ body {
     margin: 0;
 }
 
-.map-ctrl i {
+.map-ctrl [class^="icon-"] {
     margin-left: 5px;
 }
 
@@ -121,7 +121,8 @@ body {
 }
 
 #about-social {
-    margin-left: -1.34em;
+    padding-left: 10px;
+    list-style-type: none;
 }
 
 .goog-modalpopup-bg {

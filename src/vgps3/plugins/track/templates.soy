@@ -15,7 +15,7 @@
  * @param index
  */
 {template .infoControl}
-  <h3>...iNfO</h3>
+  <h3 class="icon-info-sign icon-2x"></h3>
   <ul>
     <li>{$fixes['elev'][$index]}m [hV]</li>
     <li>{max($fixes['elev'][$index] - $fixes['elevGnd'][$index], 0)}m [hS]</li>
@@ -30,10 +30,13 @@
  * @param pilot
  */
 {template .dateControl}
-  <ul>
+  <div>
+  <span class="{if $pilot}icon-user{else}icon-calendar{/if} icon-2x"></span>
+  <ul class="pull-left">
     <li>{$date['day']}/{$date['month']}/{$date['year']}</li>
     {if $pilot}
       <li>{$pilot}</li>
     {/if}
   </ul>
+  <div>
 {/template}

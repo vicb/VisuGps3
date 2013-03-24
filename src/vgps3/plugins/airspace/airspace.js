@@ -85,6 +85,7 @@ vgps3.airspace.Airspace.prototype.init = function(vgps) {
   this.control_.update({maxAltitude: vgps3.airspace.MAX_ALTITUDE});
   this.handle_ = goog.dom.getLastElementChild(this.control_.getElement());
   this.select_ = goog.dom.getFirstElementChild(this.control_.getElement());
+  goog.style.setStyle(this.handle_, 'cursor', 'pointer');
   goog.style.showElement(this.select_, false);
   this.getHandler()
     .listen(this.handle_, 'mousedown', this.clickhandle_)
