@@ -23,6 +23,7 @@ as the maps API v2 will be deprecated in 2013.
 - The track can be viewed in 3D on platforms where the [GE plugin is supported](http://www.google.com/earth/explore/products/plugin.html),
 - Display markers for routes,
 - Measure distances with the path plugin,
+- Display restricted airspaces,
 - Topographic maps:
   - [France IGN](http://www.ign.fr/),
   - [Spain IGN](http://www.ign.es/),
@@ -31,15 +32,12 @@ as the maps API v2 will be deprecated in 2013.
 
 ## Roadmap
 
-### v3.0
+### future versions
 
-- Multiple tracks support
-- Airspace support
-
-### v3.1
-
-- Rewritten track parsers (PHP)
+- Integrate [Cesium](http://cesium.agi.com/) for 3D,
+- Rewritten track parsers (PHP / Python),
 - use GeoJSON ?
+
 
 ## Contributors
 
