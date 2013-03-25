@@ -15,7 +15,7 @@
     cursor: pointer;
     text-align: center;
     overflow: hidden;
-    background-color: #000000;
+    background-color: #adff2f;
 }
 
 .vgps3-sliders-title h1 {
@@ -24,7 +24,6 @@
     position: absolute;
     top: 50%;
     margin: -.5em 0 0 .5em;
-    color: white;
 }
 
 
@@ -58,3 +57,4 @@
     background-color: #898989;
     cursor: col-resize;
 }
+

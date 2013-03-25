@@ -33,7 +33,7 @@ body {
     top: 0;
     right: 0;
     height: 100%;
-    width: 5%;
+    width: 7em;
     background: -webkit-linear-gradient(left,white, #333);
     background: -moz-linear-gradient(left,white, #333);
     background: -ms-linear-gradient(left,white, #333);
@@ -45,7 +45,7 @@ body {
     border: 1px inset #555555;
     padding: 4px;
     margin: 2px 5px;
-    background-color: yellowgreen;
+    background-color: #adff2f;
     text-align: right;
     border-radius: 4px;
     opacity: 0.9;
@@ -73,7 +73,7 @@ body {
 
 .modal-dialog {
   font-size: 14px;
-  border: 1px solid #000;
+  border: 1px solid #006400;
   color: #000;
   position: absolute;
   box-shadow: 4px 4px 2px rgba(100, 100, 100, 0.6);
@@ -84,7 +84,7 @@ body {
 .modal-dialog a,
 .modal-dialog a:link,
 .modal-dialog a:visited  {
-  color: #06c;
+  color: #228b22;
   cursor: pointer;
 }
 
@@ -96,7 +96,7 @@ body {
 }
 
 .modal-dialog-title {
-  background: black;
+  background: #228b22;
   color: white;
   cursor: pointer;
   font-size: 120%;
@@ -110,6 +110,7 @@ body {
 .modal-dialog-content {
   background-color: #fff;
   padding: 8px;
+  opacity: 0.9;
 }
 
 .modal-dialog-buttons {
