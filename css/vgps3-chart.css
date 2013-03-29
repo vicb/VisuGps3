@@ -8,11 +8,6 @@
     z-index: 1000;
 }
 
-#charts {
-    background: white;
-    z-index: -500;
-}
-
 .vgps3-sliders-title {
     position: relative;
     width: 100%;
