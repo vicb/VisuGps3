@@ -172,9 +172,11 @@ vgps3.airspace.Airspace.prototype.trackLoadhandle_ = function(event) {
  */
 vgps3.airspace.Airspace.prototype.disposeInternal = function() {
   goog.base(this, 'disposeInternal');
-  google.maps.event.clearInstanceListeners(this.layer_);
-  this.layer_.setMap(null);
-  delete this.layer_;
+  if (this.layer_) {
+    google.maps.event.clearInstanceListeners(this.layer_);
+    this.layer_.setMap(null);
+    delete this.layer_;
+  }
   goog.dom.removeChildren(this.control_.getElement());
   delete this.handle_;
   delete this.select_;
