@@ -160,12 +160,12 @@ vgps3.topo.es.Map.prototype.getTileUrl_ = function(coord, zoom) {
     return null;
   }
   return vgps3.topo.es.TILES_URL
-        .replace('{server}', (vgps3.topo.es.serverIndex_++ % 5).toString(10))
+        .replace('{server}', (vgps3.topo.es.serverIndex_++ % 5).toString())
         .replace('{layer}', this.getLayerName_(zoom))
-        .replace('{zone}', this.zone_.toString(10))
-        .replace('{scale}', (2048 / Math.pow(2, zoom - vgps3.topo.es.ZOOM_OFFSET) * 1000).toString(10))
-        .replace('{x}', (((coord.x % numTiles) + numTiles) % numTiles).toString(10))
-        .replace('{y}', (-coord.y - 1).toString(10));
+        .replace('{zone}', this.zone_.toString())
+        .replace('{scale}', (2048 / Math.pow(2, zoom - vgps3.topo.es.ZOOM_OFFSET) * 1000).toString())
+        .replace('{x}', (((coord.x % numTiles) + numTiles) % numTiles).toString())
+        .replace('{y}', (-coord.y - 1).toString());
 };
 
 

@@ -93,9 +93,9 @@ vgps3.topo.fr.Map.prototype.getTileUrl_ = function(coord, zoom) {
   }
 
   return this.tilesUrl_
-      .replace('{zoom}', zoom.toString(10))
-      .replace('{x}', (((coord.x % numTiles) + numTiles) % numTiles).toString(10))
-      .replace('{y}', coord.y.toString(10))
+      .replace('{zoom}', zoom.toString())
+      .replace('{x}', (((coord.x % numTiles) + numTiles) % numTiles).toString())
+      .replace('{y}', coord.y.toString())
       .replace('{layer}', 'GEOGRAPHICALGRIDSYSTEMS.MAPS');
 };
 

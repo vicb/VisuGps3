@@ -69,9 +69,9 @@ vgps3.topo.eu.Map.prototype.getTileUrl_ = function(coord, zoom) {
   }
 
   return vgps3.topo.eu.TILES_URL
-      .replace('{zoom}', zoom.toString(10))
-      .replace('{x}', (((coord.x % numTiles) + numTiles) % numTiles).toString(10))
-      .replace('{y}', coord.y.toString(10));
+      .replace('{zoom}', zoom.toString())
+      .replace('{x}', (((coord.x % numTiles) + numTiles) % numTiles).toString())
+      .replace('{y}', coord.y.toString());
 };
 
 

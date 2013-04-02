@@ -154,11 +154,11 @@ vgps3.topo.ch.Map.prototype.getTileUrl_ = function(coord, zoom) {
     return null;
   }
   return vgps3.topo.ch.TILES_URL
-      .replace('{server}', (vgps3.topo.ch.serverIndex_++ % 4).toString(10))
-      .replace('{y}', coord.y.toString(10))
-      .replace('{x}', (coord.x).toString(10))
+      .replace('{server}', (vgps3.topo.ch.serverIndex_++ % 4).toString())
+      .replace('{y}', coord.y.toString())
+      .replace('{x}', (coord.x).toString())
       .replace('{proj}', '21781')
-      .replace('{zoom}', vgps3.topo.ch.PARAMETERS[this.previousZoom_].zoom.toString(10))
+      .replace('{zoom}', vgps3.topo.ch.PARAMETERS[this.previousZoom_].zoom.toString())
       .replace('{date}', '20120809')
       .replace('{layer}', 'ch.swisstopo.pixelkarte-farbe');
 };
