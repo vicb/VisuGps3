@@ -32,7 +32,7 @@ vgps3.skyways.Skyways = function() {
    *  @type {google.maps.ImageMapType}
    *  @private
    */
-  this.map;
+  this.map_;
 
   /**
    * @type {vgps3.Control} The google map control
@@ -52,6 +52,12 @@ vgps3.skyways.Skyways = function() {
    * @private
    */
   this.visible_ = false;
+
+  /**
+   * @type {Element} The copyright
+   * @protected
+   */
+  this.copyright_;
 
   goog.base(this);
 };
@@ -73,7 +79,8 @@ vgps3.skyways.Skyways.prototype.init = function(vgps) {
   this.control_.update();
   var element = this.control_.getElement();
   goog.style.setStyle(element, 'cursor', 'pointer');
-  this.url_ = vgps3.skyways.LAYER_URL.replace('{domain}', document.domain);
+  this.url_ = vgps3.skyways.TILES_URL.replace('{domain}', document.domain);
+  this.createCopyright_(vgps3.skyways.COPYRIGHT, vgps3.skyways.URL);
   this.getHandler().listen(element, 'mousedown', this.clickHandler_);
 };
 
@@ -100,6 +107,7 @@ vgps3.skyways.Skyways.prototype.clickHandler_ = function (event) {
     });
   }
   this.visible_ = !this.visible_;
+  goog.style.showElement(this.copyright_, this.visible_);
 };
 
 /**
@@ -128,6 +136,26 @@ vgps3.skyways.Skyways.prototype.getMapType_ = function() {
   return mapType;
 };
 
+/**
+ * Create a copyright control on the map
+ *
+ * @param {string} text Copyright
+ * @param {string} url  Link target.
+ *
+ * @private
+ */
+vgps3.skyways.Skyways.prototype.createCopyright_ = function(text, url) {
+  this.copyright_ = goog.dom.createDom(
+    'a',
+    {'target': '_blank', 'href': url, 'class': 'vgps3-topo-logo'},
+    text
+  );
+
+  this.gMap_.controls[google.maps.ControlPosition.BOTTOM_RIGHT].push(this.copyright_);
+
+  goog.style.showElement(this.copyright_, false);
+};
+
 
 /**
  * @override
@@ -138,7 +166,8 @@ vgps3.skyways.Skyways.prototype.disposeInternal = function() {
     this.layer_.setMap(null);
     delete this.layer_;
   }
-  goog.dom.removeChildren(this.control_.getElement());
+  goog.dom.removeNode(this.copyright_);
+  goog.dom.removeNode(this.control_.getElement());
   goog.dispose(this.control_);
 };
 
@@ -146,6 +175,16 @@ vgps3.skyways.Skyways.prototype.disposeInternal = function() {
 /**
  * @define {string} The skyways tiles URL
  */
-vgps3.skyways.LAYER_URL = 'http://thermal.kk7.ch/php/tile.php?typ=skyways&t=all&z={zoom}&x={x}&y={y}&src={domain}';
+vgps3.skyways.TILES_URL = 'http://thermal.kk7.ch/php/tile.php?typ=skyways&t=all&z={zoom}&x={x}&y={y}&src={domain}';
+
+/**
+ * @define {string} The skyways website
+ */
+vgps3.skyways.URL = 'http://thermal.kk7.ch';
+
+/**
+ * @define {string} The skyways copyright
+ */
+vgps3.skyways.COPYRIGHT = 'thermal.kk7.ch ©';
 
 goog.exportSymbol('vgps3.skyways.Skyways', vgps3.skyways.Skyways);

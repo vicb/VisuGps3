@@ -69,6 +69,9 @@ body {
 
 .vgps3-topo-logo {
   margin: 2px 5px;
+  background: white;
+  color: black;
+  text-decoration: none;
 }
 
 .modal-dialog {
