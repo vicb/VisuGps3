@@ -33,7 +33,7 @@ goog.require('vgps3.topo.es.Map');
 goog.require('vgps3.topo.eu.Map');
 goog.require('vgps3.topo.fr.Map');
 goog.require('vgps3.track.Track');
-
+goog.require('vgps3.skyways.Skyways');
 
 
 /**
@@ -63,7 +63,8 @@ vgps3.Viewer = function(mapContainer, chartContainer) {
     'route': new vgps3.route.Route(),
     'earth': new vgps3.earth.Earth(),
     'path': new vgps3.path.Path(),
-    'airspace': new vgps3.airspace.Airspace()
+    'airspace': new vgps3.airspace.Airspace(),
+    'skyways': new vgps3.skyways.Skyways()
   };
 
   /**
