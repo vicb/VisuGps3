@@ -23,6 +23,7 @@ goog.require('vgps3.PluginBase');
 goog.require('vgps3.skyways.templates');
 
 
+
 /**
  * @constructor
  * @extends {vgps3.PluginBase}
@@ -84,13 +85,14 @@ vgps3.skyways.Skyways.prototype.init = function(vgps) {
   this.getHandler().listen(element, 'mousedown', this.clickHandler_);
 };
 
+
 /**
  * Toggles airspace visibility when the handler is clicked.
  *
  * @param {goog.events.Event} event
  * @private
  */
-vgps3.skyways.Skyways.prototype.clickHandler_ = function (event) {
+vgps3.skyways.Skyways.prototype.clickHandler_ = function(event) {
   if (!this.visible_) {
     if (!this.map_) {
       this.map_ = this.getMapType_();
@@ -98,9 +100,9 @@ vgps3.skyways.Skyways.prototype.clickHandler_ = function (event) {
     this.gMap_.overlayMapTypes.insertAt(0, this.map_);
   } else {
     var overlays = this.gMap_.overlayMapTypes,
-        map = this.map_
-    ;
-    overlays.forEach(function (overlay, index) {
+        map = this.map_;
+
+    overlays.forEach(function(overlay, index) {
       if (overlay === map) {
         overlays.removeAt(index);
       }
@@ -110,10 +112,11 @@ vgps3.skyways.Skyways.prototype.clickHandler_ = function (event) {
   goog.style.showElement(this.copyright_, this.visible_);
 };
 
+
 /**
  * Create the Skyways map type.
  *
- * @returns {google.maps.ImageMapType}
+ * @return {google.maps.ImageMapType}
  * @private
  */
 vgps3.skyways.Skyways.prototype.getMapType_ = function() {
@@ -123,8 +126,8 @@ vgps3.skyways.Skyways.prototype.getMapType_ = function() {
       return url
         .replace('{x}', coord.x)
         .replace('{y}', ((1 << zoom) - coord.y - 1).toString())
-        .replace('{zoom}', zoom)
-      ;
+        .replace('{zoom}', zoom);
+
     },
     tileSize: new google.maps.Size(256, 256),
     opacity: 0.5,
@@ -136,20 +139,21 @@ vgps3.skyways.Skyways.prototype.getMapType_ = function() {
   return mapType;
 };
 
+
 /**
  * Create a copyright control on the map
  *
- * @param {string} text Copyright
+ * @param {string} text Copyright.
  * @param {string} url  Link target.
  *
  * @private
  */
 vgps3.skyways.Skyways.prototype.createCopyright_ = function(text, url) {
   this.copyright_ = goog.dom.createDom(
-    'a',
-    {'target': '_blank', 'href': url, 'class': 'vgps3-topo-logo'},
-    text
-  );
+      'a',
+      {'target': '_blank', 'href': url, 'class': 'vgps3-topo-logo'},
+      text
+      );
 
   this.gMap_.controls[google.maps.ControlPosition.BOTTOM_RIGHT].push(this.copyright_);
 
@@ -173,17 +177,19 @@ vgps3.skyways.Skyways.prototype.disposeInternal = function() {
 
 
 /**
- * @define {string} The skyways tiles URL
+ * @define {string} The skyways tiles URL.
  */
 vgps3.skyways.TILES_URL = 'http://thermal.kk7.ch/php/tile.php?typ=skyways&t=all&z={zoom}&x={x}&y={y}&src={domain}';
 
+
 /**
- * @define {string} The skyways website
+ * @define {string} The skyways website.
  */
 vgps3.skyways.URL = 'http://thermal.kk7.ch';
 
+
 /**
- * @define {string} The skyways copyright
+ * @define {string} The skyways copyright.
  */
 vgps3.skyways.COPYRIGHT = 'thermal.kk7.ch ©';
 

@@ -296,6 +296,7 @@ vgps3.chart.Chart.prototype.resizeHandler_ = function() {
   this.sliders_.resizeHandler();
 };
 
+
 /**
  * Sets the charts container size.
  *
@@ -307,7 +308,8 @@ vgps3.chart.Chart.prototype.resizeCharts_ = function() {
       container = goog.dom.getElement('charts-container');
 
   goog.style.setWidth(charts, goog.style.getSize(container).width - goog.style.getSize(sliders).width);
-}
+};
+
 
 /**
  * Draw all the charts.

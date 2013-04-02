@@ -28,12 +28,13 @@ goog.require('vgps3.chart.Chart');
 goog.require('vgps3.earth.Earth');
 goog.require('vgps3.path.Path');
 goog.require('vgps3.route.Route');
+goog.require('vgps3.skyways.Skyways');
 goog.require('vgps3.topo.ch.Map');
 goog.require('vgps3.topo.es.Map');
 goog.require('vgps3.topo.eu.Map');
 goog.require('vgps3.topo.fr.Map');
 goog.require('vgps3.track.Track');
-goog.require('vgps3.skyways.Skyways');
+
 
 
 /**
