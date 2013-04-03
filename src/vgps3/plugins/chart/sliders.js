@@ -59,9 +59,9 @@ vgps3.chart.Sliders.prototype.addSlider = function(label, element, color) {
 
   slider.setMoveToPointEnabled(true);
   slider.setValue(goog.style.getOpacity(element) * 100);
+  goog.dom.append(/** @type {!Node} */(slider.getElement()), goog.dom.createDom('div', 'vgps3-slider-hscale'));
   thumb = goog.dom.getElementsByTagNameAndClass(null, goog.ui.Slider.THUMB_CSS_CLASS, slider.getElement())[0];
   goog.style.setStyle(thumb, 'background-color', color);
-  goog.style.setOpacity(thumb, goog.style.getOpacity(element));
   thumb.title = label;
 
   this.getHandler().listen(
@@ -70,7 +70,6 @@ vgps3.chart.Sliders.prototype.addSlider = function(label, element, color) {
       function(event) {
         var opacity = slider.getValue() / 100;
         goog.style.setOpacity(element, opacity);
-        goog.style.setOpacity(thumb, Math.max(0.2, opacity));
       }
   );
 };

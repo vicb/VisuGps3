@@ -34,11 +34,6 @@ body {
     right: 0;
     height: 100%;
     width: 7em;
-    background: -webkit-linear-gradient(left,white, #333);
-    background: -moz-linear-gradient(left,white, #333);
-    background: -ms-linear-gradient(left,white, #333);
-    background: -o-linear-gradient(left,white, #333);
-    background: linear-gradient(to right,white, #333);
 }
 
 .map-ctrl {
@@ -142,6 +137,29 @@ body {
     position: absolute;
     z-index: 1000;
     outline: none;
+}
+
+.goog-slider-horizontal {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.goog-slider-horizontal:focus {
+    outline: none;
+}
+
+.goog-slider-horizontal .goog-slider-thumb {
+    position: absolute;
+    overflow: hidden;
+    border-radius: 2px;
+    background-color: #898989;
+    width: 10px;
+    height: 10px;
+    cursor: col-resize;
+    z-index: 2;
 }
 
 .vgps3-progress {
