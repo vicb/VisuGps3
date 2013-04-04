@@ -36,6 +36,10 @@ body {
     width: 7em;
 }
 
+select {
+    font: inherit;
+}
+
 .map-ctrl {
     border: 1px inset #555555;
     padding: 4px;
@@ -59,7 +63,12 @@ body {
 }
 
 .map-ctrl [class^="icon-"] {
+    text-align: center;
     margin-left: 5px;
+}
+
+.map-ctrl [class^="icon-"]:before {
+    width: 1em;
 }
 
 .vgps3-topo-logo {
@@ -155,7 +164,7 @@ body {
     position: absolute;
     overflow: hidden;
     border-radius: 2px;
-    background-color: #898989;
+    background-color: #555;
     width: 10px;
     height: 10px;
     cursor: col-resize;
