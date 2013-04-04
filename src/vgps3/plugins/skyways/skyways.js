@@ -18,6 +18,8 @@ goog.provide('vgps3.skyways.Skyways');
 goog.require('goog.dom');
 goog.require('goog.soy');
 goog.require('goog.style');
+goog.require('goog.ui.Component.EventType');
+goog.require('goog.ui.Slider');
 goog.require('vgps3.Map');
 goog.require('vgps3.PluginBase');
 goog.require('vgps3.skyways.templates');
@@ -42,17 +44,16 @@ vgps3.skyways.Skyways = function() {
   this.control_;
 
   /**
+   * @type {goog.ui.Slider} The opacity slider
+   * @private
+   */
+  this.slider_;
+
+  /**
    * @type {string}
    * @private
    */
   this.url_;
-
-
-  /**
-   * @type {boolean} Wheteher the skyways layer is visible
-   * @private
-   */
-  this.visible_ = false;
 
   /**
    * @type {Element} The copyright
@@ -76,40 +77,54 @@ vgps3.skyways.Skyways.prototype.init = function(vgps) {
       vgps3.skyways.templates.control,
       google.maps.ControlPosition.RIGHT_TOP
       );
-
   this.control_.update();
-  var element = this.control_.getElement();
-  goog.style.setStyle(element, 'cursor', 'pointer');
+  var handle = goog.dom.getLastElementChild(this.control_.getElement());
+  goog.style.setStyle(handle, 'cursor', 'pointer');
+  this.slider_ = new goog.ui.Slider();
+  this.slider_.decorate(goog.dom.getFirstElementChild(this.control_.getElement()));
+  this.slider_.setMinimum(20);
+  goog.style.showElement(this.slider_.getElement(), false);
   this.url_ = vgps3.skyways.TILES_URL.replace('{domain}', document.domain);
   this.createCopyright_(vgps3.skyways.COPYRIGHT, vgps3.skyways.URL);
-  this.getHandler().listen(element, 'mousedown', this.clickHandler_);
+  this.getHandler()
+    .listen(handle, 'mousedown', this.clickHandler_)
+    .listen(this.slider_, goog.ui.Component.EventType.CHANGE, function() {
+        if (this.map_) {
+          this.map_.setOpacity(this.slider_.getValue() / 100);
+        }
+      });
 };
 
 
 /**
- * Toggles airspace visibility when the handler is clicked.
+ * Toggles skyways visibility when the handler is clicked.
  *
  * @param {goog.events.Event} event
  * @private
  */
 vgps3.skyways.Skyways.prototype.clickHandler_ = function(event) {
-  if (!this.visible_) {
+  /**
+   * @type {boolean}
+   */
+  var visible = goog.style.isElementShown(this.slider_.getElement());
+  goog.style.showElement(this.copyright_, !visible);
+  goog.style.showElement(this.slider_.getElement(), !visible);
+
+  if (!visible) {
     if (!this.map_) {
       this.map_ = this.getMapType_();
     }
+    this.slider_.setValue(this.map_.getOpacity() * 100);
     this.gMap_.overlayMapTypes.insertAt(0, this.map_);
   } else {
     var overlays = this.gMap_.overlayMapTypes,
         map = this.map_;
-
     overlays.forEach(function(overlay, index) {
       if (overlay === map) {
         overlays.removeAt(index);
       }
     });
   }
-  this.visible_ = !this.visible_;
-  goog.style.showElement(this.copyright_, this.visible_);
 };
 
 
@@ -173,6 +188,7 @@ vgps3.skyways.Skyways.prototype.disposeInternal = function() {
   goog.dom.removeNode(this.copyright_);
   goog.dom.removeNode(this.control_.getElement());
   goog.dispose(this.control_);
+  goog.dispose(this.slider_);
 };
 
 
