@@ -17,7 +17,7 @@
 {template .infoControl}
   <h3 class="icon-info-sign icon-2x"></h3>
   <ul>
-    <li>{$fixes['elev'][$index]}m [hV]</li>
+    <li title="{round($fixes['elev'][$index] / 0.3048)}ft">{$fixes['elev'][$index]}m [hV]</li>
     <li>{max($fixes['elev'][$index] - $fixes['elevGnd'][$index], 0)}m [hS]</li>
     <li>{$fixes['vario'][$index]}m/s [Vz]</li>
     <li>{$fixes['speed'][$index]}km/h [Vx]</li>
