@@ -1,4 +1,4 @@
-PLOVR_JAR = plovr-eba786b34df9.jar
+PLOVR_JAR = plovr-81ed862.jar
 SRC = $(shell find src -name \*.js)
 
 all: lint dist/vgps3.js

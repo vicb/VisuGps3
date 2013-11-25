@@ -14,7 +14,7 @@
   "pretty-print": false,
   "output-wrapper": [
     "/**\n",
-    " * VisuGps3 Copyright 2012 Victor Berchet <victor@suumit.com>\n",
+    " * VisuGps3 Copyright 2013 Victor Berchet <victor@suumit.com>\n",
     " */\n",
     "%output%"
   ],
