@@ -15,7 +15,7 @@
  * @param index
  */
 {template .infoControl}
-  <h3 class="icon-info-sign icon-2x"></h3>
+  <h3><i class="fa fa-info-circle fa-2x"></i></h3>
   <ul>
     <li title="{round($fixes['elev'][$index] / 0.3048)}ft">{$fixes['elev'][$index]}m [hV]</li>
     <li>{max($fixes['elev'][$index] - $fixes['elevGnd'][$index], 0)}m [hS]</li>
@@ -31,7 +31,7 @@
  */
 {template .dateControl}
   <div>
-  <span class="{if $pilot}icon-user{else}icon-calendar{/if} icon-2x"></span>
+  <i class="fa {if $pilot}fa-user{else}fa-calendar{/if} fa-2x"></i>
   <ul class="pull-left">
     <li>{$date['day']}/{$date['month']}/{$date['year']}</li>
     {if $pilot}

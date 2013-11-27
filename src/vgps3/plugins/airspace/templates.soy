@@ -17,7 +17,7 @@
   <ul class="vgps3-as-info">
     <li class="vgps3-as-title"><a href="{$row['url'].value}">{$row['name'].value}</a></li>
     <li><strong>class:</strong> {$row['class'].value}</li>
-    <li><strong>altitude:</strong><span class="icon-circle-arrow-down"></span>{$row['floor'].value} <span class="icon-circle-arrow-up"></span>{$row['ceiling'].value}</li>
+    <li><strong>altitude:</strong><i class="fa fa-circle-arrow-down"></i>{$row['floor'].value} <i class="fa fa-circle-arrow-up"></i>{$row['ceiling'].value}</li>
   </ul>
 {/template}
 
@@ -30,5 +30,5 @@
     <option value="{$v}" {if $v == 1}selected{/if}>{$v}000m</option>
     {/for}
   </select>
-  <span class="icon-plane icon-2x"></span>
+  <i class="fa fa-fw fa-plane fa-2x"></i>
 {/template}

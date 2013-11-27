@@ -1,5 +1,5 @@
 @import url(http://fonts.googleapis.com/css?family=Nobile);
-@import url(font-awesome.css);
+@import url(//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css);
 
 html {
     height: 100%;
@@ -50,6 +50,10 @@ select {
     opacity: 0.9;
 }
 
+.map-ctrl div, .map-ctrl span {
+    font: 12px 'Nobile', verdana, sans-serif;
+}
+
 .map-ctrl ul {
     list-style-type: none;
     margin: 0;
@@ -62,12 +66,12 @@ select {
     margin: 0;
 }
 
-.map-ctrl [class^="icon-"] {
+.map-ctrl [class^="fa"] {
     text-align: center;
     margin-left: 5px;
 }
 
-.map-ctrl [class^="icon-"]:before {
+.map-ctrl [class^="fa"]:before {
     width: 1em;
 }
 
