@@ -59,7 +59,12 @@ vgps3.loader.load = function(module, version, cb, opt_options) {
       optionsMap = new goog.structs.Map(options),
       v = version.toString();
 
-  vgps3.loader.logger_.info(goog.string.format('Module %s v%s requested with options %s', module, v, goog.debug.expose(options)));
+  vgps3.loader.logger_.info(goog.string.format(
+    'Module %s v%s requested with options %s',
+    module,
+    v,
+    goog.debug.expose(options)
+  ));
 
   if (goog.isFunction(cb)) {
     callback = cb;
@@ -152,6 +157,7 @@ vgps3.loader.loadHandler_ = function(module, version, optionsMap) {
 /**
  * The modules that have already been loaded.
  * @type {Array.<Array.<goog.structs.Map.<goog.structs.Map, {loaded: boolean, callbacks: Array.<Function>}>>>}
+ * @private
  */
 vgps3.loader.modules_ = [];
 

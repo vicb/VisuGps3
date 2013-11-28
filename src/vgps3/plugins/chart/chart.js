@@ -379,6 +379,8 @@ vgps3.chart.Chart.prototype.drawChart_ = function(type, index, columns) {
  * Creates chart underlying data as a DataView.
  *
  * @param {number} index
+ *
+ * @return {google.visualization.DataView}
  * @private
  */
 vgps3.chart.Chart.prototype.createDataView_ = function(index) {

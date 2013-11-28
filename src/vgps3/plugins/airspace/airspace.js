@@ -95,7 +95,7 @@ vgps3.airspace.Airspace.prototype.init = function(vgps) {
 
 
 /**
- * @param {google.maps.FusionTablesMouseEvent} event
+ * @param {google.maps.FusionTablesMouseEvent} event The click event.
  * @private
  */
 vgps3.airspace.Airspace.prototype.fusionClickhandle_ = function(event) {
@@ -107,7 +107,7 @@ vgps3.airspace.Airspace.prototype.fusionClickhandle_ = function(event) {
 /**
  * Toggles airspace visibility when the handler is clicked.
  *
- * @param {goog.events.Event} event
+ * @param {goog.events.Event} event The click event.
  * @private
  */
 vgps3.airspace.Airspace.prototype.clickhandle_ = function(event) {
@@ -159,7 +159,7 @@ vgps3.airspace.Airspace.prototype.setFloor_ = function(floor) {
 /**
  * Sets the floor altitude when a track has been loaded.
  *
- * @param {vgps3.track.LoadEvent} event
+ * @param {vgps3.track.LoadEvent} event The load event.
  * @private
  */
 vgps3.airspace.Airspace.prototype.trackLoadhandle_ = function(event) {

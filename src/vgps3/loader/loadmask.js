@@ -37,7 +37,7 @@ vgps3.loadMask.opened_ = 0;
 /**
  * Set the message (and show the popup when currently hidden).
  *
- * @param {string} message
+ * @param {string} message The message to display.
  * @param {vgps3.loadMask.Style=} opt_class A css class to add to the message.
  * @param {boolean=} opt_open Whether to create a new mask if none exists.
  */

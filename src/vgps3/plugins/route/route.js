@@ -47,7 +47,7 @@ goog.inherits(vgps3.route.Route, vgps3.PluginBase);
  * @param {google.maps.LatLng=} opt_center
  */
 vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end, opt_center) {
-  var startIcon =  {
+  var startIcon = {
       url: vgps3.route.START_ICON_URL,
       size: new google.maps.Size(12, 20)
     },

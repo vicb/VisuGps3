@@ -25,10 +25,10 @@ goog.require('vgps3.track.templates');
 
 
 /**
- * @param {google.maps.Map} map
- * @param {!Function} template
- * @param {google.maps.ControlPosition} position
- * @param {boolean=} opt_iframe
+ * @param {google.maps.Map} map The map instance.
+ * @param {!Function} template A template for rendering the control.
+ * @param {google.maps.ControlPosition} position The control position.
+ * @param {boolean=} opt_iframe Whether to use an iframe shim.
  *
  * @constructor
  * @extends {goog.Disposable}
@@ -83,7 +83,7 @@ goog.inherits(vgps3.Control, goog.Disposable);
 /**
  * Updates the control by rendering the template.
  *
- * @param {Object=} opt_templateData
+ * @param {Object=} opt_templateData The view data.
  */
 vgps3.Control.prototype.update = function(opt_templateData) {
   if (!this.dom_) {
@@ -119,7 +119,7 @@ vgps3.Control.prototype.update = function(opt_templateData) {
 
 /**
  * Adds a class to the control div
- * @param {?string} extraClass
+ * @param {?string} extraClass An extra class to add to the control.
  */
 vgps3.Control.prototype.setExtraClass = function(extraClass) {
   this.extraClass_ = goog.isNull(extraClass) ? null : extraClass;
