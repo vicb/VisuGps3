@@ -94,6 +94,7 @@ vgps3.loader.load = function(module, version, cb, opt_options) {
           return true;
         } else {
           vgps3.loader.logger_.info(goog.string.format('Module %s v%s already requested with different options'));
+          return false;
         }
       })) {
     return;

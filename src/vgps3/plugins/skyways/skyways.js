@@ -83,7 +83,7 @@ vgps3.skyways.Skyways.prototype.init = function(vgps) {
   this.slider_ = new goog.ui.Slider();
   this.slider_.decorate(goog.dom.getFirstElementChild(this.control_.getElement()));
   this.slider_.setMinimum(20);
-  goog.style.showElement(this.slider_.getElement(), false);
+  goog.style.setElementShown(this.slider_.getElement(), false);
   this.url_ = vgps3.skyways.TILES_URL.replace('{domain}', document.domain);
   this.createCopyright_(vgps3.skyways.COPYRIGHT, vgps3.skyways.URL);
   this.getHandler()
@@ -107,8 +107,8 @@ vgps3.skyways.Skyways.prototype.clickHandler_ = function(event) {
    * @type {boolean}
    */
   var visible = goog.style.isElementShown(this.slider_.getElement());
-  goog.style.showElement(this.copyright_, !visible);
-  goog.style.showElement(this.slider_.getElement(), !visible);
+  goog.style.setElementShown(this.copyright_, !visible);
+  goog.style.setElementShown(this.slider_.getElement(), !visible);
 
   if (!visible) {
     if (!this.map_) {
@@ -172,7 +172,7 @@ vgps3.skyways.Skyways.prototype.createCopyright_ = function(text, url) {
 
   this.gMap_.controls[google.maps.ControlPosition.BOTTOM_RIGHT].push(this.copyright_);
 
-  goog.style.showElement(this.copyright_, false);
+  goog.style.setElementShown(this.copyright_, false);
 };
 
 

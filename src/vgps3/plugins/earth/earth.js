@@ -244,7 +244,7 @@ vgps3.earth.Earth.prototype.showEarth_ = function(visible) {
   }
 
   this.visible_ = visible;
-  goog.style.showElement(this.earthDom_, visible);
+  goog.style.setElementShown(this.earthDom_, visible);
 };
 
 

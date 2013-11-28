@@ -47,11 +47,20 @@ goog.inherits(vgps3.route.Route, vgps3.PluginBase);
  * @param {google.maps.LatLng=} opt_center
  */
 vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end, opt_center) {
-  var startIcon = new google.maps.MarkerImage(vgps3.route.START_ICON_URL, new google.maps.Size(12, 20)),
-      endIcon = new google.maps.MarkerImage(vgps3.route.END_ICON_URL, new google.maps.Size(12, 20)),
-      icon = new google.maps.MarkerImage(vgps3.route.ICON_URL, new google.maps.Size(12, 20)),
-      closed = type.length && type.substr(-1) === 'c',
-      bounds = new google.maps.LatLngBounds();
+  var startIcon =  {
+      url: vgps3.route.START_ICON_URL,
+      size: new google.maps.Size(12, 20)
+    },
+  endIcon = {
+    url: vgps3.route.END_ICON_URL,
+    size: new google.maps.Size(12, 20)
+  },
+  icon = {
+    url: vgps3.route.ICON_URL,
+    size: new google.maps.Size(12, 20)
+  },
+  closed = type.length && type.substr(-1) === 'c',
+  bounds = new google.maps.LatLngBounds();
 
   this.overlays_.push(new google.maps.Polyline({
     clickable: false,
@@ -123,7 +132,9 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end
   }
 };
 
-
+/**
+ * @override
+ */
 vgps3.route.Route.prototype.disposeInternal = function() {
   var that = this;
 

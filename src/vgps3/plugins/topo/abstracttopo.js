@@ -87,7 +87,7 @@ vgps3.topo.AbstractTopo.prototype.setBounds_ = function(latlngBounds) {
  * @param {string} logo Path to the logo.
  * @param {string} url  Link target.
  *
- * @private
+ * @protected
  */
 vgps3.topo.AbstractTopo.prototype.setCopyright_ = function(logo, url) {
   this.copyright_ = goog.dom.createDom(
@@ -98,7 +98,7 @@ vgps3.topo.AbstractTopo.prototype.setCopyright_ = function(logo, url) {
 
   this.gMap_.controls[google.maps.ControlPosition.BOTTOM_RIGHT].push(this.copyright_);
 
-  goog.style.showElement(this.copyright_, false);
+  goog.style.setElementShown(this.copyright_, false);
 };
 
 
@@ -126,7 +126,7 @@ vgps3.topo.AbstractTopo.prototype.registerMapType_ = function(mapType) {
  * @protected
  */
 vgps3.topo.AbstractTopo.prototype.showHandler_ = function() {
-  this.copyright_ && goog.style.showElement(this.copyright_, true);
+  this.copyright_ && goog.style.setElementShown(this.copyright_, true);
 };
 
 
@@ -136,7 +136,7 @@ vgps3.topo.AbstractTopo.prototype.showHandler_ = function() {
  * @protected
  */
 vgps3.topo.AbstractTopo.prototype.hideHandler_ = function() {
-  this.copyright_ && goog.style.showElement(this.copyright_, false);
+  this.copyright_ && goog.style.setElementShown(this.copyright_, false);
 };
 
 

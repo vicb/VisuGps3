@@ -73,7 +73,7 @@ vgps3.path.Path.prototype.init = function(vgps) {
       );
   this.control_.update();
   this.element_ = goog.dom.getFirstElementChild(this.control_.getElement());
-  goog.style.showElement(this.element_, false);
+  goog.style.setElementShown(this.element_, false);
   this.getHandler().listen(this.control_.getElement(), 'mousedown', this.clickHandler_);
   goog.style.setStyle(this.control_.getElement(), 'cursor', 'pointer');
 };
@@ -143,7 +143,7 @@ vgps3.path.Path.prototype.clickHandler_ = function(event) {
     this.line_.setVisible(false);
   }
 
-  goog.style.showElement(this.element_, !visible);
+  goog.style.setElementShown(this.element_, !visible);
 };
 
 

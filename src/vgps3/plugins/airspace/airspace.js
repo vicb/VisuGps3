@@ -52,11 +52,11 @@ vgps3.airspace.Airspace = function() {
    * @type {google.maps.FusionTablesQuery}
    * @private
    */
-  this.ftQuery_ = /** @type {google.maps.FusionTablesQuery} */{
+  this.ftQuery_ = /** @type {google.maps.FusionTablesQuery} */({
     select: 'geometry',
     where: 'floor_m <= 1000',
     from: vgps3.airspace.FUSION_TABLE_ID
-  };
+  });
 
   /**
    * @type {Element} The span where to display the altitude
@@ -86,7 +86,7 @@ vgps3.airspace.Airspace.prototype.init = function(vgps) {
   this.handle_ = goog.dom.getLastElementChild(this.control_.getElement());
   this.select_ = goog.dom.getFirstElementChild(this.control_.getElement());
   goog.style.setStyle(this.handle_, 'cursor', 'pointer');
-  goog.style.showElement(this.select_, false);
+  goog.style.setElementShown(this.select_, false);
   this.getHandler()
     .listen(this.handle_, 'mousedown', this.clickhandle_)
     .listen(this.select_, 'change', function() { this.setFloor_(this.select_.value * 1000); })
@@ -138,7 +138,7 @@ vgps3.airspace.Airspace.prototype.clickhandle_ = function(event) {
     }
   }
 
-  goog.style.showElement(this.select_, !visible);
+  goog.style.setElementShown(this.select_, !visible);
 };
 
 
