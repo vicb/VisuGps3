@@ -207,6 +207,18 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
       bounds = new google.maps.LatLngBounds(),
       trackIndex = this.tracks_.length;
 
+  if (gpsFixes.kmlUrl) {
+    this.logger_.info(goog.string.format('Adding a kml layer'));
+    var layer = new google.maps.KmlLayer({
+      map:this.gMap_,
+      url: gpsFixes.kmlUrl,
+      preserveViewport: trackIndex > 0
+    });
+
+    vgps3.loadMask.close();
+    return;
+  }
+
   this.logger_.info(goog.string.format('Adding track[%d]', this.tracks_.length));
 
   this.tracks_.push({points: [], fixes: gpsFixes});
@@ -228,8 +240,6 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
     gpsFixes['speed'][i] = Math.min(vgps3.track.MAX_SPEED, gpsFixes['speed'][i]);
     gpsFixes['vario'][i] = Math.min(vgps3.track.MAX_VARIO, gpsFixes['vario'][i]);
   }
-
-
 
   this.tracks_[trackIndex].bounds = bounds;
   this.tracks_[trackIndex].color = this.getTrackColor_(trackIndex);
