@@ -207,11 +207,11 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
       bounds = new google.maps.LatLngBounds(),
       trackIndex = this.tracks_.length;
 
-  if (gpsFixes.kmlUrl) {
+  if (gpsFixes['kmlUrl']) {
     this.logger_.info(goog.string.format('Adding a kml layer'));
     var layer = new google.maps.KmlLayer({
       map:this.gMap_,
-      url: gpsFixes.kmlUrl,
+      url: gpsFixes['kmlUrl'],
       preserveViewport: trackIndex > 0
     });
 
