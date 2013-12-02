@@ -53,6 +53,13 @@ vgps3.track.Track = function() {
   this.tracks_ = [];
 
   /**
+   * List of kml layers
+   * @type {Array.<google.maps.KmlLayer>}
+   * @private
+   */
+  this.kmlLayers_ = [];
+
+  /**
   * @type {number} The index of the current track
   * @private
   */
@@ -209,13 +216,21 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
 
   if (gpsFixes['kmlUrl']) {
     this.logger_.info(goog.string.format('Adding a kml layer'));
+    var that = this;
     var layer = new google.maps.KmlLayer({
       map:this.gMap_,
       url: gpsFixes['kmlUrl'],
-      preserveViewport: trackIndex > 0
+      preserveViewport: true
     });
 
-    vgps3.loadMask.close();
+    google.maps.event.addListener(layer, 'defaultviewport_changed', function() {
+      if (layer.getStatus() == google.maps.KmlLayerStatus.OK) {
+        that.kmlLayers_.push(layer);
+        that.gMap_.fitBounds(that.getTracksBounds_());
+        vgps3.loadMask.close();
+      }
+    });
+
     return;
   }
 
@@ -365,11 +380,23 @@ vgps3.track.Track.prototype.getTrackColor_ = function(trackIndex) {
  * @private
  */
 vgps3.track.Track.prototype.getTracksBounds_ = function() {
-  return /** @type {google.maps.LatLngBounds} */ (goog.array.reduce(
-      this.tracks_,
-      function(bounds, track) {return bounds.union(track.bounds);},
-      new google.maps.LatLngBounds()
-      ));
+  /** @type {google.maps.LatLngBounds} */
+  var bounds;
+  bounds = goog.array.reduce(
+    this.tracks_,
+    function(bounds, track) {return bounds.union(track.bounds);},
+    new google.maps.LatLngBounds()
+  );
+
+  bounds = goog.array.reduce(
+    this.kmlLayers_,
+    function(bounds, layer) {
+      return bounds.union(layer.getDefaultViewport());
+    },
+    bounds
+  );
+
+  return bounds;
 };
 
 
