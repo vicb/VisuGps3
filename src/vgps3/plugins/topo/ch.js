@@ -159,7 +159,7 @@ vgps3.topo.ch.Map.prototype.getTileUrl_ = function(coord, zoom) {
       .replace('{x}', (coord.x).toString())
       .replace('{proj}', '21781')
       .replace('{zoom}', vgps3.topo.ch.PARAMETERS[this.previousZoom_].zoom.toString())
-      .replace('{date}', '20120809')
+      .replace('{date}', '20130903')
       .replace('{layer}', 'ch.swisstopo.pixelkarte-farbe');
 };
 
