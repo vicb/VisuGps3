@@ -21,6 +21,28 @@ goog.require('vgps3.loadMask.templates');
 
 
 /**
+ * @constructor
+ * @param {boolean=} opt_useIframeMask Work around windowed controls z-index
+ *     issue by using an iframe instead of a div for bg element.
+ * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper; see {@link
+ *     goog.ui.Component} for semantics.
+ *
+ * @extends {goog.ui.ModalPopup}
+ */
+vgps3.loadMask.Popup = function(opt_useIframeMask, opt_domHelper) {
+  goog.base(this, opt_useIframeMask, opt_domHelper);
+
+};
+goog.inherits(vgps3.loadMask.Popup, goog.ui.ModalPopup);
+
+/**
+ * @override
+ * Do not try to focus the element, this would re-center the map container into
+ * the viewport which is not desirable when integrated in an iframe.
+ */
+vgps3.loadMask.Popup.prototype.focus = function() {}
+
+/**
  * @type {goog.ui.ModalPopup}
  * @private
  */
@@ -43,7 +65,7 @@ vgps3.loadMask.opened_ = 0;
  */
 vgps3.loadMask.setMessage = function(message, opt_class, opt_open) {
   if (opt_open && !vgps3.loadMask.popup_) {
-    vgps3.loadMask.popup_ = new goog.ui.ModalPopup(true);
+    vgps3.loadMask.popup_ = new vgps3.loadMask.Popup(true);
     vgps3.loadMask.popup_.render();
   }
   if (vgps3.loadMask.popup_) {
