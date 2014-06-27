@@ -531,7 +531,7 @@ vgps3.track.PROXY_URL = 'php/vg_proxy.php?track=';
 /**
  * @define {number} The maximum speed (km/h).
  */
-vgps3.track.MAX_SPEED = 100;
+vgps3.track.MAX_SPEED = 200;
 
 
 /**
