@@ -104,7 +104,7 @@ vgps3.Map.prototype.showAbout = function() {
  */
 vgps3.Map.prototype.loadGoogleMapsApi_ = function(container, userOptions, opt_callback) {
   var libs = ['geometry'],
-      parameters = new goog.Uri.QueryData('sensor=false'),
+      parameters = new goog.Uri.QueryData(),
       key = this.getDomainKey(vgps3.Map.GOOGLE_API_KEYS);
 
   goog.array.forEach(this.plugins_, function(plugin) {
