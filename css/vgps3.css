@@ -40,7 +40,7 @@ select {
     font: inherit;
 }
 
-.map-ctrl {
+.map-ctrl, .doarama-ctrl {
     border: 1px inset #555555;
     padding: 4px;
     margin: 2px 5px;
@@ -48,6 +48,10 @@ select {
     text-align: right;
     border-radius: 4px;
     opacity: 0.9;
+}
+
+.vg-new {
+    background-color: #ffff00;
 }
 
 .map-ctrl div, .map-ctrl span {

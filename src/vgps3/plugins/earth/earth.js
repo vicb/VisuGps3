@@ -125,6 +125,7 @@ vgps3.earth.Earth = function() {
   this.batchExecutor_;
 
   goog.base(this);
+
   /**
    * @type {goog.debug.Logger} The logger
    * @private
