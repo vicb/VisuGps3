@@ -188,7 +188,7 @@ vgps3.Map.prototype.init_ = function(container, userOptions, callback) {
  * @return {?string} The key, null when no matching domain has been found.
  */
 vgps3.Map.prototype.getDomainKey = function(keys) {
-  var re = /([\w-.*]+)="(.+?)"/g,
+  var re = /([-a-zA-Z0-9_.*]+)="(.+?)"/g,
       matches;
 
   while (matches = re.exec(keys)) {
