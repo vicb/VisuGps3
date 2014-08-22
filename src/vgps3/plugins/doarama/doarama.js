@@ -31,8 +31,6 @@ goog.require('vgps3.doarama.templates');
  * @extends {vgps3.PluginBase}
  */
 vgps3.doarama.Doarama = function() {
-
-
   /**
    * @type {vgps3.Control} The google map control
    * @private
@@ -77,14 +75,15 @@ vgps3.doarama.Doarama.prototype.init = function(vgps) {
  */
 vgps3.doarama.Doarama.prototype.disposeInternal = function() {
   goog.base(this, 'disposeInternal');
-  //goog.dom.removeNode(this.element_);
-  //delete this.element_;
+  goog.dom.removeNode(this.iframe_);
+  delete this.iframe_;
+  goog.dom.removeNode(this.close_);
+  delete this.close_;
   goog.dispose(this.control_);
 };
 
-
 /**
- * Toggles distance visibility when the control is clicked.
+ * Make the Doarama iframe visible
  *
  * @param {goog.events.Event} event
  * @private
@@ -94,11 +93,23 @@ vgps3.doarama.Doarama.prototype.show_ = function(event) {
   goog.style.setElementShown(this.close_, true);
 };
 
+/**
+ * Hide Doarama iframe
+ *
+ * @param {goog.events.Event} event
+ * @private
+ */
 vgps3.doarama.Doarama.prototype.hide_ = function(event) {
   goog.style.setElementShown(this.iframe_, false);
   goog.style.setElementShown(this.close_, false);
 };
 
+/**
+ * Setup the DoArama iframe when a track is loaded
+ *
+ * @param {goog.events.Event} event
+ * @private
+ */
 vgps3.doarama.Doarama.prototype.trackLoadHandler_ = function(event) {
   // todo handle more than 1 track
   if (goog.isDef(this.iframe_)) {
@@ -115,7 +126,15 @@ vgps3.doarama.Doarama.prototype.trackLoadHandler_ = function(event) {
 };
 
 
-
+/**
+ * Setup the DoArama iframe when a track is loaded:
+ * - create the Doarama iframe,
+ * - create the close control displayed on top the iframe,
+ * - create the control that allow switching from Maps to Doarama
+ *
+ * @param {String} url
+ * @private
+ */
 vgps3.doarama.Doarama.prototype.setupDoarama_ = function(url) {
   var that = this;
   var domHelper = new goog.dom.DomHelper(goog.dom.getOwnerDocument(this.gMap_.getDiv()));
