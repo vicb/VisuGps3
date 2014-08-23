@@ -91,6 +91,7 @@ vgps3.doarama.Doarama.prototype.disposeInternal = function() {
 vgps3.doarama.Doarama.prototype.show_ = function(event) {
   if (goog.labs.userAgent.browser.isIE) {
     alert('DoArama ne fonctionne pas avec Internet Explorer');
+    return;
   }
   goog.style.setElementShown(this.iframe_, true);
   goog.style.setElementShown(this.close_, true);
