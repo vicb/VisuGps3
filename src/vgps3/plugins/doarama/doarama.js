@@ -20,10 +20,13 @@ goog.require('goog.Timer');
 goog.require('goog.dom');
 goog.require('goog.events.EventHandler');
 goog.require('goog.net.Cookies');
+goog.require('goog.net.XhrIo');
 goog.require('goog.style');
 goog.require('vgps3.Control');
-goog.require('vgps3.PluginBase');
 goog.require('vgps3.doarama.templates');
+goog.require('vgps3.PluginBase');
+goog.require('vgps3.track.Track');
+
 
 /**
  * @constructor
@@ -116,11 +119,16 @@ vgps3.doarama.Doarama.prototype.trackLoadHandler_ = function(event) {
   }
 
   if (goog.isDefAndNotNull(event.fixes['doaramaUrl'])) {
+    // Set the iframe source
     var options = '&fixedAspect=false';
     if (goog.isDefAndNotNull(event.fixes['pilot'])) {
       options += '&name=' + encodeURIComponent(event.fixes['pilot']);
     }
     this.setupDoarama_(event.fixes['doaramaUrl'] + options);
+    // Upload the fixes when needed
+    if (!goog.isDef(event.fixes['doaramaUpload']) || false === event.fixes['doaramaUpload']) {
+      goog.net.XhrIo.send(vgps3.track.PROXY_URL + event.url + "&doaramaUpload=true");
+    }
   }
 };
 

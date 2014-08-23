@@ -312,7 +312,7 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
   this.tracks_[trackIndex].iconScaler = this.getIconScaler_(minElevation, maxElevation, gpsFixes['elev']);
 
   this.dispatchEvent(
-      new vgps3.track.LoadEvent(trackIndex, gpsFixes, this.tracks_[trackIndex].color)
+      new vgps3.track.LoadEvent(trackIndex, gpsFixes, this.tracks_[trackIndex].color, url)
   );
 };
 
