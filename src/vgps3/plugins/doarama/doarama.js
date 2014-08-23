@@ -19,12 +19,12 @@ goog.provide('vgps3.doarama.Doarama');
 goog.require('goog.Timer');
 goog.require('goog.dom');
 goog.require('goog.events.EventHandler');
+goog.require('goog.labs.userAgent.browser');
 goog.require('goog.net.Cookies');
 goog.require('goog.style');
 goog.require('vgps3.Control');
 goog.require('vgps3.PluginBase');
 goog.require('vgps3.doarama.templates');
-
 
 /**
  * @constructor
@@ -89,6 +89,9 @@ vgps3.doarama.Doarama.prototype.disposeInternal = function() {
  * @private
  */
 vgps3.doarama.Doarama.prototype.show_ = function(event) {
+  if (goog.labs.userAgent.browser.isIE) {
+    alert('DoArama ne fonctionne pas avec Internet Explorer');
+  }
   goog.style.setElementShown(this.iframe_, true);
   goog.style.setElementShown(this.close_, true);
 };
