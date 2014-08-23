@@ -46,6 +46,12 @@ vgps3.doarama.Doarama = function() {
   this.iframe_;
 
   /**
+   * @type {String} DoArama url
+   * @private
+   */
+   this.doaramaUrl_;
+
+  /**
    * @type {Element} Close DoArama
    * @private
    */
@@ -91,6 +97,9 @@ vgps3.doarama.Doarama.prototype.disposeInternal = function() {
  * @private
  */
 vgps3.doarama.Doarama.prototype.show_ = function(event) {
+  if (this.iframe_.src != this.doaramaUrl_) {
+    this.iframe_.src = this.doaramaUrl_;
+  }
   goog.style.setElementShown(this.iframe_, true);
   goog.style.setElementShown(this.close_, true);
 };
@@ -124,7 +133,8 @@ vgps3.doarama.Doarama.prototype.trackLoadHandler_ = function(event) {
     if (goog.isDefAndNotNull(event.fixes['pilot'])) {
       options += '&name=' + encodeURIComponent(event.fixes['pilot']);
     }
-    this.setupDoarama_(event.fixes['doaramaUrl'] + options);
+    this.doaramaUrl_ = event.fixes['doaramaUrl'] + options;
+    this.setupDoarama_();
     // Upload the fixes when needed
     if (!goog.isDef(event.fixes['doaramaUpload']) || false === event.fixes['doaramaUpload']) {
       goog.net.XhrIo.send(vgps3.track.PROXY_URL + event.url + "&doaramaUpload=true");
@@ -139,15 +149,12 @@ vgps3.doarama.Doarama.prototype.trackLoadHandler_ = function(event) {
  * - create the close control displayed on top the iframe,
  * - create the control that allow switching from Maps to Doarama
  *
- * @param {String} url
  * @private
  */
-vgps3.doarama.Doarama.prototype.setupDoarama_ = function(url) {
+vgps3.doarama.Doarama.prototype.setupDoarama_ = function() {
   var that = this;
   var domHelper = new goog.dom.DomHelper(goog.dom.getOwnerDocument(this.gMap_.getDiv()));
-
   this.iframe_ = goog.dom.iframe.createBlank(domHelper, 'position: absolute; top: 0; left: 0; background: white');
-  this.iframe_.src = url;
   goog.style.setElementShown(this.iframe_, false);
   goog.style.setSize(this.iframe_, goog.style.getSize(/** @type {Element} */(this.gMap_.getDiv())));
   domHelper.appendChild(domHelper.getDocument().body, this.iframe_);
