@@ -9,7 +9,7 @@
  */
 
 /**
- * @fileoverview DoArama integration
+ * @fileoverview DoArama integration.
  * @see http://www.doarama.com/api/0.2/docs
  * @author Victor Berchet <victor@suumit.com>
  */
@@ -120,9 +120,9 @@ vgps3.doarama.Doarama.prototype.trackLoadHandler_ = function(event) {
   }
 
   if (goog.isDefAndNotNull(event.fixes['doaramaUrl'])) {
-    var options = "&fixedAspect=false";
+    var options = '&fixedAspect=false';
     if (goog.isDefAndNotNull(event.fixes['pilot'])) {
-      options += "&name=" + encodeURIComponent(event.fixes['pilot']);
+      options += '&name=' + encodeURIComponent(event.fixes['pilot']);
     }
     this.setupDoarama_(event.fixes['doaramaUrl'] + options);
   }
@@ -142,7 +142,7 @@ vgps3.doarama.Doarama.prototype.setupDoarama_ = function(url) {
   var that = this;
   var domHelper = new goog.dom.DomHelper(goog.dom.getOwnerDocument(this.gMap_.getDiv()));
 
-  this.iframe_ = goog.dom.iframe.createBlank(domHelper, "position: absolute; top: 0; left: 0; background: white");
+  this.iframe_ = goog.dom.iframe.createBlank(domHelper, 'position: absolute; top: 0; left: 0; background: white');
   this.iframe_.src = url;
   goog.style.setElementShown(this.iframe_, false);
   goog.style.setSize(this.iframe_, goog.style.getSize(/** @type {Element} */(this.gMap_.getDiv())));
@@ -170,7 +170,7 @@ vgps3.doarama.Doarama.prototype.setupDoarama_ = function(url) {
   this.control_.update();
   this.getHandler().listen(this.control_.getElement(), 'mousedown', this.show_);
   goog.style.setStyle(this.control_.getElement(), 'cursor', 'pointer');
-}
+};
 
 
 

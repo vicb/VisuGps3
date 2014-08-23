@@ -40,7 +40,7 @@ goog.inherits(vgps3.loadMask.Popup, goog.ui.ModalPopup);
  * Do not try to focus the element, this would re-center the map container into
  * the viewport which is not desirable when integrated in an iframe.
  */
-vgps3.loadMask.Popup.prototype.focus = function() {}
+vgps3.loadMask.Popup.prototype.focus = function() {};
 
 /**
  * @type {goog.ui.ModalPopup}

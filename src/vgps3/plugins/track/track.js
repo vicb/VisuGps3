@@ -218,7 +218,7 @@ vgps3.track.Track.prototype.addTrack_ = function(url, gpsFixes) {
     this.logger_.info(goog.string.format('Adding a kml layer'));
     var that = this;
     var layer = new google.maps.KmlLayer({
-      map:this.gMap_,
+      map: this.gMap_,
       url: gpsFixes['kmlUrl'],
       preserveViewport: true
     });
