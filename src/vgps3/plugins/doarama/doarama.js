@@ -97,11 +97,15 @@ vgps3.doarama.Doarama.prototype.disposeInternal = function() {
  * @private
  */
 vgps3.doarama.Doarama.prototype.show_ = function(event) {
-  if (this.iframe_.src != this.doaramaUrl_) {
-    this.iframe_.src = this.doaramaUrl_;
+  if (navigator.userAgent.indexOf('MSIE') > -1) {
+    if (this.iframe_.src != this.doaramaUrl_) {
+      this.iframe_.src = this.doaramaUrl_;
+    }
+    goog.style.setElementShown(this.iframe_, true);
+    goog.style.setElementShown(this.close_, true);
+  } else {
+    alert('DoArama ne fonctionne pas avec Internet Explorer');
   }
-  goog.style.setElementShown(this.iframe_, true);
-  goog.style.setElementShown(this.close_, true);
 };
 
 /**
