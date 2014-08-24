@@ -97,7 +97,7 @@ vgps3.doarama.Doarama.prototype.disposeInternal = function() {
  * @private
  */
 vgps3.doarama.Doarama.prototype.show_ = function(event) {
-  if (navigator.userAgent.indexOf('MSIE') > -1) {
+  if (navigator.userAgent.indexOf('MSIE') == -1) {
     if (this.iframe_.src != this.doaramaUrl_) {
       this.iframe_.src = this.doaramaUrl_;
     }
