@@ -159,6 +159,9 @@ vgps3.doarama.Doarama.prototype.setupDoarama_ = function() {
   var that = this;
   var domHelper = new goog.dom.DomHelper(goog.dom.getOwnerDocument(this.gMap_.getDiv()));
   this.iframe_ = goog.dom.iframe.createBlank(domHelper, 'position: absolute; top: 0; left: 0; background: white');
+  this.iframe_.setAttribute("webkitAllowFullScreen", true);
+  this.iframe_.setAttribute("mozAllowFullScreen", true);
+  this.iframe_.setAttribute("allowFullScreen", true);
   goog.style.setElementShown(this.iframe_, false);
   goog.style.setSize(this.iframe_, goog.style.getSize(/** @type {Element} */(this.gMap_.getDiv())));
   domHelper.appendChild(domHelper.getDocument().body, this.iframe_);
