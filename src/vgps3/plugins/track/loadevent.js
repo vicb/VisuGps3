@@ -23,7 +23,7 @@ goog.require('goog.events.Event');
  * @param {number} trackIndex
  * @param {vgps3.track.GpsFixes} fixes
  * @param {string} TrackColor
- * @param {String} url
+ * @param {string} url
  *
  * @constructor
  * @extends {goog.events.Event}
@@ -31,7 +31,7 @@ goog.require('goog.events.Event');
 vgps3.track.LoadEvent = function(trackIndex, fixes, TrackColor, url) {
   goog.base(this, vgps3.track.EventType.LOAD);
   /**
-   * @type {String} track url
+   * @type {string} track url
    */
   this.url = url;
 
