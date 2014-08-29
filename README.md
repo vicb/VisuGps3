@@ -20,11 +20,14 @@ as the maps API v2 will be deprecated in 2013.
 
 - Display a single or multiple tracks on top of a map,
 - Display charts for elevation, horizontal & vertical speed,
-- The track can be viewed in 3D on platforms where the [GE plugin is supported](http://www.google.com/earth/explore/products/plugin.html),
+- The track can be viewed in 3D
+  - on platforms where the [GE plugin is supported](http://www.google.com/earth/explore/products/plugin.html),
+  - without any plugin if your browser support WebGL thanks to DoArama - based on Cesium
 - Display markers for routes,
 - Measure distances with the path plugin,
 - Display restricted airspaces,
 - Display skyways thanks to [Michael von Känel](http://thermal.kk7.ch/),
+- Switch to full screen mode,
 - Topographic maps:
   - [France IGN](http://www.ign.fr/),
   - [Spain IGN](http://www.ign.es/),
@@ -35,10 +38,7 @@ as the maps API v2 will be deprecated in 2013.
 
 ### future versions
 
-- Integrate [Cesium](http://cesium.agi.com/) for 3D,
-- Rewritten track parsers (PHP / Python),
 - use GeoJSON
-
 
 ## Contributors
 
