@@ -23,8 +23,8 @@ goog.require('goog.net.Cookies');
 goog.require('goog.net.XhrIo');
 goog.require('goog.style');
 goog.require('vgps3.Control');
-goog.require('vgps3.doarama.templates');
 goog.require('vgps3.PluginBase');
+goog.require('vgps3.doarama.templates');
 goog.require('vgps3.track.Track');
 
 
@@ -141,7 +141,7 @@ vgps3.doarama.Doarama.prototype.trackLoadHandler_ = function(event) {
     this.setupDoarama_();
     // Upload the fixes when needed
     if (!goog.isDef(event.fixes['doaramaUpload']) || false === event.fixes['doaramaUpload']) {
-      goog.net.XhrIo.send(vgps3.track.PROXY_URL + event.url + "&doaramaUpload=true");
+      goog.net.XhrIo.send(vgps3.track.PROXY_URL + event.url + '&doaramaUpload=true');
     }
   }
 };
@@ -159,9 +159,9 @@ vgps3.doarama.Doarama.prototype.setupDoarama_ = function() {
   var that = this;
   var domHelper = new goog.dom.DomHelper(goog.dom.getOwnerDocument(this.gMap_.getDiv()));
   this.iframe_ = goog.dom.iframe.createBlank(domHelper, 'position: absolute; top: 0; left: 0; background: white');
-  this.iframe_.setAttribute("webkitAllowFullScreen", true);
-  this.iframe_.setAttribute("mozAllowFullScreen", true);
-  this.iframe_.setAttribute("allowFullScreen", true);
+  this.iframe_.setAttribute('webkitAllowFullScreen', true);
+  this.iframe_.setAttribute('mozAllowFullScreen', true);
+  this.iframe_.setAttribute('allowFullScreen', true);
   goog.style.setElementShown(this.iframe_, false);
   goog.style.setSize(this.iframe_, goog.style.getSize(/** @type {Element} */(this.gMap_.getDiv())));
   domHelper.appendChild(domHelper.getDocument().body, this.iframe_);
