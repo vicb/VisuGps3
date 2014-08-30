@@ -16,6 +16,7 @@
 goog.provide('vgps3.route.Route');
 
 goog.require('goog.array');
+goog.require('goog.string.format');
 goog.require('vgps3.Map');
 goog.require('vgps3.PluginBase');
 
@@ -32,6 +33,12 @@ vgps3.route.Route = function() {
    * @private
    */
   this.overlays_ = [];
+
+  /**
+  * @type {!goog.debug.Logger}
+  * @private
+  */
+  this.logger_ = goog.debug.Logger.getLogger('vgps3.route.Route');
 
   goog.base(this);
 };
@@ -62,18 +69,17 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end
   closed = type.length && type.substr(-1) === 'c',
   bounds = new google.maps.LatLngBounds();
 
-  this.overlays_.push(new google.maps.Polyline({
-    clickable: false,
-    map: this.gMap_,
-    path: turnpoints,
-    strokeColor: '#00f',
-    strokeOpacity: 0.8,
-    strokeWeight: 1
-  }));
+  this.logger_.info(goog.string.format('Track type: %s', type));
 
   goog.array.forEach(turnpoints, function(tp) {
     bounds.extend(tp);
   });
+
+  var lineSymbol = {
+    path: 'M 0,-1 0,1',
+    strokeOpacity: 0.8,
+    scale: 2
+  };
 
   if (closed && goog.isDef(opt_start)) {
     bounds.extend(opt_start);
@@ -81,9 +87,13 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end
       clickable: false,
       map: this.gMap_,
       path: [opt_start, turnpoints[0]],
-      strokeColor: '#222',
-      strokeOpacity: 0.8,
-      strokeWeight: 1
+      strokeColor: '#44f',
+      strokeOpacity: 0,
+      icons: [{
+        icon: lineSymbol,
+        offset: 0,
+        repeat: '10px'
+      }]
     }));
   }
 
@@ -93,9 +103,13 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end
       clickable: false,
       map: this.gMap_,
       path: [opt_end, turnpoints[turnpoints.length - 1]],
-      strokeColor: '#222',
-      strokeOpacity: 0.8,
-      strokeWeight: 1
+      strokeColor: '#44f',
+      strokeOpacity: 0,
+      icons: [{
+        icon: lineSymbol,
+        offset: 0,
+        repeat: '10px'
+      }]
     }));
   }
 
@@ -126,6 +140,15 @@ vgps3.route.Route.prototype.draw = function(type, turnpoints, opt_start, opt_end
       },
       this
   );
+
+  this.overlays_.push(new google.maps.Polyline({
+    clickable: false,
+    map: this.gMap_,
+    path: turnpoints,
+    strokeColor: '#00f',
+    strokeOpacity: 0.8,
+    strokeWeight: 2
+  }));
 
   if (opt_center) {
     this.gMap_.fitBounds(bounds);
