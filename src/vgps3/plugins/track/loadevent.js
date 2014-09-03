@@ -36,7 +36,7 @@ vgps3.track.LoadEvent = function(trackIndex, fixes, TrackColor, url) {
   this.url = url;
 
   /**
-  * @type {Object} The fixes
+  * @type {vgps3.track.GpsFixes} The fixes
   */
   this.fixes = fixes;
 
