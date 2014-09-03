@@ -19,6 +19,7 @@ goog.provide('vgps3.doarama.Doarama');
 goog.require('goog.Timer');
 goog.require('goog.dom');
 goog.require('goog.events.EventHandler');
+goog.require('goog.events.EventType');
 goog.require('goog.net.Cookies');
 goog.require('goog.net.XhrIo');
 goog.require('goog.style');
@@ -58,6 +59,30 @@ vgps3.doarama.Doarama = function() {
   this.close_;
 
   /**
+   * @type {Element} Close DoArama
+   * @private
+   */
+  this.player_;
+
+  /**
+   * @type {goog.Timer}
+   * @private
+   */
+  this.syncTimer_ = new goog.Timer(200);
+
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this.doaramaApiReady_ = false;
+
+  /**
+   * @type {vgps3.track.GpsFixes} GPS fixes
+   * @private
+   */
+  this.fixes_;
+
+  /**
    * @type {goog.debug.Logger} The logger
    * @private
    */
@@ -75,6 +100,7 @@ goog.inherits(vgps3.doarama.Doarama, vgps3.PluginBase);
 vgps3.doarama.Doarama.prototype.init = function(vgps) {
   goog.base(this, 'init', vgps);
   this.getHandler().listen(vgps, vgps3.track.EventType.LOAD, this.trackLoadHandler_);
+  this.syncTimer_.listen(goog.Timer.TICK, this.syncTimerHandler_, false, this);
 };
 
 
@@ -101,6 +127,7 @@ vgps3.doarama.Doarama.prototype.show_ = function(event) {
     if (this.iframe_.src != this.doaramaUrl_) {
       this.iframe_.src = this.doaramaUrl_;
     }
+    this.syncTimer_.start();
     goog.style.setElementShown(this.iframe_, true);
     goog.style.setElementShown(this.close_, true);
   } else {
@@ -115,6 +142,7 @@ vgps3.doarama.Doarama.prototype.show_ = function(event) {
  * @private
  */
 vgps3.doarama.Doarama.prototype.hide_ = function(event) {
+  this.syncTimer_.stop();
   goog.style.setElementShown(this.iframe_, false);
   goog.style.setElementShown(this.close_, false);
 };
@@ -122,7 +150,7 @@ vgps3.doarama.Doarama.prototype.hide_ = function(event) {
 /**
  * Setup the DoArama iframe when a track is loaded
  *
- * @param {goog.events.Event} event
+ * @param {vgps3.track.LoadEvent} event
  * @private
  */
 vgps3.doarama.Doarama.prototype.trackLoadHandler_ = function(event) {
@@ -132,6 +160,7 @@ vgps3.doarama.Doarama.prototype.trackLoadHandler_ = function(event) {
   }
 
   if (goog.isDefAndNotNull(event.fixes['doaramaUrl'])) {
+    this.fixes_ = event.fixes;
     // Set the iframe source
     var options = '&fixedAspect=false';
     if (goog.isDefAndNotNull(event.fixes['pilot'])) {
@@ -146,6 +175,69 @@ vgps3.doarama.Doarama.prototype.trackLoadHandler_ = function(event) {
   }
 };
 
+/**
+ * Synchronize the graph with the DoArama time
+ *
+ * @param {goog.events.Event} event
+ * @private
+ */
+vgps3.doarama.Doarama.prototype.syncTimerHandler_ = function(event) {
+  if (!this.player_) {
+    this.player_ = this.iframe_.contentWindow;
+    if (!this.player_) {
+      return;
+    }
+    goog.events.listen(window, goog.events.EventType.MESSAGE, this.messageHandler_, false, this);
+  }
+
+  if (this.doaramaApiReady_) {
+    var uri = new goog.Uri(this.iframe_.src);
+    var domain = uri.getScheme() + '://' + uri.getDomain();
+    this.player_.postMessage({'method': 'getTime'}, domain);
+  }
+
+};
+
+/**
+ * Synchronize the graph with the DoArama time
+ *
+ * @param {goog.events.Event} event
+ * @private
+ */
+vgps3.doarama.Doarama.prototype.messageHandler_ = function(event) {
+  var data = event['event_']['data'];
+
+  switch (data['method']) {
+    case 'ready':
+      this.doaramaApiReady_ = true;
+      break;
+    case 'getTime':
+      var date = this.fixes_['date'];
+      var time = this.fixes_['time'];
+      var maxIterations = 10;
+      var idxL = 0;
+      var idxH = time['hour'].length;
+      var idx = idxH;
+      while (1 < (idxH - idxL)) {
+        idx = Math.floor((idxL + idxH) / 2);
+
+        var fixTimeMs = Date.UTC(date['year'], date['month'] - 1, date['day'], time['hour'][idx], time['min'][idx],
+          time['sec'][idx]);
+        if (fixTimeMs < data['result']) {
+          idxL = idx;
+        } else {
+          idxH = idx;
+        }
+        if (0 === maxIterations--) {
+          break;
+        }
+      }
+      this.dispatchEvent(new vgps3.track.ClickEvent(this.fixes_, idx / time['hour'].length));
+      break;
+    default:
+      break;
+  }
+};
 
 /**
  * Setup the DoArama iframe when a track is loaded:
