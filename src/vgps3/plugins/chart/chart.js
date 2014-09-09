@@ -140,8 +140,9 @@ vgps3.chart.Chart.prototype.init = function(vgps) {
   goog.base(this, 'init', vgps);
   this.resizeCharts_();
   this.getHandler()
-    .listen(vgps, vgps3.track.EventType.LOAD, this.mapLoadHandler_)
-    .listen(vgps, vgps3.track.EventType.SELECT, this.mapSelectHandler_);
+    .listen(vgps, vgps3.track.EventType.LOAD, this.trackLoadHandler_)
+    .listen(vgps, vgps3.track.EventType.LOAD, this.trackUpdateHandler_)
+    .listen(vgps, vgps3.track.EventType.SELECT, this.trackSelectHandler_);
 };
 
 
@@ -211,12 +212,12 @@ vgps3.chart.Chart.prototype.handleMouseWheel_ = function(event) {
 
 
 /**
- * Creates the charts when a track has been loaded.
+ * Creates the charts when a track gets loaded.
  *
  * @param {vgps3.track.LoadEvent} event
  * @private
  */
-vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
+vgps3.chart.Chart.prototype.trackLoadHandler_ = function(event) {
   this.logger_.info(goog.string.format('Adding track[%d]', event.trackIndex));
   if (!this.chartContainers_) {
 
@@ -269,12 +270,24 @@ vgps3.chart.Chart.prototype.mapLoadHandler_ = function(event) {
 
 
 /**
+ * Updates the charts when a track gets updated.
+ *
+ * @param {vgps3.track.UpdateEvent} event
+ * @private
+ */
+vgps3.chart.Chart.prototype.trackUpdateHandler_ = function(event) {
+  this.chartData_[event.trackIndex] = {'fixes': event.fixes};
+  this.drawCharts_(event.trackIndex);
+};
+
+
+/**
  * Redraws the charts when a new track is selected.
  *
  * @param {vgps3.track.TrackSelectEvent} event
  * @private
  */
-vgps3.chart.Chart.prototype.mapSelectHandler_ = function(event) {
+vgps3.chart.Chart.prototype.trackSelectHandler_ = function(event) {
   this.currentTrackIndex_ = event.trackIndex;
   this.trackLoaded_.addCallback(function() {
     this.drawCharts_(event.trackIndex);

@@ -15,6 +15,7 @@
 
 goog.provide('vgps3.Viewer');
 
+goog.require('goog.Timer');
 goog.require('goog.Uri');
 goog.require('goog.array');
 goog.require('goog.debug.Console');
@@ -151,10 +152,11 @@ vgps3.Viewer.prototype.parseUrl_ = function(url) {
       turnpoints = uri.getParameterValues('turnpoints'),
       start = uri.getParameterValue('start'),
       end = uri.getParameterValue('end'),
-      hasTrack = false;
+      hasTrack = false,
+      urls = uri.getParameterValues('track') || [];
 
   goog.array.forEach(
-      uri.getParameterValues('track') || [],
+      urls,
       function(track) {
         hasTrack = true;
         this.logger_.info('Loading track: ' + track);
@@ -162,6 +164,26 @@ vgps3.Viewer.prototype.parseUrl_ = function(url) {
       },
       this
   );
+
+  if (uri.getQueryData().containsKey('live')) {
+    this.logger_.info('Updating activated');
+    // Load every min
+    var trackPlugin = this.plugins['track'];
+    var timer = new goog.Timer(60000);
+    timer.listen(
+      goog.Timer.TICK,
+      function() {
+        goog.array.forEach(
+            urls,
+            function(track) {
+              trackPlugin.update(track);
+            },
+            this
+        );
+      }
+    );
+    timer.start();
+  }
 
   if (routeType && turnpoints) {
     turnpoints = goog.array.map(/** @type {!Array.<number>} */(goog.json.parse(turnpoints)), this.array2LatLng_);
