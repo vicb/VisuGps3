@@ -47,7 +47,7 @@ vgps3.doarama.Doarama = function() {
   this.iframe_;
 
   /**
-   * @type {String} DoArama url
+   * @type {string} DoArama url
    * @private
    */
    this.doaramaUrl_;
@@ -83,6 +83,12 @@ vgps3.doarama.Doarama = function() {
   this.fixes_;
 
   /**
+   * @type {string} DoArama iframe domain (for sending messages)
+   * @private
+   */
+  this.domain_;
+
+  /**
    * @type {goog.debug.Logger} The logger
    * @private
    */
@@ -99,8 +105,10 @@ goog.inherits(vgps3.doarama.Doarama, vgps3.PluginBase);
  */
 vgps3.doarama.Doarama.prototype.init = function(vgps) {
   goog.base(this, 'init', vgps);
-  this.getHandler().listen(vgps, vgps3.track.EventType.LOAD, this.trackLoadHandler_);
-  this.syncTimer_.listen(goog.Timer.TICK, this.syncTimerHandler_, false, this);
+  this.getHandler()
+    .listen(vgps, vgps3.track.EventType.LOAD, this.trackLoadHandler_)
+    .listen(vgps, vgps3.chart.EventType.CLICK, this.chartClickHandler_)
+    .listen(this.syncTimer_, goog.Timer.TICK, this.syncTimerHandler_);
 };
 
 
@@ -176,6 +184,23 @@ vgps3.doarama.Doarama.prototype.trackLoadHandler_ = function(event) {
 };
 
 /**
+ * Sync DoArama position when charts are clicked
+ *
+ * @param {vgps3.chart.ClickEvent} event
+ * @private
+ */
+vgps3.doarama.Doarama.prototype.chartClickHandler_ = function(event) {
+  if (this.doaramaApiReady_ && this.player_) {
+    var date = this.fixes_['date'];
+    var time = this.fixes_['time'];
+    var idx = Math.floor(event.position * time['hour'].length);
+    var fixTimeMs = Date.UTC(date['year'], date['month'] - 1, date['day'], time['hour'][idx], time['min'][idx],
+      time['sec'][idx]);
+    this.player_['postMessage']({method: 'setTime', value: fixTimeMs}, this.domain_);
+  }
+};
+
+/**
  * Synchronize the graph with the DoArama time
  *
  * @param {goog.events.Event} event
@@ -187,13 +212,13 @@ vgps3.doarama.Doarama.prototype.syncTimerHandler_ = function(event) {
     if (!this.player_) {
       return;
     }
+    var uri = new goog.Uri(this.iframe_.src);
+    this.domain_ = uri.getScheme() + '://' + uri.getDomain();
     goog.events.listen(window, goog.events.EventType.MESSAGE, this.messageHandler_, false, this);
   }
 
   if (this.doaramaApiReady_) {
-    var uri = new goog.Uri(this.iframe_.src);
-    var domain = uri.getScheme() + '://' + uri.getDomain();
-    this.player_.postMessage({'method': 'getTime'}, domain);
+    this.player_['postMessage']({method: 'getTime'}, this.domain_);
   }
 
 };
