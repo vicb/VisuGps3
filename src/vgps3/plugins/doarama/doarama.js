@@ -226,11 +226,11 @@ vgps3.doarama.Doarama.prototype.syncTimerHandler_ = function(event) {
 /**
  * Synchronize the graph with the DoArama time
  *
- * @param {goog.events.Event} event
+ * @param {goog.events.BrowserEvent} event
  * @private
  */
 vgps3.doarama.Doarama.prototype.messageHandler_ = function(event) {
-  var data = event['event_']['data'];
+  var data = event.getBrowserEvent()['data'];
 
   switch (data['method']) {
     case 'ready':
