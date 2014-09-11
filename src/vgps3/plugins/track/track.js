@@ -141,6 +141,15 @@ vgps3.track.Track.prototype.load = function(url) {
 };
 
 /**
+ * Loads track on the map.
+ *
+ * @param {vgps3.track.GpsFixes} track
+ */
+vgps3.track.Track.prototype.loadJSON = function(track) {
+  this.addTrack_('drag&drop', this.nextTrackIndex_++, track);
+};
+
+/**
  * Update a track
  *
  * @param {string} url The track url.

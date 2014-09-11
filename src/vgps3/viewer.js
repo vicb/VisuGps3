@@ -21,7 +21,9 @@ goog.require('goog.array');
 goog.require('goog.debug.Console');
 goog.require('goog.debug.Logger');
 goog.require('goog.events');
+goog.require('goog.events.FileDropHandler');
 goog.require('goog.json');
+goog.require('goog.net.XhrIo');
 goog.require('goog.object');
 goog.require('goog.structs.Map');
 goog.require('vgps3.airspace.Airspace');
@@ -106,6 +108,8 @@ vgps3.Viewer = function(mapContainer, chartContainer) {
         that.parseUrl_(document.location.href);
       }
       );
+
+  this.setupFileDrop_();
 };
 
 
@@ -208,6 +212,39 @@ vgps3.Viewer.prototype.parseUrl_ = function(url) {
  */
 vgps3.Viewer.prototype.array2LatLng_ = function(opt_latlng) {
   return opt_latlng && goog.isArray(opt_latlng) ? new google.maps.LatLng(opt_latlng[0], opt_latlng[1]) : null;
+};
+
+vgps3.Viewer.prototype.setupFileDrop_ = function() {
+  var that = this;
+  var handler = new goog.events.FileDropHandler(document.documentElement, true);
+
+  goog.events.listen(handler, goog.events.FileDropHandler.EventType.DROP, function (e) {
+    e.preventDefault();
+    var files = e.getBrowserEvent().dataTransfer.files;
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      goog.net.XhrIo.send(
+        'php/vg_dropfile.php',
+        function (event) {
+          var xhr = /** @type {goog.net.XhrIo} */ (event.target);
+
+          if (xhr.isSuccess()) {
+            var track = /** @type {vgps3.track.GpsFixes} */ (xhr.getResponseJson());
+            goog.dispose(xhr);
+            // todo test for errors
+            if (track) {
+              that.plugins['track'].loadJSON(track);
+              return;
+            }
+          } else {
+            goog.dispose(xhr);
+          }
+        },
+        'POST',
+        file
+      );
+    }
+  });
 };
 
 goog.exportSymbol('vgps3.Viewer', vgps3.Viewer);
