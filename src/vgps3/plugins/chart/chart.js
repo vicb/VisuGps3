@@ -128,7 +128,7 @@ vgps3.chart.Chart = function(container) {
 
   goog.base(this);
 
-  vgps3.loader.load('visualization', '1', vgps3.chart.chartApiLoaded_, {'packages': ['corechart']});
+  vgps3.loader.load('visualization', '1.x', vgps3.chart.chartApiLoaded_, {'packages': ['corechart']});
 };
 goog.inherits(vgps3.chart.Chart, vgps3.PluginBase);
 
