@@ -17,6 +17,7 @@ goog.provide('vgps3.airspace.Airspace');
 
 goog.require('goog.dom');
 goog.require('goog.soy');
+goog.require('goog.string.format');
 goog.require('goog.style');
 goog.require('vgps3.Map');
 goog.require('vgps3.PluginBase');
@@ -54,7 +55,7 @@ vgps3.airspace.Airspace = function() {
    */
   this.ftQuery_ = /** @type {google.maps.FusionTablesQuery} */({
     select: 'geometry',
-    where: 'floor_m <= 1000',
+    where: goog.string.format(vgps3.airspace.WHERE, 1000),
     from: vgps3.airspace.FUSION_TABLE_ID
   });
 
@@ -150,7 +151,7 @@ vgps3.airspace.Airspace.prototype.clickhandle_ = function(event) {
  */
 vgps3.airspace.Airspace.prototype.setFloor_ = function(floor) {
   if (this.layer_) {
-    this.ftQuery_.where = 'floor_m <=' + floor;
+    this.ftQuery_.where = goog.string.format(vgps3.airspace.WHERE, floor);
     this.layer_.setOptions({query: this.ftQuery_});
   }
 };
@@ -189,6 +190,12 @@ vgps3.airspace.Airspace.prototype.disposeInternal = function() {
  * @define {string} The fusion table ID.
  */
 vgps3.airspace.FUSION_TABLE_ID = '';
+
+/**
+ * @define {string} The fusion table ID.
+ */
+vgps3.airspace.WHERE = "floor_m <= %d AND class NOT EQUAL TO 'E'";
+
 
 
 /**
