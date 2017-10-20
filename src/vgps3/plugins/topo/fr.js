@@ -110,7 +110,7 @@ vgps3.topo.fr.API_KEYS = '';
 /**
  * @define {string} The url for tiles.
  */
-vgps3.topo.fr.TILES_URL = 'http://gpp3-wxs.ign.fr/{API_KEY}/geoportail/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER={layer}&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={zoom}&TILEROW={y}&TILECOL={x}';
+vgps3.topo.fr.TILES_URL = 'https://wxs.ign.fr/{API_KEY}/geoportail/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER={layer}&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={zoom}&TILEROW={y}&TILECOL={x}';
 
 
 /**

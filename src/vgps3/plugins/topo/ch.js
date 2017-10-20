@@ -167,7 +167,7 @@ vgps3.topo.ch.Map.prototype.getTileUrl_ = function(coord, zoom) {
 /**
  * @define {string} The url for tiles.
  */
-vgps3.topo.ch.TILES_URL = 'http://wmts{server}.geo.admin.ch/1.0.0/{layer}/default/{date}/{proj}/{zoom}/{y}/{x}.jpeg';
+vgps3.topo.ch.TILES_URL = 'https://wmts{server}.geo.admin.ch/1.0.0/{layer}/default/{date}/{proj}/{zoom}/{y}/{x}.jpeg';
 
 
 /**
