@@ -31,11 +31,12 @@ goog.require('vgps3.templates');
  * @param {function(): Object.<string>} userOptions Google Maps options.
  * @param {(Array.<vgps3.PluginBase>|vgps3.PluginBase)=} opt_plugins A list of plugins.
  * @param {Function=} opt_callback Called once the map has been initialized.
+ * @param {string=} opt_gMapsKey Google Maps API key
  *
  * @constructor
  * @extends {goog.events.EventTarget}
  */
-vgps3.Map = function(container, userOptions, opt_plugins, opt_callback) {
+vgps3.Map = function(container, userOptions, opt_plugins, opt_callback, opt_gMapsKey) {
   /**
   * @type {google.maps.Map}
   * @private
@@ -62,7 +63,7 @@ vgps3.Map = function(container, userOptions, opt_plugins, opt_callback) {
 
   goog.base(this);
 
-  this.loadGoogleMapsApi_(container, userOptions, opt_callback);
+  this.loadGoogleMapsApi_(container, userOptions, opt_callback, opt_gMapsKey);
 };
 goog.inherits(vgps3.Map, goog.events.EventTarget);
 
@@ -99,13 +100,14 @@ vgps3.Map.prototype.showAbout = function() {
  * @param {!Element} container The container.
  * @param {function(): Object.<string>} userOptions Google Maps options.
  * @param {Function=} opt_callback Called once the map has been initialized.
+ * @param {string=} opt_gMapsKey Google Maps API key
  *
  * @private
  */
-vgps3.Map.prototype.loadGoogleMapsApi_ = function(container, userOptions, opt_callback) {
+vgps3.Map.prototype.loadGoogleMapsApi_ = function(container, userOptions, opt_callback, opt_gMapsKey) {
   var libs = ['geometry'],
       parameters = new goog.Uri.QueryData(),
-      key = this.getDomainKey(vgps3.Map.GOOGLE_API_KEYS);
+      key = opt_gMapsKey == null ? this.getDomainKey(vgps3.Map.GOOGLE_API_KEYS) : opt_gMapsKey;
 
   goog.array.forEach(this.plugins_, function(plugin) {
     libs = libs.concat(plugin.requireGoogleMapLibs());

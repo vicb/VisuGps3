@@ -47,9 +47,10 @@ goog.require('vgps3.track.Track');
  *
  * @param {!Element} mapContainer
  * @param {!Element} chartContainer
+ * @param {string=} opt_gMapsKey Google Maps API key
  * @constructor
  */
-vgps3.Viewer = function(mapContainer, chartContainer) {
+vgps3.Viewer = function(mapContainer, chartContainer, opt_gMapsKey) {
   /**
    * @type {vgps3.Map}
    * @private
@@ -106,8 +107,9 @@ vgps3.Viewer = function(mapContainer, chartContainer) {
       function() {
         that.wireEvents_();
         that.parseUrl_(document.location.href);
-      }
-      );
+      },
+      opt_gMapsKey
+    );
 
   this.setupFileDrop_();
 };
