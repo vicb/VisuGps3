@@ -29,7 +29,6 @@ goog.require('goog.structs.Map');
 goog.require('vgps3.airspace.Airspace');
 goog.require('vgps3.chart.Chart');
 goog.require('vgps3.doarama.Doarama');
-goog.require('vgps3.earth.Earth');
 goog.require('vgps3.fullscreen.Fullscreen');
 goog.require('vgps3.path.Path');
 goog.require('vgps3.route.Route');
@@ -68,7 +67,6 @@ vgps3.Viewer = function(mapContainer, chartContainer, opt_gMapsKey) {
     'topoch': new vgps3.topo.ch.Map(),
     'topoeu': new vgps3.topo.eu.Map(),
     'route': new vgps3.route.Route(),
-    'earth': new vgps3.earth.Earth(),
     'path': new vgps3.path.Path(),
     'airspace': new vgps3.airspace.Airspace(),
     'skyways': new vgps3.skyways.Skyways(),
@@ -96,8 +94,7 @@ vgps3.Viewer = function(mapContainer, chartContainer, opt_gMapsKey) {
             vgps3.topo.fr.MapTypeId.TERRAIN,
             vgps3.topo.ch.MapTypeId.TERRAIN,
             vgps3.topo.es.MapTypeId.TERRAIN,
-            vgps3.topo.eu.MapTypeId.TERRAIN,
-            vgps3.earth.MapTypeId.EARTH
+            vgps3.topo.eu.MapTypeId.TERRAIN
           ],
           style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
         }
@@ -125,13 +122,12 @@ vgps3.Viewer.prototype.wireEvents_ = function() {
   var vgps = this.vgps_,
       track = this.plugins['track'],
       chart = this.plugins['chart'],
-      earth = this.plugins['earth'],
       eventMap = new goog.structs.Map(
-      vgps3.chart.EventType.MOVE, function(e) {track.moveTo(e.position); earth.moveTo(e.position);},
-      vgps3.chart.EventType.CLICK, function(e) {track.moveTo(e.position, true); earth.moveTo(e.position, true);},
-      vgps3.chart.EventType.WHEEL, function(e) {track.moveTo(e.position, true, -e.direction); earth.moveTo(e.position, true, e.direction);},
+      vgps3.chart.EventType.MOVE, function(e) {track.moveTo(e.position);},
+      vgps3.chart.EventType.CLICK, function(e) {track.moveTo(e.position, true);},
+      vgps3.chart.EventType.WHEEL, function(e) {track.moveTo(e.position, true, -e.direction);},
       vgps3.chart.EventType.ABOUT, function(e) {vgps.showAbout();},
-      vgps3.track.EventType.CLICK, function(e) {chart.moveTo(e.position); earth.moveTo(e.position);}
+      vgps3.track.EventType.CLICK, function(e) {chart.moveTo(e.position);}
       );
 
   goog.object.forEach(eventMap.toObject(), function(listener, event) {
