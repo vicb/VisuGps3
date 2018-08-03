@@ -25,31 +25,53 @@
         </div>
     </div>
     <script type="text/javascript">
-        var isInIframe = parent !== window;
-        if (isInIframe) {
-            var hostname = new URL(document.referrer).hostname;
-            var apiKey = getApiKey(hostname);
+        var urlParser = document.createElement('a');
+        var apiKey = 'no-key';
 
-            if (apiKey == null) {
-                console.log('Please contact visugps - see http://victorb.fr');
-            } else {
-                viewer = new vgps3.Viewer(
-                    document.getElementById('map-container'),
-                    document.getElementById('chart-container'),
-                    apiKey
-                );
-            }
-        } else {
-            viewer = new vgps3.Viewer(
-                document.getElementById('map-container'),
-                document.getElementById('chart-container')
-            );
+        var isInIframe = parent !== window;
+
+        if (isInIframe) {
+            apiKey = getApiKey(document.referrer);
         }
 
+        if (apiKey === 'no-key') {
+            apiKey = getApiKey(getTrackHostname());
+        }
+
+        if (apiKey === 'no-key') {
+            console.error('unregistered site');
+        }
+
+        viewer = new vgps3.Viewer(
+            document.getElementById('map-container'),
+            document.getElementById('chart-container'),
+            apiKey
+        );
+
+        function getHostname(url) {
+            urlParser.href = url;
+            return urlParser.hostname;
+        }
+
+        function getTrackHostname() {
+            var params = document.location.search.substr(1).split('&');
+            for (var i = 0; i < params.length; i++) {
+                var kv = params[i].split('=');
+                if (kv[0] == 'track') return decodeURIComponent(kv[1]);
+            }
+            return '';
+        }
+
+
         function getApiKey(hostname) {
-            if (referrer.indexOf('ffvl.fr') > -1 ) {
+            if (hostname.indexOf('victorb.fr') > -1) {
+                return;
+            }
+            if (hostname.indexOf('ffvl.fr') > -1 ) {
                 return 'AIzaSyCrrJFObDFdK4fkGs1hDeR4t3wIw56jL94';
             }
+
+            return 'no-key';
         }
     </script>
 </body>
