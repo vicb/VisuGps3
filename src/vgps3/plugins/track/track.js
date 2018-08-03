@@ -495,6 +495,14 @@ vgps3.track.Track.prototype.clickHandler_ = function(event) {
       latlng = event.latLng,
       that = this;
 
+
+  var gtag = goog.global['gtag'];
+  if (goog.isDef(gtag)) {
+    gtag('event', 'track', {
+      'value': 'click'
+    });
+  }
+
   goog.array.forEach(this.tracks_, function(track, trackIdx) {
     if (goog.DEBUG) {var trials = 0;}
     for (var pointIdx = 0, nbPoints = track.points.length; pointIdx < nbPoints; ) {

@@ -122,12 +122,27 @@ vgps3.Map.prototype.loadGoogleMapsApi_ = function(container, userOptions, opt_ca
     parameters.add('key', key);
   }
 
+  var gtag = goog.global['gtag'];
+  if (goog.isDef(gtag)) {
+    gtag('event', 'preload', {
+      'value': key
+    });
+  }
+
   vgps3.loader.load(
       'maps',
       '3',
       goog.bind(this.init_, this, container, userOptions, opt_callback),
       {'other_params': parameters.toString()}
   );
+
+  var gtag = goog.global['gtag'];
+  if (goog.isDef(gtag)) {
+    gtag('event', 'postload', {
+      'value': key
+    });
+  }
+
 };
 
 
