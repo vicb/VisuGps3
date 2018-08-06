@@ -31,7 +31,7 @@
         var isInIframe = parent !== window;
 
         if (isInIframe) {
-            apiKey = getApiKey(document.referrer);
+            apiKey = getApiKey(getHostname(document.referrer));
         }
 
         if (apiKey === 'no-key') {
@@ -57,18 +57,20 @@
             var params = document.location.search.substr(1).split('&');
             for (var i = 0; i < params.length; i++) {
                 var kv = params[i].split('=');
-                if (kv[0] == 'track') return decodeURIComponent(kv[1]);
+                if (kv[0] == 'track') {
+                    return getHostname(decodeURIComponent(kv[1]));
+                }
             }
             return '';
         }
 
 
         function getApiKey(hostname) {
-            if (hostname.indexOf('victorb.fr') > -1) {
-                return;
-            }
             if (hostname.indexOf('ffvl.fr') > -1 ) {
                 return 'AIzaSyCrrJFObDFdK4fkGs1hDeR4t3wIw56jL94';
+            }
+            if (hostname.indexOf('victorb.fr') > -1) {
+                return;
             }
 
             return 'no-key';
