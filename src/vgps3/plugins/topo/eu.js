@@ -78,8 +78,7 @@ vgps3.topo.eu.Map.prototype.getTileUrl_ = function(coord, zoom) {
 /**
  * @define {string} The url for tiles.
  */
-vgps3.topo.eu.TILES_URL = 'http://4umaps.eu/{zoom}/{x}/{y}.png';
-
+vgps3.topo.eu.TILES_URL = 'https://tileserver.4umaps.com/{zoom}/{x}/{y}.png';
 
 /**
  * @enum {string} The supported map types

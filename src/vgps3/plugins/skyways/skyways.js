@@ -195,13 +195,13 @@ vgps3.skyways.Skyways.prototype.disposeInternal = function() {
 /**
  * @define {string} The skyways tiles URL.
  */
-vgps3.skyways.TILES_URL = 'http://thermal.kk7.ch/php/tile.php?typ=skyways&t=all&z={zoom}&x={x}&y={y}&src={domain}';
+vgps3.skyways.TILES_URL = 'https://thermal.kk7.ch/php/tile.php?typ=skyways&t=all&z={zoom}&x={x}&y={y}&src={domain}';
 
 
 /**
  * @define {string} The skyways website.
  */
-vgps3.skyways.URL = 'http://thermal.kk7.ch';
+vgps3.skyways.URL = 'https://thermal.kk7.ch';
 
 
 /**
