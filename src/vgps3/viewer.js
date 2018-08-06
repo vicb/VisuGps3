@@ -28,7 +28,6 @@ goog.require('goog.object');
 goog.require('goog.structs.Map');
 goog.require('vgps3.airspace.Airspace');
 goog.require('vgps3.chart.Chart');
-goog.require('vgps3.doarama.Doarama');
 goog.require('vgps3.fullscreen.Fullscreen');
 goog.require('vgps3.path.Path');
 goog.require('vgps3.route.Route');
@@ -70,7 +69,6 @@ vgps3.Viewer = function(mapContainer, chartContainer, opt_gMapsKey) {
     'path': new vgps3.path.Path(),
     'airspace': new vgps3.airspace.Airspace(),
     'skyways': new vgps3.skyways.Skyways(),
-    'doarama': new vgps3.doarama.Doarama(),
     'fs': new vgps3.fullscreen.Fullscreen()
   };
 
