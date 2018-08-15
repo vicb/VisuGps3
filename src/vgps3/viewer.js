@@ -90,6 +90,7 @@ vgps3.Viewer = function(mapContainer, chartContainer, opt_gMapsKey) {
             google.maps.MapTypeId.SATELLITE,
             google.maps.MapTypeId.TERRAIN,
             vgps3.topo.fr.MapTypeId.TERRAIN,
+            vgps3.topo.fr.MapTypeId.SCAN,
             vgps3.topo.ch.MapTypeId.TERRAIN,
             vgps3.topo.es.MapTypeId.TERRAIN,
             vgps3.topo.eu.MapTypeId.TERRAIN

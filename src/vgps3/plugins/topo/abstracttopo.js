@@ -106,12 +106,13 @@ vgps3.topo.AbstractTopo.prototype.setCopyright_ = function(logo, url) {
  * Registers the custom map.
  *
  * @param {string} mapType
+ * @param {google.maps.ImageMapType=} opt_mapType
  *
  * @protected
  */
-vgps3.topo.AbstractTopo.prototype.registerMapType_ = function(mapType) {
+vgps3.topo.AbstractTopo.prototype.registerMapType_ = function(mapType, opt_mapType) {
   this.mapType_ = mapType;
-  this.gMap_.mapTypes.set(mapType, /** @type {?} */ (this.getMapType_()));
+  this.gMap_.mapTypes.set(mapType, /** @type {?} */ (opt_mapType || this.getMapType_()));
   google.maps.event.addListener(
       this.gMap_,
       'maptypeid_changed',
@@ -208,7 +209,7 @@ vgps3.topo.AbstractTopo.prototype.getTileUrl_ = goog.abstractMethod;
 /**
  * Handling map show / hide
  *
- * @private
+ * @protected
  */
 vgps3.topo.AbstractTopo.prototype.mapTypeChangeHandler_ = function() {
   if (this.gMap_.getMapTypeId() === this.mapType_) {

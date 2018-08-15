@@ -33,6 +33,11 @@ vgps3.topo.fr.Map = function() {
    * @private
    */
   this.tilesUrl_;
+
+  /**
+   * @type {string}
+   */
+  this.layerName_ = 'GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.CLASSIQUE';
 };
 goog.inherits(vgps3.topo.fr.Map, vgps3.topo.AbstractTopo);
 
@@ -62,7 +67,8 @@ vgps3.topo.fr.Map.prototype.init = function(vgps) {
     [-14.6, -178.5, -12.8, -175.8] // WLF
   ]);
   this.setCopyright_('img/topo.fr.png', 'http://www.ign.fr/');
-  this.registerMapType_(vgps3.topo.fr.MapTypeId.TERRAIN);
+  this.registerMapType_(vgps3.topo.fr.MapTypeId.TERRAIN, this.getMapType_());
+  this.registerMapType_(vgps3.topo.fr.MapTypeId.SCAN, this.getScanMapType_());
   var key = vgps.getDomainKey(vgps3.topo.fr.API_KEYS);
   this.tilesUrl_ = null == key ? null : vgps3.topo.fr.TILES_URL.replace('{API_KEY}', key);
 };
@@ -82,6 +88,35 @@ vgps3.topo.fr.Map.prototype.getMapType_ = function() {
   });
 };
 
+/**
+ * @return {google.maps.ImageMapType} The map type.
+ * @protected
+ */
+vgps3.topo.fr.Map.prototype.getScanMapType_ = function() {
+  return new google.maps.ImageMapType({
+    getTileUrl: goog.bind(this.getTileUrl_, this),
+    tileSize: new google.maps.Size(256, 256),
+    minZoom: 6,
+    maxZoom: 17,
+    name: 'France (scan)',
+    alt: 'Cartes IGN France'
+  });
+};
+
+/**
+ * @override
+ */
+vgps3.topo.fr.Map.prototype.mapTypeChangeHandler_ = function() {
+  if (this.gMap_.getMapTypeId() === vgps3.topo.fr.MapTypeId.TERRAIN) {
+    this.layerName_ = 'GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.CLASSIQUE';
+    this.showHandler_();
+  } else if (this.gMap_.getMapTypeId() === vgps3.topo.fr.MapTypeId.SCAN) {
+    this.layerName_ = 'GEOGRAPHICALGRIDSYSTEMS.MAPS';
+    this.showHandler_();
+  } else {
+    this.hideHandler_();
+  }
+};
 
 /**
  * @override
@@ -96,7 +131,7 @@ vgps3.topo.fr.Map.prototype.getTileUrl_ = function(coord, zoom) {
       .replace('{zoom}', zoom.toString())
       .replace('{x}', (((coord.x % numTiles) + numTiles) % numTiles).toString())
       .replace('{y}', coord.y.toString())
-      .replace('{layer}', 'GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.CLASSIQUE');
+      .replace('{layer}', this.layerName_);
 };
 
 
@@ -117,7 +152,8 @@ vgps3.topo.fr.TILES_URL = 'https://wxs.ign.fr/{API_KEY}/geoportail/wmts?SERVICE=
  * @enum {string} The supported map types
  */
 vgps3.topo.fr.MapTypeId = {
-  TERRAIN: 'vgps3-topo-fr-terrain'
+  TERRAIN: 'vgps3-topo-fr-terrain',
+  SCAN: 'vgps3-topo-fr-scan'
 };
 
 goog.exportSymbol('vgps3.topo.fr.Map', vgps3.topo.fr.Map);
