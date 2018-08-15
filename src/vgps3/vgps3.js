@@ -136,7 +136,6 @@ vgps3.Map.prototype.loadGoogleMapsApi_ = function(container, userOptions, opt_ca
       {'other_params': parameters.toString()}
   );
 
-  var gtag = goog.global['gtag'];
   if (goog.isDef(gtag)) {
     gtag('event', 'postload', {
       'value': key
