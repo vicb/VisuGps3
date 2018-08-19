@@ -172,19 +172,19 @@ vgps3.route.Route.prototype.disposeInternal = function() {
 /**
  * @define {string} The start icon url.
  */
-vgps3.route.START_ICON_URL = 'https://labs.google.com/ridefinder/images/mm_20_green.png';
+vgps3.route.START_ICON_URL = 'https://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_green.png';
 
 
 /**
  * @define {string} The end icon url.
  */
-vgps3.route.END_ICON_URL = 'https://labs.google.com/ridefinder/images/mm_20_red.png';
+vgps3.route.END_ICON_URL = 'https://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_red.png';
 
 
 /**
  * @define {string} The route icon url.
  */
-vgps3.route.ICON_URL = 'https://labs.google.com/ridefinder/images/mm_20_orange.png';
+vgps3.route.ICON_URL = 'https://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_orange.png';
 
 goog.exportSymbol('vgps3.route.Route', vgps3.route.Route);
 goog.exportSymbol('vgps3.route.Route.draw', vgps3.route.Route.prototype.draw);
